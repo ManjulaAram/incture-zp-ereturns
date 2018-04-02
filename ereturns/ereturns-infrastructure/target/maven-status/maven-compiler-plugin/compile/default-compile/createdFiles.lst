@@ -1,0 +1,12 @@
+com\incture\zp\ereturns\repositories\RequestRepository.class
+com\incture\zp\ereturns\dto\CustomerDto.class
+com\incture\zp\ereturns\model\User.class
+com\incture\zp\ereturns\model\Request.class
+com\incture\zp\ereturns\dto\RequestDto.class
+com\incture\zp\ereturns\model\Item.class
+com\incture\zp\ereturns\dto\ItemDto.class
+com\incture\zp\ereturns\servicesimpl\RequestServiceImpl.class
+com\incture\zp\ereturns\services\RequestService.class
+com\incture\zp\ereturns\model\Header.class
+com\incture\zp\ereturns\dto\HeaderDto.class
+com\incture\zp\ereturns\repositoriesimpl\RequestRepositoryImpl.class
