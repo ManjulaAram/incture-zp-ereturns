@@ -1,14 +1,11 @@
 package com.incture.zp.ereturns.dto;
 
-import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
-public class HeaderDto implements Serializable {
+public class HeaderDto {
 
-	private static final long serialVersionUID = -8547234219630979516L;
-
-	private int invoiceNo;
+	private String invoiceNo;
 	
 	private String invoiceSeq;
 	
@@ -16,19 +13,17 @@ public class HeaderDto implements Serializable {
 	
 	private Date expiryDate;
 	
-	private double invoiceAvailableQty;
-	
-	private double invoiceNetValue;
-	
-	private int userCode;
-	
-	private List<ItemDto> itemList;
+	private String availableQty;
 
-	public int getInvoiceNo() {
+	private String netValue; // sum of all item level net value to be calculated
+	
+	private Set<ItemDto> itemSet;
+	
+	public String getInvoiceNo() {
 		return invoiceNo;
 	}
 
-	public void setInvoiceNo(int invoiceNo) {
+	public void setInvoiceNo(String invoiceNo) {
 		this.invoiceNo = invoiceNo;
 	}
 
@@ -56,36 +51,29 @@ public class HeaderDto implements Serializable {
 		this.expiryDate = expiryDate;
 	}
 
-	public double getInvoiceAvailableQty() {
-		return invoiceAvailableQty;
+	public String getNetValue() {
+		return netValue;
 	}
 
-	public void setInvoiceAvailableQty(double invoiceAvailableQty) {
-		this.invoiceAvailableQty = invoiceAvailableQty;
+	public void setNetValue(String netValue) {
+		this.netValue = netValue;
 	}
 
-	public double getInvoiceNetValue() {
-		return invoiceNetValue;
+
+	public Set<ItemDto> getItemSet() {
+		return itemSet;
 	}
 
-	public void setInvoiceNetValue(double invoiceNetValue) {
-		this.invoiceNetValue = invoiceNetValue;
+	public void setItemSet(Set<ItemDto> itemSet) {
+		this.itemSet = itemSet;
 	}
 
-	public int getUserCode() {
-		return userCode;
+	public String getAvailableQty() {
+		return availableQty;
 	}
 
-	public void setUserCode(int userCode) {
-		this.userCode = userCode;
+	public void setAvailableQty(String availableQty) {
+		this.availableQty = availableQty;
 	}
 
-	public List<ItemDto> getItemList() {
-		return itemList;
-	}
-
-	public void setItemList(List<ItemDto> itemList) {
-		this.itemList = itemList;
-	}
-	
 }

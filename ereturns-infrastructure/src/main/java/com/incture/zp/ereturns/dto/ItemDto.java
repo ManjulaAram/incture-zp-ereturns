@@ -1,26 +1,26 @@
 package com.incture.zp.ereturns.dto;
 
-import java.io.Serializable;
+import java.util.Date;
 
-public class ItemDto implements Serializable {
+public class ItemDto {
 
-	private static final long serialVersionUID = 5035424512341634171L;
-
-	private int itemCode;
+	private String itemCode;
 	
 	private String itemName;
 	
 	private String itemDescription;
 	
-	private double netValue;
+	private String availableQty;
 	
-	private double availableQty;
+	private Date expiryDate;
+	
+	private String netValue;
 
-	public int getItemCode() {
+	public String getItemCode() {
 		return itemCode;
 	}
 
-	public void setItemCode(int itemCode) {
+	public void setItemCode(String itemCode) {
 		this.itemCode = itemCode;
 	}
 
@@ -40,20 +40,29 @@ public class ItemDto implements Serializable {
 		this.itemDescription = itemDescription;
 	}
 
-	public double getNetValue() {
-		return netValue;
-	}
-
-	public void setNetValue(double netValue) {
-		this.netValue = netValue;
-	}
-
-	public double getAvailableQty() {
+	public String getAvailableQty() {
 		return availableQty;
 	}
 
-	public void setAvailableQty(double availableQty) {
+	public void setAvailableQty(String availableQty) {
 		this.availableQty = availableQty;
 	}
+
+	public String getNetValue() {
+		return netValue;
+	}
+
+	public void setNetValue(String netValue) {
+		this.netValue = netValue;
+	}
+
+	public Date getExpiryDate() {
+		return expiryDate;
+	}
+
+	public void setExpiryDate(Date expiryDate) {
+		this.expiryDate = expiryDate;
+	}
+	
 	
 }
