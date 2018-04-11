@@ -19,8 +19,6 @@ public class UserDto {
 	
 	private String sciId;
 	
-	private String lotNo;
-
 	private Set<HeaderDto> headerSet;
 
 	public String getUserId() {
@@ -70,14 +68,6 @@ public class UserDto {
 
 	public void setSciId(String sciId) {
 		this.sciId = sciId;
-	}
-
-	public String getLotNo() {
-		return lotNo;
-	}
-
-	public void setLotNo(String lotNo) {
-		this.lotNo = lotNo;
 	}
 
 	public Set<HeaderDto> getHeaderSet() {

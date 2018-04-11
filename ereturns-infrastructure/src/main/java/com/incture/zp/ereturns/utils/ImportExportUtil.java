@@ -1,22 +1,35 @@
 package com.incture.zp.ereturns.utils;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.stereotype.Component;
+
 import com.incture.zp.ereturns.dto.HeaderDto;
 import com.incture.zp.ereturns.dto.ItemDto;
+import com.incture.zp.ereturns.dto.RequestDto;
+import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.UserDto;
 import com.incture.zp.ereturns.model.Header;
 import com.incture.zp.ereturns.model.Item;
+import com.incture.zp.ereturns.model.Request;
+import com.incture.zp.ereturns.model.ReturnOrder;
 import com.incture.zp.ereturns.model.User;
 
+@Component
 public class ImportExportUtil {
 
-	public static User importUserDto(UserDto userDto) {
+	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//	private static final Logger LOGGER = LoggerFactory.getLogger(HeaderRepositoryImpl.class);
+	
+	public User importUserDto(UserDto userDto) {
 		User user = new User();
 		user.setAddress(userDto.getAddress());
 		user.setEmail(userDto.getEmail());
-		user.setLotNo(userDto.getLotNo());
 		user.setSciId(userDto.getSciId());
 		user.setUserCode(userDto.getUserCode());
 		user.setUserId(userDto.getUserId());
@@ -26,12 +39,11 @@ public class ImportExportUtil {
 		if (userDto.getHeaderSet() != null && userDto.getHeaderSet().size() > 0) {
 			headerSet = setHeaderDetail(userDto.getHeaderSet(), user);
 		}
-		
 		user.setSetHeader(headerSet);
 		return user;
 	}
 	
-	private static Set<Header> setHeaderDetail(Set<HeaderDto> headerSet, User user) {
+	private Set<Header> setHeaderDetail(Set<HeaderDto> headerSet, User user) {
 		Set<Header> setHeader = new HashSet<>();
 		
 		for(HeaderDto headerDto : headerSet) {
@@ -39,13 +51,29 @@ public class ImportExportUtil {
 		}
 		return setHeader;
 	}
-	
-	public static UserDto exportUserDto(User user, Set<HeaderDto> headerSet) {
+
+	private Set<ReturnOrder> setReturnOrderDetail(Set<ReturnOrderDto> returnOrderSet, Request request) {
+		Set<ReturnOrder> setReturnOrder = new HashSet<>();
+		
+		for(ReturnOrderDto returnOrderDto : returnOrderSet) {
+			setReturnOrder.add(importReturnOrderDto(returnOrderDto, request));
+		}
+		return setReturnOrder;
+	}
+
+	public UserDto exportUserDto(User user) {
 		UserDto userDto = new UserDto();
 		userDto.setAddress(user.getAddress());
 		userDto.setEmail(user.getEmail());
+		
+		Set<Header> headers = user.getSetHeader();
+		HeaderDto headerDto = null;
+		Set<HeaderDto> headerSet = new HashSet<>();
+		for(Header header : headers) {
+			headerDto = exportHeaderDto(header);
+			headerSet.add(headerDto);
+		}
 		userDto.setHeaderSet(headerSet);
-		userDto.setLotNo(user.getLotNo());
 		userDto.setSciId(user.getSciId());
 		userDto.setUserCode(user.getUserCode());
 		userDto.setUserId(user.getUserId());
@@ -54,7 +82,7 @@ public class ImportExportUtil {
 		return userDto;
 	}
 	
-	public static Header importHeaderDto(HeaderDto headerDto, User user) {
+	public Header importHeaderDto(HeaderDto headerDto, User user) {
 		Header header = new Header();
 		header.setAvailableQty(headerDto.getAvailableQty());
 		header.setExpiryDate(headerDto.getExpiryDate());
@@ -68,27 +96,32 @@ public class ImportExportUtil {
 		if (headerDto.getItemSet() != null && headerDto.getItemSet().size() > 0) {
 			itemSet = setItemDetail(headerDto.getItemSet(), header);
 		}
-
 		header.setSetItem(itemSet);
 		
 		return header;
 	}
 	
-	public static HeaderDto exportHeaderDto(Header header, Set<ItemDto> setItem) {
+	public HeaderDto exportHeaderDto(Header header) {
 		HeaderDto headerDto = new HeaderDto();
 		headerDto.setAvailableQty(header.getAvailableQty());
 		headerDto.setExpiryDate(header.getExpiryDate());
 		headerDto.setInvoiceDate(header.getInvoiceDate());
 		headerDto.setInvoiceNo(header.getInvoiceNo());
 		headerDto.setInvoiceSeq(header.getInvoiceSeq());
-		
-		headerDto.setItemSet(setItem);
+		Set<Item> items = header.getSetItem();
+		Set<ItemDto> setItemsDto = new HashSet<>();
+		ItemDto itemDto = null;
+		for(Item item : items) {
+			itemDto = exportItemDto(item);
+			setItemsDto.add(itemDto);
+		}
+		headerDto.setItemSet(setItemsDto);
 		headerDto.setNetValue(header.getNetValue());
 		
 		return headerDto;
 	}
 	
-	private static Set<Item> setItemDetail(Set<ItemDto> itemSet, Header header) {
+	private Set<Item> setItemDetail(Set<ItemDto> itemSet, Header header) {
 		Set<Item> setItem = new HashSet<>();
 		
 		for(ItemDto itemDto : itemSet) {
@@ -97,7 +130,7 @@ public class ImportExportUtil {
 		return setItem;
 	}
 	
-	public static Item importItemDto(ItemDto itemDto, Header header) {
+	public Item importItemDto(ItemDto itemDto, Header header) {
 		Item item = new Item();
 		item.setAvailableQty(itemDto.getAvailableQty());
 		item.setExpiryDate(itemDto.getExpiryDate());
@@ -110,7 +143,7 @@ public class ImportExportUtil {
 		return item;
 	}
 	
-	public static ItemDto exportItemDto(Item item) {
+	public ItemDto exportItemDto(Item item) {
 		ItemDto itemDto = new ItemDto();
 		itemDto.setAvailableQty(item.getAvailableQty());
 		itemDto.setExpiryDate(item.getExpiryDate());
@@ -122,4 +155,137 @@ public class ImportExportUtil {
 		return itemDto;
 	}
 
+	public Request importRequestDto(RequestDto requestDto) {
+		Request request = new Request();
+		request.setBoxQty(requestDto.getBoxQty());
+		request.setLocation(requestDto.getLocation());
+		request.setRequestApprovedBy(requestDto.getRequestApprovedBy());
+		if(requestDto.getRequestApprovedDate() != null && !(requestDto.getRequestApprovedDate().equals(""))) {
+			Date approvedDate;
+			try {
+				approvedDate = dateFormat.parse(requestDto.getRequestApprovedDate());
+				request.setRequestApprovedDate(approvedDate);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		request.setRequestCreatedBy(requestDto.getRequestCreatedBy());
+		
+		if(requestDto.getRequestCreatedDate() != null && !(requestDto.getRequestCreatedDate().equals(""))) {
+			Date createdDate;
+			try {
+				createdDate = dateFormat.parse(requestDto.getRequestCreatedDate());
+				request.setRequestCreatedDate(createdDate);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		request.setRequestId(requestDto.getRequestId());
+		// define rule based on reason and return value
+		request.setRequestPendingWith(requestDto.getRequestPendingWith());
+		request.setRequestStatus(requestDto.getRequestStatus());
+		request.setRequestUpdatedBy(requestDto.getRequestUpdatedBy());
+		
+		if(requestDto.getRequestUpdatedDate() != null && !(requestDto.getRequestUpdatedDate().equals(""))) {
+			Date updatedDate;
+			try {
+				updatedDate = dateFormat.parse(requestDto.getRequestUpdatedDate());
+				request.setRequestUpdatedDate(updatedDate);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		request.setLotNo(requestDto.getLotNo());
+		request.setSalesPerson(requestDto.getSalesPerson());
+		
+		Set<ReturnOrder> returnOrderSet = null;
+		if (requestDto.getSetReturnOrderDto() != null && requestDto.getSetReturnOrderDto().size() > 0) {
+			returnOrderSet = setReturnOrderDetail(requestDto.getSetReturnOrderDto(), request);
+		}
+
+		request.setSetReturnOrder(returnOrderSet);
+		return request;
+	}
+	
+	public RequestDto exportRequestDto(Request request) {
+		RequestDto requestDto = new RequestDto();
+		requestDto.setBoxQty(request.getBoxQty());
+		requestDto.setLocation(request.getLocation());
+		requestDto.setLotNo(request.getLotNo());
+		requestDto.setNoOfLine("");
+		requestDto.setRequestApprovedBy(request.getRequestApprovedBy());
+		if(request.getRequestApprovedDate() != null) {
+			String approvedDate = dateFormat.format(request.getRequestApprovedDate());
+			requestDto.setRequestApprovedDate(approvedDate);
+		} else {
+			requestDto.setRequestApprovedDate("");
+		}
+		requestDto.setRequestCreatedBy(request.getRequestCreatedBy());
+		if(request.getRequestCreatedDate() != null) {
+			String createdDate = dateFormat.format(request.getRequestCreatedDate());
+			requestDto.setRequestCreatedDate(createdDate);
+		} else {
+			requestDto.setRequestCreatedDate("");
+		}
+		requestDto.setRequestId(request.getRequestId());
+		requestDto.setRequestPendingWith(request.getRequestPendingWith());
+		requestDto.setRequestStatus(request.getRequestStatus());
+		if(request.getRequestUpdatedDate() != null) {
+			String updatedDate = dateFormat.format(request.getRequestUpdatedDate());
+			requestDto.setRequestUpdatedDate(updatedDate);
+		} else {
+			requestDto.setRequestUpdatedDate("");
+		}
+		requestDto.setRequestUpdatedBy(request.getRequestUpdatedBy());
+		requestDto.setSalesPerson("BOM");
+		requestDto.setSalesPersonName("BOM");
+		
+		Set<ReturnOrder> returnOrders = request.getSetReturnOrder();
+		ReturnOrderDto returnOrderDto = null;
+		Set<ReturnOrderDto> returnOrderSet = new HashSet<>();
+		for(ReturnOrder returnOrder : returnOrders) {
+			returnOrderDto = exportReturnOrderDto(returnOrder);
+			returnOrderSet.add(returnOrderDto);
+		}
+		requestDto.setSetReturnOrderDto(returnOrderSet);
+		
+		return requestDto;
+	}
+	
+	public ReturnOrder importReturnOrderDto(ReturnOrderDto returnOrderDto, Request request) {
+		ReturnOrder returnOrder = new ReturnOrder();
+		returnOrder.setReturnOrderData(request);
+		returnOrder.setInvoiceNo(returnOrderDto.getInvoiceNo());
+		returnOrder.setItemCode(returnOrderDto.getItemCode());
+		returnOrder.setReason(returnOrderDto.getReason());
+		returnOrder.setRemark(returnOrderDto.getRemark());
+		
+		returnOrder.setReturnEntireOrder(returnOrderDto.getReturnEntireOrder());
+		returnOrder.setReturnOrderId(returnOrderDto.getReturnOrderId());
+		returnOrder.setReturnPrice(returnOrderDto.getReturnPrice());
+		returnOrder.setReturnQty(returnOrderDto.getReturnQty());
+		returnOrder.setReturnValue(returnOrderDto.getReturnValue());
+		
+		returnOrder.setUserCode(returnOrderDto.getUserCode());
+		
+		return returnOrder;
+	}
+	
+	public ReturnOrderDto exportReturnOrderDto(ReturnOrder returnOrder) {
+		ReturnOrderDto returnOrderDto = new ReturnOrderDto();
+		
+		returnOrderDto.setInvoiceNo(returnOrder.getInvoiceNo());
+		returnOrderDto.setItemCode(returnOrder.getItemCode());
+		returnOrderDto.setReason(returnOrder.getReason());
+		returnOrderDto.setRemark(returnOrder.getRemark());
+		returnOrderDto.setReturnEntireOrder(returnOrder.getReturnEntireOrder());
+		returnOrderDto.setReturnOrderId(returnOrder.getReturnOrderId());
+		returnOrderDto.setReturnPrice(returnOrder.getReturnPrice());
+		returnOrderDto.setReturnQty(returnOrder.getReturnQty());
+		returnOrderDto.setReturnValue(returnOrder.getReturnValue());
+		returnOrderDto.setUserCode(returnOrder.getUserCode());
+		
+		return returnOrderDto;
+	}
+	
 }

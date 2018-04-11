@@ -31,6 +31,8 @@ public class Header {
 	private double netValue; // sum of all item level net value to be calculated
 	
 	private String userCode;
+	
+	private String documentType;
 
 	public int getInvoiceNo() {
 		return invoiceNo;

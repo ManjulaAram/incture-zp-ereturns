@@ -14,6 +14,10 @@ public class HeaderDto {
 	private Date expiryDate;
 	
 	private String availableQty;
+	
+	private String documentType;
+	
+	private String salesOrder;
 
 	private String netValue; // sum of all item level net value to be calculated
 	
@@ -74,6 +78,22 @@ public class HeaderDto {
 
 	public void setAvailableQty(String availableQty) {
 		this.availableQty = availableQty;
+	}
+
+	public String getDocumentType() {
+		return documentType;
+	}
+
+	public void setDocumentType(String documentType) {
+		this.documentType = documentType;
+	}
+
+	public String getSalesOrder() {
+		return salesOrder;
+	}
+
+	public void setSalesOrder(String salesOrder) {
+		this.salesOrder = salesOrder;
 	}
 
 }

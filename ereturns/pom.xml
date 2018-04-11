@@ -4,7 +4,7 @@
   <groupId>com.incture.zp</groupId>
   <artifactId>ereturns</artifactId>
   <packaging>pom</packaging>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1</version>
   
   <name>ereturns</name>
   <url>http://maven.apache.org</url>
@@ -21,9 +21,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <build>
-    <finalName>ereturns</finalName>
-  </build>
   <modules>
   	<module>ereturns-infrastructure</module>
     <module>ereturns-services</module>

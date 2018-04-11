@@ -3,13 +3,19 @@ package com.incture.zp.ereturns.model;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+@Entity
+@Table(name = "T_INVOICE_ITEM")
 public class Item {
 
+	@Id
 	@Column(name = "ITEM_CODE", nullable = false)
 	private String itemCode;
 	
@@ -28,6 +34,10 @@ public class Item {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "EXPIRY_DATE")
 	private Date expiryDate;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DELIVERY_DATE")
+	private Date deliveryDate;
 
 	@ManyToOne
 	@JoinColumn(name = "INVOICE_NO", nullable = false, updatable = false)
@@ -87,6 +97,14 @@ public class Item {
 
 	public void setExpiryDate(Date expiryDate) {
 		this.expiryDate = expiryDate;
+	}
+
+	public Date getDeliveryDate() {
+		return deliveryDate;
+	}
+
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
 	}
 
 }

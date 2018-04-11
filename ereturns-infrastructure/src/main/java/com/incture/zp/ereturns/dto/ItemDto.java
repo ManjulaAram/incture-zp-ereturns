@@ -15,6 +15,8 @@ public class ItemDto {
 	private Date expiryDate;
 	
 	private String netValue;
+	
+	private Date deliveryDate;
 
 	public String getItemCode() {
 		return itemCode;
@@ -62,6 +64,14 @@ public class ItemDto {
 
 	public void setExpiryDate(Date expiryDate) {
 		this.expiryDate = expiryDate;
+	}
+
+	public Date getDeliveryDate() {
+		return deliveryDate;
+	}
+
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
 	}
 	
 	

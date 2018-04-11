@@ -33,14 +33,8 @@ public class User {
 	@Column(name = "SCI_ID", length = 50)
 	private String sciId;
 	
-	@Column(name = "LOT_NO", length = 50)
-	private String lotNo;
-	
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "headerData")
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "headerData")
 	private Set<Header> setHeader;
-	
-//	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "requestData")
-//	private Set<Request> setRequest;
 	
 	public String getUserId() {
 		return userId;
@@ -72,12 +66,6 @@ public class User {
 	public void setSciId(String sciId) {
 		this.sciId = sciId;
 	}
-	public String getLotNo() {
-		return lotNo;
-	}
-	public void setLotNo(String lotNo) {
-		this.lotNo = lotNo;
-	}
 	public Set<Header> getSetHeader() {
 		return setHeader;
 	}
@@ -90,13 +78,5 @@ public class User {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-	
-	
-//	public Set<Request> getSetRequest() {
-//		return setRequest;
-//	}
-//	public void setSetRequest(Set<Request> setRequest) {
-//		this.setRequest = setRequest;
-//	}
 	
 }

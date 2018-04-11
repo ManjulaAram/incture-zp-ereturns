@@ -16,7 +16,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name = "T_HEADER")
+@Table(name = "T_INVOICE_HEADER")
 public class Header {
 	
 	@Id
@@ -34,17 +34,23 @@ public class Header {
 	@Column(name = "EXPIRY_DATE")
 	private Date expiryDate;
 	
+	@Column(name = "DOCUMENT_TYPE", length = 10)
+	private String documentType;
+	
+	@Column(name = "SALES_ORDER", length = 10)
+	private String salesOrder;
+	
 	@Column(name = "AVAILABLE_QTY", length = 5)
 	private String availableQty;
 
-	@Column(name = "NET_VALUE", precision = 8, scale = 2)
+	@Column(name = "NET_VALUE", length = 5)
 	private String netValue; // sum of all item level net value to be calculated
 	
 	@ManyToOne
 	@JoinColumn(name = "USER_ID", nullable = false, updatable = false)
 	private User headerData;
 	
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "itemData")
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "itemData")
 	private Set<Item> setItem;
 	
 	public String getInvoiceNo() {

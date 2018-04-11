@@ -13,7 +13,7 @@ public class ReturnResponseDto implements Serializable {
 	
 	private String message;
 	
-	private ReturnRequestDto requestDto;
+	private RequestDto requestDto;
 
 	public String getStatus() {
 		return status;
@@ -31,11 +31,11 @@ public class ReturnResponseDto implements Serializable {
 		this.message = message;
 	}
 
-	public ReturnRequestDto getRequestDto() {
+	public RequestDto getRequestDto() {
 		return requestDto;
 	}
 
-	public void setRequestDto(ReturnRequestDto requestDto) {
+	public void setRequestDto(RequestDto requestDto) {
 		this.requestDto = requestDto;
 	}
 	

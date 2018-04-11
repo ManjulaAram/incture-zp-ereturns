@@ -1,12 +1,20 @@
 package com.incture.zp.ereturns.model;
 
 import java.util.Date;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+@Entity
+@Table(name = "T_REQUEST")
 public class Request {
 
 	@Id
@@ -40,41 +48,36 @@ public class Request {
 	@Column(name = "REQ_PENDING_WITH", length = 100)
 	private String requestPendingWith;
 	
-	@Column(name = "RETURN_QTY", precision = 8, scale = 2)
-	private double returnQty;
-
-	@Column(name = "REASON", length = 255)
-	private String reason;
-	
-	@Column(name = "REMARK", length = 255)
-	private String remark;
-	
 	@Column(name = "LOCATION", length = 50)
 	private String location;
 	
 	@Column(name = "BOX_QTY", length = 10)
 	private String boxQty;
 	
-	@Column(name = "RETURN_PRICE", precision = 8, scale = 2)
-	private double returnPrice;
+	@Column(name = "LOT_NO", length = 50)
+	private String lotNo;
 	
-	@Column(name = "RETURN_VALUE", precision = 8, scale = 2)
-	private double returnValue;
+	@Column(name = "SALES_PERSON", length = 50)
+	private String salesPerson;
+	
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "returnOrderData")
+	private Set<ReturnOrder> setReturnOrder;
 
-	@Column(name = "INVOICE_NO")
-	private String invoiceNo;  
-	
-	@Column(name = "ITEM_CODE")
-	private String itemCode; 
-	
-	@Column(name = "USER_ID")
-	private String userId; 
-	
-	
-//	@ManyToOne
-//	@JoinColumn(name = "USER_ID", nullable = false, updatable = false)
-//	private User requestData;
+	public Set<ReturnOrder> getSetReturnOrder() {
+		return setReturnOrder;
+	}
 
+	public void setSetReturnOrder(Set<ReturnOrder> setReturnOrder) {
+		this.setReturnOrder = setReturnOrder;
+	}
+
+	public String getSalesPerson() {
+		return salesPerson;
+	}
+
+	public void setSalesPerson(String salesPerson) {
+		this.salesPerson = salesPerson;
+	}
 
 	public String getRequestId() {
 		return requestId;
@@ -148,29 +151,6 @@ public class Request {
 		this.requestPendingWith = requestPendingWith;
 	}
 
-	public double getReturnQty() {
-		return returnQty;
-	}
-
-	public void setReturnQty(double returnQty) {
-		this.returnQty = returnQty;
-	}
-
-	public String getReason() {
-		return reason;
-	}
-
-	public void setReason(String reason) {
-		this.reason = reason;
-	}
-
-	public String getRemark() {
-		return remark;
-	}
-
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
 
 	public String getLocation() {
 		return location;
@@ -188,20 +168,11 @@ public class Request {
 		this.boxQty = boxQty;
 	}
 
-	public String getInvoiceNo() {
-		return invoiceNo;
+	public String getLotNo() {
+		return lotNo;
 	}
-
-	public void setInvoiceNo(String invoiceNo) {
-		this.invoiceNo = invoiceNo;
-	}
-
-	public String getItemCode() {
-		return itemCode;
-	}
-
-	public void setItemCode(String itemCode) {
-		this.itemCode = itemCode;
+	public void setLotNo(String lotNo) {
+		this.lotNo = lotNo;
 	}
 
 }

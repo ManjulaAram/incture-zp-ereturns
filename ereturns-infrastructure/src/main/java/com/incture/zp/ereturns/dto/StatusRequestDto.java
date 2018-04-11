@@ -22,6 +22,8 @@ public class StatusRequestDto implements Serializable {
 	private String startDate;
 	
 	private String endDate;
+	
+	private String pendingWith;
 
 	public String getCustomerCode() {
 		return customerCode;
@@ -77,6 +79,14 @@ public class StatusRequestDto implements Serializable {
 
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
+	}
+
+	public String getPendingWith() {
+		return pendingWith;
+	}
+
+	public void setPendingWith(String pendingWith) {
+		this.pendingWith = pendingWith;
 	}
 	
 }
