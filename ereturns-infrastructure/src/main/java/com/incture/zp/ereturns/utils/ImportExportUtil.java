@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.incture.zp.ereturns.dto.HeaderDto;
@@ -24,7 +26,7 @@ import com.incture.zp.ereturns.model.User;
 public class ImportExportUtil {
 
 	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//	private static final Logger LOGGER = LoggerFactory.getLogger(HeaderRepositoryImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ImportExportUtil.class);
 	
 	public User importUserDto(UserDto userDto) {
 		User user = new User();
@@ -85,13 +87,18 @@ public class ImportExportUtil {
 	public Header importHeaderDto(HeaderDto headerDto, User user) {
 		Header header = new Header();
 		header.setAvailableQty(headerDto.getAvailableQty());
-		header.setExpiryDate(headerDto.getExpiryDate());
+		if(headerDto.getExpiryDate() != null && !(headerDto.getExpiryDate().equals(""))) {
+			header.setExpiryDate(convertStringToDate(headerDto.getExpiryDate()));
+		}
 		header.setHeaderData(user);
-		header.setInvoiceDate(headerDto.getInvoiceDate());
+		if(headerDto.getInvoiceDate() != null && !(headerDto.getInvoiceDate().equals(""))) {
+			header.setInvoiceDate(convertStringToDate(headerDto.getInvoiceDate()));
+		}
 		header.setInvoiceNo(headerDto.getInvoiceNo());
 		header.setInvoiceSeq(headerDto.getInvoiceSeq());
 		header.setNetValue(headerDto.getNetValue());
-		
+		header.setDocumentType(headerDto.getDocumentType());
+		header.setSalesOrder(headerDto.getSalesOrder());
 		Set<Item> itemSet = null;
 		if (headerDto.getItemSet() != null && headerDto.getItemSet().size() > 0) {
 			itemSet = setItemDetail(headerDto.getItemSet(), header);
@@ -104,8 +111,13 @@ public class ImportExportUtil {
 	public HeaderDto exportHeaderDto(Header header) {
 		HeaderDto headerDto = new HeaderDto();
 		headerDto.setAvailableQty(header.getAvailableQty());
-		headerDto.setExpiryDate(header.getExpiryDate());
-		headerDto.setInvoiceDate(header.getInvoiceDate());
+		if(header.getExpiryDate() != null && !(header.getExpiryDate().equals(""))) {
+			headerDto.setExpiryDate(convertDateToString(header.getExpiryDate()));
+		}
+		LOGGER.error("Date coming from DB:"+header.getExpiryDate());
+		if(header.getInvoiceDate() != null && !(header.getInvoiceDate().equals(""))) {
+			headerDto.setInvoiceDate(convertDateToString(header.getInvoiceDate()));
+		}
 		headerDto.setInvoiceNo(header.getInvoiceNo());
 		headerDto.setInvoiceSeq(header.getInvoiceSeq());
 		Set<Item> items = header.getSetItem();
@@ -117,6 +129,8 @@ public class ImportExportUtil {
 		}
 		headerDto.setItemSet(setItemsDto);
 		headerDto.setNetValue(header.getNetValue());
+		headerDto.setDocumentType(header.getDocumentType());
+		headerDto.setSalesOrder(header.getSalesOrder());
 		
 		return headerDto;
 	}
@@ -133,12 +147,17 @@ public class ImportExportUtil {
 	public Item importItemDto(ItemDto itemDto, Header header) {
 		Item item = new Item();
 		item.setAvailableQty(itemDto.getAvailableQty());
-		item.setExpiryDate(itemDto.getExpiryDate());
+		if(itemDto.getExpiryDate() != null && !(itemDto.getExpiryDate().equals(""))) {
+			item.setExpiryDate(convertStringToDate(itemDto.getExpiryDate()));
+		}
 		item.setItemCode(itemDto.getItemCode());
 		item.setItemData(header);
 		item.setItemDescription(itemDto.getItemDescription());
 		item.setItemName(itemDto.getItemName());
 		item.setNetValue(itemDto.getNetValue());
+		if(itemDto.getDeliveryDate() != null && !(itemDto.getDeliveryDate().equals(""))) {
+			item.setDeliveryDate(convertStringToDate(itemDto.getDeliveryDate()));
+		}
 		
 		return item;
 	}
@@ -146,11 +165,16 @@ public class ImportExportUtil {
 	public ItemDto exportItemDto(Item item) {
 		ItemDto itemDto = new ItemDto();
 		itemDto.setAvailableQty(item.getAvailableQty());
-		itemDto.setExpiryDate(item.getExpiryDate());
+		if(item.getExpiryDate() != null && !(item.getExpiryDate().equals(""))) {
+			itemDto.setExpiryDate(convertDateToString(item.getExpiryDate()));
+		}
 		itemDto.setItemCode(item.getItemCode());
 		itemDto.setItemDescription(item.getItemDescription());
 		itemDto.setItemName(item.getItemName());
 		itemDto.setNetValue(item.getNetValue());
+		if(item.getDeliveryDate() != null && !(item.getDeliveryDate().equals(""))) {
+			itemDto.setDeliveryDate(convertDateToString(item.getDeliveryDate()));
+		}
 		
 		return itemDto;
 	}
@@ -161,24 +185,12 @@ public class ImportExportUtil {
 		request.setLocation(requestDto.getLocation());
 		request.setRequestApprovedBy(requestDto.getRequestApprovedBy());
 		if(requestDto.getRequestApprovedDate() != null && !(requestDto.getRequestApprovedDate().equals(""))) {
-			Date approvedDate;
-			try {
-				approvedDate = dateFormat.parse(requestDto.getRequestApprovedDate());
-				request.setRequestApprovedDate(approvedDate);
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
+			request.setRequestApprovedDate(convertStringToDate(requestDto.getRequestApprovedDate()));
 		}
 		request.setRequestCreatedBy(requestDto.getRequestCreatedBy());
 		
 		if(requestDto.getRequestCreatedDate() != null && !(requestDto.getRequestCreatedDate().equals(""))) {
-			Date createdDate;
-			try {
-				createdDate = dateFormat.parse(requestDto.getRequestCreatedDate());
-				request.setRequestCreatedDate(createdDate);
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
+			request.setRequestCreatedDate(convertStringToDate(requestDto.getRequestCreatedDate()));
 		}
 		request.setRequestId(requestDto.getRequestId());
 		// define rule based on reason and return value
@@ -187,13 +199,7 @@ public class ImportExportUtil {
 		request.setRequestUpdatedBy(requestDto.getRequestUpdatedBy());
 		
 		if(requestDto.getRequestUpdatedDate() != null && !(requestDto.getRequestUpdatedDate().equals(""))) {
-			Date updatedDate;
-			try {
-				updatedDate = dateFormat.parse(requestDto.getRequestUpdatedDate());
-				request.setRequestUpdatedDate(updatedDate);
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
+			request.setRequestUpdatedDate(convertStringToDate(requestDto.getRequestUpdatedDate()));
 		}
 		request.setLotNo(requestDto.getLotNo());
 		request.setSalesPerson(requestDto.getSalesPerson());
@@ -203,6 +209,7 @@ public class ImportExportUtil {
 			returnOrderSet = setReturnOrderDetail(requestDto.getSetReturnOrderDto(), request);
 		}
 
+		request.setUnRef(requestDto.getUnRef());
 		request.setSetReturnOrder(returnOrderSet);
 		return request;
 	}
@@ -215,15 +222,13 @@ public class ImportExportUtil {
 		requestDto.setNoOfLine("");
 		requestDto.setRequestApprovedBy(request.getRequestApprovedBy());
 		if(request.getRequestApprovedDate() != null) {
-			String approvedDate = dateFormat.format(request.getRequestApprovedDate());
-			requestDto.setRequestApprovedDate(approvedDate);
+			requestDto.setRequestApprovedDate(convertDateToString(request.getRequestApprovedDate()));
 		} else {
 			requestDto.setRequestApprovedDate("");
 		}
 		requestDto.setRequestCreatedBy(request.getRequestCreatedBy());
 		if(request.getRequestCreatedDate() != null) {
-			String createdDate = dateFormat.format(request.getRequestCreatedDate());
-			requestDto.setRequestCreatedDate(createdDate);
+			requestDto.setRequestCreatedDate(convertDateToString(request.getRequestCreatedDate()));
 		} else {
 			requestDto.setRequestCreatedDate("");
 		}
@@ -231,14 +236,14 @@ public class ImportExportUtil {
 		requestDto.setRequestPendingWith(request.getRequestPendingWith());
 		requestDto.setRequestStatus(request.getRequestStatus());
 		if(request.getRequestUpdatedDate() != null) {
-			String updatedDate = dateFormat.format(request.getRequestUpdatedDate());
-			requestDto.setRequestUpdatedDate(updatedDate);
+			requestDto.setRequestUpdatedDate(convertDateToString(request.getRequestUpdatedDate()));
 		} else {
 			requestDto.setRequestUpdatedDate("");
 		}
 		requestDto.setRequestUpdatedBy(request.getRequestUpdatedBy());
 		requestDto.setSalesPerson("BOM");
 		requestDto.setSalesPersonName("BOM");
+		requestDto.setUnRef(request.getUnRef());
 		
 		Set<ReturnOrder> returnOrders = request.getSetReturnOrder();
 		ReturnOrderDto returnOrderDto = null;
@@ -288,4 +293,18 @@ public class ImportExportUtil {
 		return returnOrderDto;
 	}
 	
+	private String convertDateToString(Date input) {
+		String output = dateFormat.format(input);
+		return output;
+	}
+	
+	private Date convertStringToDate(String input) {
+		Date output = null;
+		try {
+			output = dateFormat.parse(input);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return output;
+	}
 }

@@ -1,7 +1,5 @@
 package com.incture.zp.ereturns.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -49,13 +47,13 @@ public class EReturnsController {
 	
 	@RequestMapping(value = "/addUser", method = RequestMethod.POST, consumes = { "application/JSON" }, produces = { "application/json" })
 	@ResponseBody
-	public void addUser(@RequestBody UserDto userDto) {
-		userService.addUser(userDto);
+	public ResponseDto addUser(@RequestBody UserDto userDto) {
+		return userService.addUser(userDto);
 	}
 	
 	@RequestMapping(value = "/getSearchResult", method = RequestMethod.POST, consumes = { "application/JSON" }, produces = { "application/json" })
 	@ResponseBody
-	public List<SearchResultDto> getSearchResult(@RequestBody SearchDto searchDto) {
+	public SearchResultDto getSearchResult(@RequestBody SearchDto searchDto) {
 		return headerService.getSearchResult(searchDto);
 	}
 	
@@ -79,7 +77,7 @@ public class EReturnsController {
 	
 	@RequestMapping(value = "/getStatusDetails", method = RequestMethod.POST, consumes = { "application/JSON" }, produces = { "application/json" })
 	@ResponseBody
-	public List<StatusResponseDto> getStatusDetails(@RequestBody StatusRequestDto requestDto) {
+	public StatusResponseDto getStatusDetails(@RequestBody StatusRequestDto requestDto) {
 		return requestService.getStatusDetails(requestDto);
 	}
 	

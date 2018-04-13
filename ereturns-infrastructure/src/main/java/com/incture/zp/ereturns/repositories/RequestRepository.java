@@ -1,7 +1,5 @@
 package com.incture.zp.ereturns.repositories;
 
-import java.util.List;
-
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.StatusRequestDto;
 import com.incture.zp.ereturns.dto.StatusResponseDto;
@@ -13,6 +11,6 @@ public interface RequestRepository {
 	
 	public Request getRequestById(String id);
 	
-	public List<StatusResponseDto> getStatusDetails(StatusRequestDto requestDto);
+	public StatusResponseDto getStatusDetails(StatusRequestDto requestDto);
 	
 }

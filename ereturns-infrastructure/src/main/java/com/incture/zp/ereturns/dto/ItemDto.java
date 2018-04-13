@@ -1,7 +1,5 @@
 package com.incture.zp.ereturns.dto;
 
-import java.util.Date;
-
 public class ItemDto {
 
 	private String itemCode;
@@ -12,11 +10,11 @@ public class ItemDto {
 	
 	private String availableQty;
 	
-	private Date expiryDate;
+	private String expiryDate;
 	
 	private String netValue;
 	
-	private Date deliveryDate;
+	private String deliveryDate;
 
 	public String getItemCode() {
 		return itemCode;
@@ -58,19 +56,19 @@ public class ItemDto {
 		this.netValue = netValue;
 	}
 
-	public Date getExpiryDate() {
+	public String getExpiryDate() {
 		return expiryDate;
 	}
 
-	public void setExpiryDate(Date expiryDate) {
+	public void setExpiryDate(String expiryDate) {
 		this.expiryDate = expiryDate;
 	}
 
-	public Date getDeliveryDate() {
+	public String getDeliveryDate() {
 		return deliveryDate;
 	}
 
-	public void setDeliveryDate(Date deliveryDate) {
+	public void setDeliveryDate(String deliveryDate) {
 		this.deliveryDate = deliveryDate;
 	}
 	

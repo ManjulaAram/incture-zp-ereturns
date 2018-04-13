@@ -1,7 +1,5 @@
 package com.incture.zp.ereturns.servicesimpl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +30,7 @@ public class HeaderServiceImpl implements HeaderService {
 	}
 
 	@Override
-	public List<SearchResultDto> getSearchResult(SearchDto searchDto) {
+	public SearchResultDto getSearchResult(SearchDto searchDto) {
 		return headerRepository.getSearchResult(searchDto);
 	}
 

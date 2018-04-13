@@ -1,6 +1,5 @@
 package com.incture.zp.ereturns.dto;
 
-import java.util.Date;
 import java.util.Set;
 
 public class HeaderDto {
@@ -9,9 +8,9 @@ public class HeaderDto {
 	
 	private String invoiceSeq;
 	
-	private Date invoiceDate;
+	private String invoiceDate;
 	
-	private Date expiryDate;
+	private String expiryDate;
 	
 	private String availableQty;
 	
@@ -39,19 +38,19 @@ public class HeaderDto {
 		this.invoiceSeq = invoiceSeq;
 	}
 
-	public Date getInvoiceDate() {
+	public String getInvoiceDate() {
 		return invoiceDate;
 	}
 
-	public void setInvoiceDate(Date invoiceDate) {
+	public void setInvoiceDate(String invoiceDate) {
 		this.invoiceDate = invoiceDate;
 	}
 
-	public Date getExpiryDate() {
+	public String getExpiryDate() {
 		return expiryDate;
 	}
 
-	public void setExpiryDate(Date expiryDate) {
+	public void setExpiryDate(String expiryDate) {
 		this.expiryDate = expiryDate;
 	}
 

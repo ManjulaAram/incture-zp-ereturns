@@ -37,6 +37,8 @@ public class RequestDto {
 	
 	private String location;
 	
+	private String unRef;
+	
 	private Set<ReturnOrderDto> setReturnOrderDto;
 	
 	public String getLotNo() {
@@ -165,6 +167,14 @@ public class RequestDto {
 
 	public void setSetReturnOrderDto(Set<ReturnOrderDto> setReturnOrderDto) {
 		this.setReturnOrderDto = setReturnOrderDto;
+	}
+
+	public String getUnRef() {
+		return unRef;
+	}
+
+	public void setUnRef(String unRef) {
+		this.unRef = unRef;
 	}
 
 }

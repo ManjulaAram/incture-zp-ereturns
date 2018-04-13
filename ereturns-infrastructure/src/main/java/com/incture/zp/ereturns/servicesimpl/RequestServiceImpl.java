@@ -1,7 +1,5 @@
 package com.incture.zp.ereturns.servicesimpl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,8 +37,8 @@ public class RequestServiceImpl implements RequestService {
 	}
 
 	@Override
-	public List<StatusResponseDto> getStatusDetails(StatusRequestDto requestDto) {
-		List<StatusResponseDto> rList = requestRepository.getStatusDetails(requestDto);
+	public StatusResponseDto getStatusDetails(StatusRequestDto requestDto) {
+		StatusResponseDto rList = requestRepository.getStatusDetails(requestDto);
 		return rList;
 	}
 

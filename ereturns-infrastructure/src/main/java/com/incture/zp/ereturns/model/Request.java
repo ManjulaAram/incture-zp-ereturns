@@ -59,6 +59,9 @@ public class Request {
 	
 	@Column(name = "SALES_PERSON", length = 50)
 	private String salesPerson;
+
+	@Column(name = "UN_REFERENCED", length = 5)
+	private String unRef;
 	
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "returnOrderData")
 	private Set<ReturnOrder> setReturnOrder;
@@ -173,6 +176,14 @@ public class Request {
 	}
 	public void setLotNo(String lotNo) {
 		this.lotNo = lotNo;
+	}
+
+	public String getUnRef() {
+		return unRef;
+	}
+
+	public void setUnRef(String unRef) {
+		this.unRef = unRef;
 	}
 
 }

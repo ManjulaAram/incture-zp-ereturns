@@ -1,6 +1,5 @@
 package com.incture.zp.ereturns.repositoriesimpl;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,9 +36,8 @@ public class HeaderRepositoryImpl implements HeaderRepository {
 	}
 
 	@Override
-	public List<SearchResultDto> getSearchResult(SearchDto searchDto) {
-		String constraint = null;
-		List<SearchResultDto> searchResultDtos = new ArrayList<>();
+	public SearchResultDto getSearchResult(SearchDto searchDto) {
+		String constraint = "";
 		SearchResultDto searchResultDto = new SearchResultDto();
 		
 		StringBuilder queryString = new StringBuilder();
@@ -59,12 +57,10 @@ public class HeaderRepositoryImpl implements HeaderRepository {
 		
 		if(searchDto.getInvoiceNo() != null && !(searchDto.getInvoiceNo().equals(""))) {
 			queryString.append(" AND h.invoiceNo=:invoiceNo");
-			constraint = "invoiceNo";
 		}
 		
 		if(searchDto.getSalesOrder() != null && !(searchDto.getSalesOrder().equals(""))) {
 			queryString.append(" AND h.salesOrder=:salesOrder");
-			constraint = "salesOrder";
 		}
 		
 		Query query = sessionFactory.getCurrentSession().createQuery(queryString.toString());
@@ -91,6 +87,8 @@ public class HeaderRepositoryImpl implements HeaderRepository {
 		Item item = null;
 		Set<Header> setHeader = new HashSet<>();
 		Set<Item> setItem = new HashSet<>();
+		int itemSize = 0;
+		int itemCount = 0;
 		@SuppressWarnings("unchecked")
 		List<Object[]> objectsList = query.list();
 			for (Object[] objects : objectsList) {
@@ -101,16 +99,24 @@ public class HeaderRepositoryImpl implements HeaderRepository {
 			if(constraint.equalsIgnoreCase("userCode") || constraint.equalsIgnoreCase("userName")) {
 				searchResultDto.setUserDto(importExportUtil.exportUserDto(user));
 			} else {
-				setItem.add(item);
-				header.setSetItem(setItem);
+				itemSize = header.getSetItem().size();
+				if(itemSize > 1) {
+					setItem.add(item);
+					header.setSetItem(setItem);
+					itemCount = itemSize;
+				} else {
+					if(itemCount > 1) {
+						setItem.add(item);
+						header.setSetItem(setItem);
+						itemCount = itemCount - 1;
+					}
+				}
 				setHeader.add(header);
 				user.setSetHeader(setHeader);
 				searchResultDto.setUserDto(importExportUtil.exportUserDto(user));
 			}
 		}
-		searchResultDtos.add(searchResultDto);
-		
-		return searchResultDtos;
+		return searchResultDto;
 	}
 	
 }

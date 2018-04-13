@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.UserDto;
 import com.incture.zp.ereturns.model.User;
 import com.incture.zp.ereturns.repositories.UserRepository;
@@ -21,8 +22,8 @@ public class UserServiceImpl implements UserService {
 	ImportExportUtil importExportUtil;
 
 	@Override
-	public void addUser(UserDto userDto) {
-		userRepository.addUser(importExportUtil.importUserDto(userDto));
+	public ResponseDto addUser(UserDto userDto) {
+		return userRepository.addUser(importExportUtil.importUserDto(userDto));
 	}
 	
 	@Override

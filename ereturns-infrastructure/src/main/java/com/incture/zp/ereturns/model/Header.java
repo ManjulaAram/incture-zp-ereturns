@@ -117,4 +117,20 @@ public class Header {
 		return invoiceSeq;
 	}
 
+	public String getDocumentType() {
+		return documentType;
+	}
+
+	public void setDocumentType(String documentType) {
+		this.documentType = documentType;
+	}
+
+	public String getSalesOrder() {
+		return salesOrder;
+	}
+
+	public void setSalesOrder(String salesOrder) {
+		this.salesOrder = salesOrder;
+	}
+
 }

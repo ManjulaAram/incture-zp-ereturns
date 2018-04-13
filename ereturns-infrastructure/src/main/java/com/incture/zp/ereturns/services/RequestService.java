@@ -1,7 +1,5 @@
 package com.incture.zp.ereturns.services;
 
-import java.util.List;
-
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.StatusRequestDto;
@@ -13,7 +11,7 @@ public interface RequestService {
 	
 	public RequestDto getRequestById(String id);
 	
-	public List<StatusResponseDto> getStatusDetails(StatusRequestDto requestDto);
+	public StatusResponseDto getStatusDetails(StatusRequestDto requestDto);
 	
 	public ResponseDto updateRequestStatus(RequestDto requestDto);
 
