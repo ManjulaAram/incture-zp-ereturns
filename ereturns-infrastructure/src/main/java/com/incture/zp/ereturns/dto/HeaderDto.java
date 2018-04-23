@@ -17,6 +17,8 @@ public class HeaderDto {
 	private String documentType;
 	
 	private String salesOrder;
+	
+	private String barCode;
 
 	private String netValue; // sum of all item level net value to be calculated
 	
@@ -93,6 +95,14 @@ public class HeaderDto {
 
 	public void setSalesOrder(String salesOrder) {
 		this.salesOrder = salesOrder;
+	}
+
+	public String getBarCode() {
+		return barCode;
+	}
+
+	public void setBarCode(String barCode) {
+		this.barCode = barCode;
 	}
 
 }

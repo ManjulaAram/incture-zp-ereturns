@@ -44,12 +44,12 @@ public class RequestServiceImpl implements RequestService {
 
 	@Override
 	public ResponseDto updateRequestStatus(RequestDto requestDto) {
-		if(requestDto.getSetReturnOrderDto() != null) {
-			for(ReturnOrderDto returnOrderDto : requestDto.getSetReturnOrderDto()) {
-				String pending = rulesUtil.defineReasonRule(returnOrderDto.getReason());
-				requestDto.setRequestPendingWith(pending);
-			}
-		}
+//		if(requestDto.getSetReturnOrderDto() != null) {
+//			for(ReturnOrderDto returnOrderDto : requestDto.getSetReturnOrderDto()) {
+//				String pending = rulesUtil.defineReasonRule(returnOrderDto.getReason());
+//				requestDto.setRequestPendingWith(pending);
+//			}
+//		}
 		return requestRepository.addRequest(importExportUtil.importRequestDto(requestDto));
 	}
 

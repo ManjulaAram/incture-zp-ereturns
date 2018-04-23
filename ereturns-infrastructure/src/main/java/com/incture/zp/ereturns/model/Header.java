@@ -45,7 +45,10 @@ public class Header {
 
 	@Column(name = "NET_VALUE", length = 5)
 	private String netValue; // sum of all item level net value to be calculated
-	
+
+	@Column(name = "BAR_CODE", length = 100)
+	private String barCode; 
+
 	@ManyToOne
 	@JoinColumn(name = "USER_ID", nullable = false, updatable = false)
 	private User headerData;
@@ -131,6 +134,14 @@ public class Header {
 
 	public void setSalesOrder(String salesOrder) {
 		this.salesOrder = salesOrder;
+	}
+
+	public String getBarCode() {
+		return barCode;
+	}
+
+	public void setBarCode(String barCode) {
+		this.barCode = barCode;
 	}
 
 }

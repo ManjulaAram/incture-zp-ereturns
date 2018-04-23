@@ -94,6 +94,7 @@ public class ImportExportUtil {
 		if(headerDto.getInvoiceDate() != null && !(headerDto.getInvoiceDate().equals(""))) {
 			header.setInvoiceDate(convertStringToDate(headerDto.getInvoiceDate()));
 		}
+		header.setBarCode(headerDto.getBarCode());
 		header.setInvoiceNo(headerDto.getInvoiceNo());
 		header.setInvoiceSeq(headerDto.getInvoiceSeq());
 		header.setNetValue(headerDto.getNetValue());
@@ -118,6 +119,7 @@ public class ImportExportUtil {
 		if(header.getInvoiceDate() != null && !(header.getInvoiceDate().equals(""))) {
 			headerDto.setInvoiceDate(convertDateToString(header.getInvoiceDate()));
 		}
+		headerDto.setBarCode(header.getBarCode());
 		headerDto.setInvoiceNo(header.getInvoiceNo());
 		headerDto.setInvoiceSeq(header.getInvoiceSeq());
 		Set<Item> items = header.getSetItem();
