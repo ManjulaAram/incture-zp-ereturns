@@ -42,14 +42,15 @@ public class RequestRepositoryImpl implements RequestRepository {
 	@Override
 	public ResponseDto addRequest(Request request) {
 		ResponseDto responseDto = new ResponseDto();
-		String requestId = getNextSeqNumber(new GetReferenceData().executeForRequest(""), 6);
+		String requestId = getNextSeqNumber(new GetReferenceData().execute("R"), 6);
 		if(request.getRequestId() == null || request.getRequestId().equals("")) {
 			request.setRequestId(requestId);
 			responseDto.setMessage("Request "+ requestId +" Saved Successfully");
 		}
 		sessionFactory.getCurrentSession().saveOrUpdate(request);
 		responseDto.setMessage("Request "+request.getRequestId()+" Updated Successfully");
-		responseDto.setStatus("OK");
+		responseDto.setStatus("SUCCESS");
+		responseDto.setCode("00");
 		return responseDto;
 	}
 

@@ -33,9 +33,17 @@ public class User {
 	@Column(name = "SCI_ID", length = 50)
 	private String sciId;
 	
+	@Column(name = "MOBILE_TOKEN", length = 50)
+	private String mobileToken;
+	
+	@Column(name = "WEB_TOKEN", length = 50)
+	private String webToken;
+	
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "headerData")
 	private Set<Header> setHeader;
-	
+
+	private String roleId;
+
 	public String getUserId() {
 		return userId;
 	}
@@ -78,5 +86,23 @@ public class User {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-	
+	public String getMobileToken() {
+		return mobileToken;
+	}
+	public void setMobileToken(String mobileToken) {
+		this.mobileToken = mobileToken;
+	}
+	public String getWebToken() {
+		return webToken;
+	}
+	public void setWebToken(String webToken) {
+		this.webToken = webToken;
+	}
+	public String getRoleId() {
+		return roleId;
+	}
+	public void setRoleId(String roleId) {
+		this.roleId = roleId;
+	}
+
 }

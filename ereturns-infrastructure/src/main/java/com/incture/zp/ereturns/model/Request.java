@@ -48,38 +48,17 @@ public class Request {
 	@Column(name = "REQ_PENDING_WITH", length = 100)
 	private String requestPendingWith;
 	
-	@Column(name = "LOCATION", length = 50)
-	private String location;
-	
-	@Column(name = "BOX_QTY", length = 10)
-	private String boxQty;
-	
-	@Column(name = "LOT_NO", length = 50)
-	private String lotNo;
-	
-	@Column(name = "SALES_PERSON", length = 50)
-	private String salesPerson;
-
-	@Column(name = "UN_REFERENCED", length = 5)
-	private String unRef;
-	
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "returnOrderData")
 	private Set<ReturnOrder> setReturnOrder;
 
+	private Set<Attachment> setAttachment;
+	
 	public Set<ReturnOrder> getSetReturnOrder() {
 		return setReturnOrder;
 	}
 
 	public void setSetReturnOrder(Set<ReturnOrder> setReturnOrder) {
 		this.setReturnOrder = setReturnOrder;
-	}
-
-	public String getSalesPerson() {
-		return salesPerson;
-	}
-
-	public void setSalesPerson(String salesPerson) {
-		this.salesPerson = salesPerson;
 	}
 
 	public String getRequestId() {
@@ -154,36 +133,12 @@ public class Request {
 		this.requestPendingWith = requestPendingWith;
 	}
 
-
-	public String getLocation() {
-		return location;
+	public Set<Attachment> getSetAttachment() {
+		return setAttachment;
 	}
 
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	public String getBoxQty() {
-		return boxQty;
-	}
-
-	public void setBoxQty(String boxQty) {
-		this.boxQty = boxQty;
-	}
-
-	public String getLotNo() {
-		return lotNo;
-	}
-	public void setLotNo(String lotNo) {
-		this.lotNo = lotNo;
-	}
-
-	public String getUnRef() {
-		return unRef;
-	}
-
-	public void setUnRef(String unRef) {
-		this.unRef = unRef;
+	public void setSetAttachment(Set<Attachment> setAttachment) {
+		this.setAttachment = setAttachment;
 	}
 
 }

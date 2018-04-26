@@ -11,11 +11,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.incture.zp.ereturns.dto.AttachmentDto;
 import com.incture.zp.ereturns.dto.HeaderDto;
 import com.incture.zp.ereturns.dto.ItemDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.UserDto;
+import com.incture.zp.ereturns.model.Attachment;
 import com.incture.zp.ereturns.model.Header;
 import com.incture.zp.ereturns.model.Item;
 import com.incture.zp.ereturns.model.Request;
@@ -183,8 +185,6 @@ public class ImportExportUtil {
 
 	public Request importRequestDto(RequestDto requestDto) {
 		Request request = new Request();
-		request.setBoxQty(requestDto.getBoxQty());
-		request.setLocation(requestDto.getLocation());
 		request.setRequestApprovedBy(requestDto.getRequestApprovedBy());
 		if(requestDto.getRequestApprovedDate() != null && !(requestDto.getRequestApprovedDate().equals(""))) {
 			request.setRequestApprovedDate(convertStringToDate(requestDto.getRequestApprovedDate()));
@@ -203,25 +203,18 @@ public class ImportExportUtil {
 		if(requestDto.getRequestUpdatedDate() != null && !(requestDto.getRequestUpdatedDate().equals(""))) {
 			request.setRequestUpdatedDate(convertStringToDate(requestDto.getRequestUpdatedDate()));
 		}
-		request.setLotNo(requestDto.getLotNo());
-		request.setSalesPerson(requestDto.getSalesPerson());
 		
 		Set<ReturnOrder> returnOrderSet = null;
 		if (requestDto.getSetReturnOrderDto() != null && requestDto.getSetReturnOrderDto().size() > 0) {
 			returnOrderSet = setReturnOrderDetail(requestDto.getSetReturnOrderDto(), request);
 		}
 
-		request.setUnRef(requestDto.getUnRef());
 		request.setSetReturnOrder(returnOrderSet);
 		return request;
 	}
 	
 	public RequestDto exportRequestDto(Request request) {
 		RequestDto requestDto = new RequestDto();
-		requestDto.setBoxQty(request.getBoxQty());
-		requestDto.setLocation(request.getLocation());
-		requestDto.setLotNo(request.getLotNo());
-		requestDto.setNoOfLine("");
 		requestDto.setRequestApprovedBy(request.getRequestApprovedBy());
 		if(request.getRequestApprovedDate() != null) {
 			requestDto.setRequestApprovedDate(convertDateToString(request.getRequestApprovedDate()));
@@ -243,9 +236,6 @@ public class ImportExportUtil {
 			requestDto.setRequestUpdatedDate("");
 		}
 		requestDto.setRequestUpdatedBy(request.getRequestUpdatedBy());
-		requestDto.setSalesPerson("BOM");
-		requestDto.setSalesPersonName("BOM");
-		requestDto.setUnRef(request.getUnRef());
 		
 		Set<ReturnOrder> returnOrders = request.getSetReturnOrder();
 		ReturnOrderDto returnOrderDto = null;
@@ -293,6 +283,30 @@ public class ImportExportUtil {
 		returnOrderDto.setUserCode(returnOrder.getUserCode());
 		
 		return returnOrderDto;
+	}
+	
+	public Attachment importAttachmentDto(AttachmentDto attachmentDto) {
+		Attachment attachment = new Attachment();
+		attachment.setAttachmentId(attachmentDto.getAttachmentId());
+		attachment.setAttachmentName(attachmentDto.getAttachmentName());
+		attachment.setAttachmentURL(attachmentDto.getAttachmentURL());
+		attachment.setInvoiceNo(attachmentDto.getInvoiceNo());
+		attachment.setItemCode(attachmentDto.getItemCode());
+		attachment.setRequestId(attachmentDto.getRequestId());
+		
+		return attachment;
+	}
+	
+	public AttachmentDto exportAttachmentDto(Attachment attachment) {
+		AttachmentDto attachmentDto = new AttachmentDto();
+		attachmentDto.setAttachmentId(attachment.getAttachmentId());
+		attachmentDto.setAttachmentName(attachment.getAttachmentName());
+		attachmentDto.setAttachmentURL(attachment.getAttachmentURL());
+		attachmentDto.setInvoiceNo(attachment.getInvoiceNo());
+		attachmentDto.setItemCode(attachment.getItemCode());
+		attachmentDto.setRequestId(attachment.getRequestId());
+		
+		return attachmentDto;
 	}
 	
 	private String convertDateToString(Date input) {

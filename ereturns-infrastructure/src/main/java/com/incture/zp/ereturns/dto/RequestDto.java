@@ -25,30 +25,10 @@ public class RequestDto {
 	
 	private String requestPendingWith;
 	
-	private String lotNo; // return order level
-	
-	private String salesPerson; // customer for actual sales order creator
-	
-	private String salesPersonName;
-	
-	private String noOfLine; //total no of line items
-	
-	private String boxQty; // return order level
-	
-	private String location;
-	
-	private String unRef;
-	
 	private Set<ReturnOrderDto> setReturnOrderDto;
 	
-	public String getLotNo() {
-		return lotNo;
-	}
-
-	public void setLotNo(String lotNo) {
-		this.lotNo = lotNo;
-	}
-
+	private Set<AttachmentDto> setAttachmentDto;
+	
 	public String getRequestId() {
 		return requestId;
 	}
@@ -121,46 +101,6 @@ public class RequestDto {
 		this.requestPendingWith = requestPendingWith;
 	}
 
-	public String getSalesPerson() {
-		return salesPerson;
-	}
-
-	public void setSalesPerson(String salesPerson) {
-		this.salesPerson = salesPerson;
-	}
-
-	public String getSalesPersonName() {
-		return salesPersonName;
-	}
-
-	public void setSalesPersonName(String salesPersonName) {
-		this.salesPersonName = salesPersonName;
-	}
-
-	public String getNoOfLine() {
-		return noOfLine;
-	}
-
-	public void setNoOfLine(String noOfLine) {
-		this.noOfLine = noOfLine;
-	}
-
-	public String getBoxQty() {
-		return boxQty;
-	}
-
-	public void setBoxQty(String boxQty) {
-		this.boxQty = boxQty;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
 	public Set<ReturnOrderDto> getSetReturnOrderDto() {
 		return setReturnOrderDto;
 	}
@@ -169,12 +109,12 @@ public class RequestDto {
 		this.setReturnOrderDto = setReturnOrderDto;
 	}
 
-	public String getUnRef() {
-		return unRef;
+	public Set<AttachmentDto> getSetAttachmentDto() {
+		return setAttachmentDto;
 	}
 
-	public void setUnRef(String unRef) {
-		this.unRef = unRef;
+	public void setSetAttachmentDto(Set<AttachmentDto> setAttachmentDto) {
+		this.setAttachmentDto = setAttachmentDto;
 	}
 
 }

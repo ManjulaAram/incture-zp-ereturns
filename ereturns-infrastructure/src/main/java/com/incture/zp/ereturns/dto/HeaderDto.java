@@ -19,6 +19,24 @@ public class HeaderDto {
 	private String salesOrder;
 	
 	private String barCode;
+	
+	private String salesOrg;
+
+	private String deliveryNo;
+
+	private String distrChan;
+
+	private String division;
+
+	private String currency;
+
+	private String refDocCat;
+
+	private String purchNoCust;
+
+	private String userCode;
+
+	private String unReferenced;
 
 	private String netValue; // sum of all item level net value to be calculated
 	
@@ -103,6 +121,78 @@ public class HeaderDto {
 
 	public void setBarCode(String barCode) {
 		this.barCode = barCode;
+	}
+
+	public String getSalesOrg() {
+		return salesOrg;
+	}
+
+	public void setSalesOrg(String salesOrg) {
+		this.salesOrg = salesOrg;
+	}
+
+	public String getDeliveryNo() {
+		return deliveryNo;
+	}
+
+	public void setDeliveryNo(String deliveryNo) {
+		this.deliveryNo = deliveryNo;
+	}
+
+	public String getDistrChan() {
+		return distrChan;
+	}
+
+	public void setDistrChan(String distrChan) {
+		this.distrChan = distrChan;
+	}
+
+	public String getDivision() {
+		return division;
+	}
+
+	public void setDivision(String division) {
+		this.division = division;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
+	public String getRefDocCat() {
+		return refDocCat;
+	}
+
+	public void setRefDocCat(String refDocCat) {
+		this.refDocCat = refDocCat;
+	}
+
+	public String getPurchNoCust() {
+		return purchNoCust;
+	}
+
+	public void setPurchNoCust(String purchNoCust) {
+		this.purchNoCust = purchNoCust;
+	}
+
+	public String getUserCode() {
+		return userCode;
+	}
+
+	public void setUserCode(String userCode) {
+		this.userCode = userCode;
+	}
+
+	public String getUnReferenced() {
+		return unReferenced;
+	}
+
+	public void setUnReferenced(String unReferenced) {
+		this.unReferenced = unReferenced;
 	}
 
 }

@@ -38,6 +38,36 @@ public class Item {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DELIVERY_DATE")
 	private Date deliveryDate;
+	
+	@Column(name = "PLANT", length = 50)
+	private String plant;
+	
+	@Column(name = "SLAES_ORDER_ITEM", length = 50)
+	private String salesOrderItem;
+	
+	@Column(name = "DELIVERY_DOC_ITEM", length = 50)
+	private String deliveryDocItem;
+	
+	@Column(name = "STORE_LOC", length = 50)
+	private String storeLoc;
+	
+	@Column(name = "MATERIAL", length = 50)
+	private String material;
+	
+	@Column(name = "MATERIAL_GROUP", length = 50)
+	private String materialGroup;
+
+	@Column(name = "BATCH", length = 50)
+	private String batch;
+	
+	@Column(name = "MATERIAL_DESC", length = 255)
+	private String materialDesc;
+	
+	@Column(name = "PRINCIPAL", length = 50)
+	private String pricipal;
+	
+	@Column(name = "PRICIPAL_CODE", length = 50)
+	private String pricipalCode;
 
 	@ManyToOne
 	@JoinColumn(name = "INVOICE_NO", nullable = false, updatable = false)
@@ -105,6 +135,62 @@ public class Item {
 
 	public void setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
+	}
+
+	public String getPlant() {
+		return plant;
+	}
+
+	public void setPlant(String plant) {
+		this.plant = plant;
+	}
+
+	public String getSalesOrderItem() {
+		return salesOrderItem;
+	}
+
+	public void setSalesOrderItem(String salesOrderItem) {
+		this.salesOrderItem = salesOrderItem;
+	}
+
+	public String getDeliveryDocItem() {
+		return deliveryDocItem;
+	}
+
+	public void setDeliveryDocItem(String deliveryDocItem) {
+		this.deliveryDocItem = deliveryDocItem;
+	}
+
+	public String getStoreLoc() {
+		return storeLoc;
+	}
+
+	public void setStoreLoc(String storeLoc) {
+		this.storeLoc = storeLoc;
+	}
+
+	public String getMaterial() {
+		return material;
+	}
+
+	public void setMaterial(String material) {
+		this.material = material;
+	}
+
+	public String getBatch() {
+		return batch;
+	}
+
+	public void setBatch(String batch) {
+		this.batch = batch;
+	}
+
+	public String getMaterialDesc() {
+		return materialDesc;
+	}
+
+	public void setMaterialDesc(String materialDesc) {
+		this.materialDesc = materialDesc;
 	}
 
 }

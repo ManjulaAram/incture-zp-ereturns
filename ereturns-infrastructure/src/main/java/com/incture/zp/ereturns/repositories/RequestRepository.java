@@ -7,7 +7,7 @@ import com.incture.zp.ereturns.model.Request;
 
 public interface RequestRepository {
 
-	public ResponseDto addRequest(Request request);
+	public ResponseDto addRequest(Request request) throws Exception;
 	
 	public Request getRequestById(String id);
 	

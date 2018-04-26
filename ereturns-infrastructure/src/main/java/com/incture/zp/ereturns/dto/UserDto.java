@@ -19,7 +19,13 @@ public class UserDto {
 	
 	private String sciId;
 	
+	private String mobileToken;
+	
+	private String webToken;
+
 	private Set<HeaderDto> headerSet;
+	
+	private Set<RoleDto> roleSet;
 
 	public String getUserId() {
 		return userId;
@@ -76,6 +82,30 @@ public class UserDto {
 
 	public void setHeaderSet(Set<HeaderDto> headerSet) {
 		this.headerSet = headerSet;
+	}
+
+	public Set<RoleDto> getRoleSet() {
+		return roleSet;
+	}
+
+	public void setRoleSet(Set<RoleDto> roleSet) {
+		this.roleSet = roleSet;
+	}
+
+	public String getMobileToken() {
+		return mobileToken;
+	}
+
+	public void setMobileToken(String mobileToken) {
+		this.mobileToken = mobileToken;
+	}
+
+	public String getWebToken() {
+		return webToken;
+	}
+
+	public void setWebToken(String webToken) {
+		this.webToken = webToken;
 	}
 
 }

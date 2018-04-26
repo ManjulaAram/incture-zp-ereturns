@@ -35,7 +35,6 @@ public class SequenceNumberGen {
 	 * map variable is lazy loaded once, and value persist to relevant table in
 	 * CEDB on every request.
 	 */
-	@SuppressWarnings("deprecation")
 	public synchronized String getNextSeqNumber(String referenceCode, Integer noOfDigits, Session session) {
 		Criteria criteria = session.createCriteria(SequenceNumber.class);
 		criteria.add(Restrictions.eq("referenceCode", referenceCode));
@@ -80,7 +79,6 @@ public class SequenceNumberGen {
 		return sequenceNumber.getRunningNumber();
 	}
 
-	@SuppressWarnings("deprecation")
 	private int updateRecord(SequenceNumber sequenceNumber, Session session) {
 		int runningnumber = 0;
 		sequenceNumber.setRunningNumber(sequenceNumber.getRunningNumber() + 1);

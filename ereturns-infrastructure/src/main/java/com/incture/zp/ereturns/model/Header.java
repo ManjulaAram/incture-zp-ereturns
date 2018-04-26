@@ -39,7 +39,34 @@ public class Header {
 	
 	@Column(name = "SALES_ORDER", length = 10)
 	private String salesOrder;
-	
+
+	@Column(name = "SALES_ORG", length = 10)
+	private String salesOrg;
+
+	@Column(name = "DELIVERY_NO", length = 10)
+	private String deliveryNo;
+
+	@Column(name = "DISTR_CHAN", length = 10)
+	private String distrChan;
+
+	@Column(name = "DIVISION", length = 10)
+	private String division;
+
+	@Column(name = "CURRENCY", length = 10)
+	private String currency;
+
+	@Column(name = "REF_DOC_CAT", length = 10)
+	private String refDocCat;
+
+	@Column(name = "PURCH_NO_C", length = 10)
+	private String purchNoCust;
+
+	@Column(name = "SOLD_TO", length = 10)
+	private String userCode;
+
+	@Column(name = "UNREFERENCED", length = 10)
+	private String unReferenced;
+
 	@Column(name = "AVAILABLE_QTY", length = 5)
 	private String availableQty;
 

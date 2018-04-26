@@ -1,18 +1,21 @@
 package com.incture.zp.ereturns.servicesimpl;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.incture.zp.ereturns.dto.AttachmentDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
-import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.StatusRequestDto;
 import com.incture.zp.ereturns.dto.StatusResponseDto;
+import com.incture.zp.ereturns.model.Attachment;
+import com.incture.zp.ereturns.repositories.AttachmentRepository;
 import com.incture.zp.ereturns.repositories.RequestRepository;
 import com.incture.zp.ereturns.services.RequestService;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
-import com.incture.zp.ereturns.utils.RulesUtil;
 
 @Service
 @Transactional
@@ -22,18 +25,46 @@ public class RequestServiceImpl implements RequestService {
 	RequestRepository requestRepository;
 	
 	@Autowired
+	AttachmentRepository attachmentRepository;
+	
+	@Autowired
 	ImportExportUtil importExportUtil;
 	
-	@Autowired RulesUtil rulesUtil;
-
 	@Override
 	public ResponseDto addRequest(RequestDto requestDto) {
-		return requestRepository.addRequest(importExportUtil.importRequestDto(requestDto));
+		ResponseDto responseDto = new ResponseDto();
+		boolean processStartFlag = false;
+		
+		try {
+			responseDto = requestRepository.addRequest(importExportUtil.importRequestDto(requestDto));
+			Set<AttachmentDto> setAttachment = requestDto.getSetAttachmentDto();
+			for(AttachmentDto attachmentDto : setAttachment) {
+				Attachment attachment = importExportUtil.importAttachmentDto(attachmentDto);
+				attachmentRepository.addAttachment(attachment);
+			}
+			if(responseDto != null) {
+				if(responseDto.getCode().equals("00")) {
+					processStartFlag = true;
+				}
+			}
+		} catch (Exception e) {
+			responseDto.setCode("01");
+			responseDto.setStatus("ERROR");
+			responseDto.setMessage(e.getMessage());
+		}
+		
+		if(processStartFlag) {
+			// start process
+		}
+		return responseDto;
 	}
 
 	@Override
 	public RequestDto getRequestById(String id) {
-		return importExportUtil.exportRequestDto(requestRepository.getRequestById(id));
+		RequestDto requestDto = importExportUtil.exportRequestDto(requestRepository.getRequestById(id));
+		Set<AttachmentDto> setAttachmentDto = attachmentRepository.getAttachmentsById(id);
+		requestDto.setSetAttachmentDto(setAttachmentDto);
+		return requestDto;
 	}
 
 	@Override
@@ -44,13 +75,15 @@ public class RequestServiceImpl implements RequestService {
 
 	@Override
 	public ResponseDto updateRequestStatus(RequestDto requestDto) {
-//		if(requestDto.getSetReturnOrderDto() != null) {
-//			for(ReturnOrderDto returnOrderDto : requestDto.getSetReturnOrderDto()) {
-//				String pending = rulesUtil.defineReasonRule(returnOrderDto.getReason());
-//				requestDto.setRequestPendingWith(pending);
-//			}
-//		}
-		return requestRepository.addRequest(importExportUtil.importRequestDto(requestDto));
+		ResponseDto responseDto = null;
+		try {
+			responseDto = requestRepository.addRequest(importExportUtil.importRequestDto(requestDto));
+		} catch (Exception e) {
+			responseDto.setCode("01");
+			responseDto.setStatus("ERROR");
+			responseDto.setMessage(e.getMessage());
+		}
+		return responseDto;
 	}
 
 }

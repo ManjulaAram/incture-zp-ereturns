@@ -24,7 +24,7 @@ public class UserRepositoryImpl implements UserRepository {
 	@Override
 	public ResponseDto addUser(User user) {
 		ResponseDto responseDto = new ResponseDto();
-		String userId = getNextSeqNumber(new GetReferenceData().executeForUser(""), 6);
+		String userId = getNextSeqNumber(new GetReferenceData().execute("U"), 6);
 		if(user.getUserId() == null || user.getUserId().equals("")) {
 			user.setUserId(userId);
 			responseDto.setMessage("User "+ userId +" Created Successfully");
