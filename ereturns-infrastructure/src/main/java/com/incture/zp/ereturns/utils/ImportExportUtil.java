@@ -289,7 +289,6 @@ public class ImportExportUtil {
 		Attachment attachment = new Attachment();
 		attachment.setAttachmentId(attachmentDto.getAttachmentId());
 		attachment.setAttachmentName(attachmentDto.getAttachmentName());
-		attachment.setAttachmentURL(attachmentDto.getAttachmentURL());
 		attachment.setInvoiceNo(attachmentDto.getInvoiceNo());
 		attachment.setItemCode(attachmentDto.getItemCode());
 		attachment.setRequestId(attachmentDto.getRequestId());
@@ -301,7 +300,6 @@ public class ImportExportUtil {
 		AttachmentDto attachmentDto = new AttachmentDto();
 		attachmentDto.setAttachmentId(attachment.getAttachmentId());
 		attachmentDto.setAttachmentName(attachment.getAttachmentName());
-		attachmentDto.setAttachmentURL(attachment.getAttachmentURL());
 		attachmentDto.setInvoiceNo(attachment.getInvoiceNo());
 		attachmentDto.setItemCode(attachment.getItemCode());
 		attachmentDto.setRequestId(attachment.getRequestId());

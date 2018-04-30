@@ -16,9 +16,6 @@ public class Attachment {
 	@Column(name = "ATTACHMENT_NAME", length = 255)
 	private String attachmentName;
 	
-	@Column(name = "ATTACHMENT_URL", length = 255)
-	private String attachmentURL;
-	
 	@Column(name = "ITEM_CODE", length = 50)
 	private String itemCode;
 	
@@ -42,14 +39,6 @@ public class Attachment {
 
 	public void setAttachmentName(String attachmentName) {
 		this.attachmentName = attachmentName;
-	}
-
-	public String getAttachmentURL() {
-		return attachmentURL;
-	}
-
-	public void setAttachmentURL(String attachmentURL) {
-		this.attachmentURL = attachmentURL;
 	}
 
 	public String getItemCode() {

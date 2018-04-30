@@ -7,6 +7,7 @@ import java.util.Set;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import com.incture.zp.ereturns.dto.AttachmentDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
@@ -16,6 +17,7 @@ import com.incture.zp.ereturns.utils.GetReferenceData;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
 import com.incture.zp.ereturns.utils.SequenceNumberGen;
 
+@Repository
 public class AttachmentRepositoryImpl implements AttachmentRepository {
 
 	@Autowired

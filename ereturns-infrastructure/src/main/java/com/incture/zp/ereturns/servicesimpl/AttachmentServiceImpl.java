@@ -1,6 +1,8 @@
 package com.incture.zp.ereturns.servicesimpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.incture.zp.ereturns.dto.AttachmentDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
@@ -8,6 +10,8 @@ import com.incture.zp.ereturns.repositories.AttachmentRepository;
 import com.incture.zp.ereturns.services.AttachmentService;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
 
+@Service
+@Transactional
 public class AttachmentServiceImpl implements AttachmentService {
 
 	@Autowired

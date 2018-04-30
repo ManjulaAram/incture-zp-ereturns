@@ -6,8 +6,6 @@ public class AttachmentDto {
 	
 	private String attachmentName;
 	
-	private String attachmentURL;
-	
 	private String itemCode;
 	
 	private String invoiceNo;
@@ -28,14 +26,6 @@ public class AttachmentDto {
 
 	public void setAttachmentName(String attachmentName) {
 		this.attachmentName = attachmentName;
-	}
-
-	public String getAttachmentURL() {
-		return attachmentURL;
-	}
-
-	public void setAttachmentURL(String attachmentURL) {
-		this.attachmentURL = attachmentURL;
 	}
 
 	public String getItemCode() {
