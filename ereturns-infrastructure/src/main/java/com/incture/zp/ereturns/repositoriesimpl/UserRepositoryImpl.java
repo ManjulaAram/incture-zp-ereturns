@@ -8,7 +8,6 @@ import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.model.User;
 import com.incture.zp.ereturns.repositories.UserRepository;
 import com.incture.zp.ereturns.utils.GetReferenceData;
-import com.incture.zp.ereturns.utils.SequenceNumberGen;
 
 @Repository()
 public class UserRepositoryImpl implements UserRepository {
@@ -16,15 +15,13 @@ public class UserRepositoryImpl implements UserRepository {
 	@Autowired
     private SessionFactory sessionFactory;
 	
-	public String getNextSeqNumber(String referenceCode, int noOfDigits) {
-		return SequenceNumberGen.getInstance().getNextSeqNumber(
-				referenceCode, noOfDigits, sessionFactory.getCurrentSession());
-	}
-
+	@Autowired 
+	private GetReferenceData getReferenceData;
+	
 	@Override
 	public ResponseDto addUser(User user) {
 		ResponseDto responseDto = new ResponseDto();
-		String userId = getNextSeqNumber(new GetReferenceData().execute("U"), 6);
+		String userId = getReferenceData.getNextSeqNumber(getReferenceData.execute("U"), 6, sessionFactory);
 		if(user.getUserId() == null || user.getUserId().equals("")) {
 			user.setUserId(userId);
 			responseDto.setMessage("User "+ userId +" Created Successfully");
@@ -38,6 +35,16 @@ public class UserRepositoryImpl implements UserRepository {
 	@Override
 	public User getUserById(String id) {
 		return (User) sessionFactory.getCurrentSession().get(User.class, id);
+	}
+
+	@Override
+	public ResponseDto updateUser(User user) {
+		return null;
+	}
+
+	@Override
+	public ResponseDto deleteUser(String id) {
+		return null;
 	}
 
 }

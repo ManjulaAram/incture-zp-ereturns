@@ -48,11 +48,21 @@ public class Request {
 	@Column(name = "REQ_PENDING_WITH", length = 100)
 	private String requestPendingWith;
 	
+	@Column(name = "SOLD_TO", length = 100)
+	private String soldTo;
+
+	@Column(name = "SHIP_TO", length = 100)
+	private String shipTo;
+	
+	@Column(name = "INVOICE_NO")
+	private String invoiceNo;  
+	
+	@Column(name = "USER_CODE")
+	private String userCode; 
+	
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "returnOrderData")
 	private Set<ReturnOrder> setReturnOrder;
 
-	private Set<Attachment> setAttachment;
-	
 	public Set<ReturnOrder> getSetReturnOrder() {
 		return setReturnOrder;
 	}
@@ -133,12 +143,20 @@ public class Request {
 		this.requestPendingWith = requestPendingWith;
 	}
 
-	public Set<Attachment> getSetAttachment() {
-		return setAttachment;
+	public String getSoldTo() {
+		return soldTo;
 	}
 
-	public void setSetAttachment(Set<Attachment> setAttachment) {
-		this.setAttachment = setAttachment;
+	public void setSoldTo(String soldTo) {
+		this.soldTo = soldTo;
+	}
+
+	public String getShipTo() {
+		return shipTo;
+	}
+
+	public void setShipTo(String shipTo) {
+		this.shipTo = shipTo;
 	}
 
 }

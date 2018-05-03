@@ -1,13 +1,14 @@
 package com.incture.zp.ereturns.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -18,18 +19,15 @@ public class User {
 	@Column(name = "USER_ID", nullable = false)
 	private String userId;
 	
-	@Column(name = "USER_CODE", length = 50)
-	private String userCode;
-	
 	@Column(name = "USER_NAME", length = 100)
 	private String userName;
 	
 	@Column(name = "EMAIL", length = 100)
 	private String email;
-	
-	@Column(name = "ADDRESS", length = 255)
-	private String address;
-	
+
+	@Column(name = "PHONE", length = 100)
+	private String phone;
+
 	@Column(name = "SCI_ID", length = 50)
 	private String sciId;
 	
@@ -39,10 +37,10 @@ public class User {
 	@Column(name = "WEB_TOKEN", length = 50)
 	private String webToken;
 	
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "headerData")
-	private Set<Header> setHeader;
-
-	private String roleId;
+	@ManyToMany
+	@JoinTable(name = "T_USER_ROLE", joinColumns = @JoinColumn(name = "USER_ID"), 
+	inverseJoinColumns = @JoinColumn(name = "ROLE_ID") )
+	private Set<Role> roleDetails = new HashSet<Role>(0);
 
 	public String getUserId() {
 		return userId;
@@ -50,35 +48,17 @@ public class User {
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
-	public String getUserCode() {
-		return userCode;
-	}
-	public void setUserCode(String userCode) {
-		this.userCode = userCode;
-	}
 	public String getEmail() {
 		return email;
 	}
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getAddress() {
-		return address;
-	}
-	public void setAddress(String address) {
-		this.address = address;
-	}
 	public String getSciId() {
 		return sciId;
 	}
 	public void setSciId(String sciId) {
 		this.sciId = sciId;
-	}
-	public Set<Header> getSetHeader() {
-		return setHeader;
-	}
-	public void setSetHeader(Set<Header> setHeader) {
-		this.setHeader = setHeader;
 	}
 	public String getUserName() {
 		return userName;
@@ -98,11 +78,17 @@ public class User {
 	public void setWebToken(String webToken) {
 		this.webToken = webToken;
 	}
-	public String getRoleId() {
-		return roleId;
+	public String getPhone() {
+		return phone;
 	}
-	public void setRoleId(String roleId) {
-		this.roleId = roleId;
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
-
+	public Set<Role> getRoleDetails() {
+		return roleDetails;
+	}
+	public void setRoleDetails(Set<Role> roleDetails) {
+		this.roleDetails = roleDetails;
+	}
+	
 }

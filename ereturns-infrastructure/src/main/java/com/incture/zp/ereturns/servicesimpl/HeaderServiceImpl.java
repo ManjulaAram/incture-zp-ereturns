@@ -5,8 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.incture.zp.ereturns.dto.HeaderDto;
-import com.incture.zp.ereturns.dto.SearchDto;
-import com.incture.zp.ereturns.dto.SearchResultDto;
+import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.model.Header;
 import com.incture.zp.ereturns.repositories.HeaderRepository;
 import com.incture.zp.ereturns.services.HeaderService;
@@ -30,8 +29,18 @@ public class HeaderServiceImpl implements HeaderService {
 	}
 
 	@Override
-	public SearchResultDto getSearchResult(SearchDto searchDto) {
-		return headerRepository.getSearchResult(searchDto);
+	public ResponseDto addHeader(Header header) {
+		return null;
+	}
+
+	@Override
+	public ResponseDto updateHeader(Header header) {
+		return null;
+	}
+
+	@Override
+	public ResponseDto deleteHeader(String id) {
+		return null;
 	}
 
 }

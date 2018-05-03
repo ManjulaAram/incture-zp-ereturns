@@ -17,8 +17,6 @@ public class SearchDto implements Serializable {
 	
 	private String salesOrder;
 	
-	private String barCode;
-	
 	public String getCustomerCode() {
 		return customerCode;
 	}
@@ -51,12 +49,4 @@ public class SearchDto implements Serializable {
 		this.salesOrder = salesOrder;
 	}
 
-	public String getBarCode() {
-		return barCode;
-	}
-
-	public void setBarCode(String barCode) {
-		this.barCode = barCode;
-	}
-	
 }

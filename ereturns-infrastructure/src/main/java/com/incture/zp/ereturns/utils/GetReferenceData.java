@@ -2,6 +2,10 @@ package com.incture.zp.ereturns.utils;
 
 import java.util.Calendar;
 
+import org.hibernate.SessionFactory;
+import org.springframework.stereotype.Component;
+
+@Component
 public class GetReferenceData {
 	
 	public String execute(String type) {
@@ -13,5 +17,10 @@ public class GetReferenceData {
 		}
 		return type + year.substring(2, 4) + month;
 	}
-	
+
+	public String getNextSeqNumber(String referenceCode, int noOfDigits, SessionFactory sessionFactory) {
+		return SequenceNumberGen.getInstance().getNextSeqNumber(
+				referenceCode, noOfDigits, sessionFactory.getCurrentSession());
+	}
+
 }

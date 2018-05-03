@@ -15,7 +15,6 @@ import com.incture.zp.ereturns.model.Attachment;
 import com.incture.zp.ereturns.repositories.AttachmentRepository;
 import com.incture.zp.ereturns.utils.GetReferenceData;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
-import com.incture.zp.ereturns.utils.SequenceNumberGen;
 
 @Repository
 public class AttachmentRepositoryImpl implements AttachmentRepository {
@@ -25,11 +24,9 @@ public class AttachmentRepositoryImpl implements AttachmentRepository {
 	
 	@Autowired
 	ImportExportUtil importExportUtil;
-
-	public String getNextSeqNumber(String referenceCode, int noOfDigits) {
-		return SequenceNumberGen.getInstance().getNextSeqNumber(
-				referenceCode, noOfDigits, sessionFactory.getCurrentSession());
-	}
+	
+	@Autowired
+	GetReferenceData getReferenceData;
 
 	@Override
 	public Attachment getAttachmentByAttachmentId(String id) {
@@ -38,7 +35,7 @@ public class AttachmentRepositoryImpl implements AttachmentRepository {
 	@Override
 	public ResponseDto addAttachment(Attachment attachment) {
 		ResponseDto responseDto = new ResponseDto();
-		String attachmentId = getNextSeqNumber(new GetReferenceData().execute("A"), 6);
+		String attachmentId = getReferenceData.getNextSeqNumber(getReferenceData.execute("A"), 6, sessionFactory);
 		if(attachment.getAttachmentId() == null || attachment.getAttachmentId().equals("")) {
 			attachment.setAttachmentId(attachmentId);
 			responseDto.setMessage("Attachment "+ attachmentId +" Saved Successfully");

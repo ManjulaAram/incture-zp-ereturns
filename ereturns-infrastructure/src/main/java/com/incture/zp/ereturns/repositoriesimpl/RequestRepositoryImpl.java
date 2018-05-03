@@ -21,7 +21,6 @@ import com.incture.zp.ereturns.model.ReturnOrder;
 import com.incture.zp.ereturns.repositories.RequestRepository;
 import com.incture.zp.ereturns.utils.GetReferenceData;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
-import com.incture.zp.ereturns.utils.SequenceNumberGen;
 
 @Repository
 public class RequestRepositoryImpl implements RequestRepository {
@@ -32,17 +31,15 @@ public class RequestRepositoryImpl implements RequestRepository {
 	@Autowired
 	ImportExportUtil importExportUtil;
 	
+	@Autowired
+	GetReferenceData getReferenceData;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ImportExportUtil.class);
 	
-	public String getNextSeqNumber(String referenceCode, int noOfDigits) {
-		return SequenceNumberGen.getInstance().getNextSeqNumber(
-				referenceCode, noOfDigits, sessionFactory.getCurrentSession());
-	}
-
 	@Override
 	public ResponseDto addRequest(Request request) {
 		ResponseDto responseDto = new ResponseDto();
-		String requestId = getNextSeqNumber(new GetReferenceData().execute("R"), 6);
+		String requestId = getReferenceData.getNextSeqNumber(getReferenceData.execute("R"), 6, sessionFactory);
 		if(request.getRequestId() == null || request.getRequestId().equals("")) {
 			request.setRequestId(requestId);
 			responseDto.setMessage("Request "+ requestId +" Saved Successfully");

@@ -24,16 +24,6 @@ public class ReturnOrderDto implements Serializable {
 
 	private String userCode;
 	
-	private String returnEntireOrder;
-	
-	public String getReturnEntireOrder() {
-		return returnEntireOrder;
-	}
-
-	public void setReturnEntireOrder(String returnEntireOrder) {
-		this.returnEntireOrder = returnEntireOrder;
-	}
-
 	public Long getReturnOrderId() {
 		return returnOrderId;
 	}

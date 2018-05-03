@@ -1,12 +1,17 @@
 package com.incture.zp.ereturns.repositories;
 
-import com.incture.zp.ereturns.dto.SearchDto;
-import com.incture.zp.ereturns.dto.SearchResultDto;
+import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.model.Header;
 
 public interface HeaderRepository {
 
 	public Header getInvoiceById(String id);
 	
-	public SearchResultDto getSearchResult(SearchDto searchDto);
+	public ResponseDto addHeader(Header header);
+	
+	public ResponseDto updateHeader(Header header);
+	
+	public ResponseDto deleteHeader(String id);
+	
+
 }

@@ -18,8 +18,6 @@ public class HeaderDto {
 	
 	private String salesOrder;
 	
-	private String barCode;
-	
 	private String salesOrg;
 
 	private String deliveryNo;
@@ -33,10 +31,6 @@ public class HeaderDto {
 	private String refDocCat;
 
 	private String purchNoCust;
-
-	private String userCode;
-
-	private String unReferenced;
 
 	private String netValue; // sum of all item level net value to be calculated
 	
@@ -115,14 +109,6 @@ public class HeaderDto {
 		this.salesOrder = salesOrder;
 	}
 
-	public String getBarCode() {
-		return barCode;
-	}
-
-	public void setBarCode(String barCode) {
-		this.barCode = barCode;
-	}
-
 	public String getSalesOrg() {
 		return salesOrg;
 	}
@@ -177,22 +163,6 @@ public class HeaderDto {
 
 	public void setPurchNoCust(String purchNoCust) {
 		this.purchNoCust = purchNoCust;
-	}
-
-	public String getUserCode() {
-		return userCode;
-	}
-
-	public void setUserCode(String userCode) {
-		this.userCode = userCode;
-	}
-
-	public String getUnReferenced() {
-		return unReferenced;
-	}
-
-	public void setUnReferenced(String unReferenced) {
-		this.unReferenced = unReferenced;
 	}
 
 }

@@ -8,8 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -19,10 +17,14 @@ import javax.persistence.TemporalType;
 @Table(name = "T_INVOICE_HEADER")
 public class Header {
 	
-	@Id
-	@Column(name = "INVOICE_NO", nullable = false)
-	private String invoiceNo;
 	
+	@Id
+	@Column(name = "HEADER_ID", nullable = false)
+	private String headerId;
+
+	@Column(name = "INVOICE_NO", length = 50)
+	private String invoiceNo;
+
 	@Column(name = "INVOICE_SEQ", length = 3)
 	private String invoiceSeq;
 	
@@ -61,25 +63,12 @@ public class Header {
 	@Column(name = "PURCH_NO_C", length = 10)
 	private String purchNoCust;
 
-	@Column(name = "SOLD_TO", length = 10)
-	private String userCode;
-
-	@Column(name = "UNREFERENCED", length = 10)
-	private String unReferenced;
-
 	@Column(name = "AVAILABLE_QTY", length = 5)
 	private String availableQty;
 
 	@Column(name = "NET_VALUE", length = 5)
 	private String netValue; // sum of all item level net value to be calculated
 
-	@Column(name = "BAR_CODE", length = 100)
-	private String barCode; 
-
-	@ManyToOne
-	@JoinColumn(name = "USER_ID", nullable = false, updatable = false)
-	private User headerData;
-	
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "itemData")
 	private Set<Item> setItem;
 	
@@ -119,14 +108,6 @@ public class Header {
 		this.netValue = netValue;
 	}
 
-	public User getHeaderData() {
-		return headerData;
-	}
-
-	public void setHeaderData(User headerData) {
-		this.headerData = headerData;
-	}
-
 	public Set<Item> getSetItem() {
 		return setItem;
 	}
@@ -163,12 +144,60 @@ public class Header {
 		this.salesOrder = salesOrder;
 	}
 
-	public String getBarCode() {
-		return barCode;
+	public String getSalesOrg() {
+		return salesOrg;
 	}
 
-	public void setBarCode(String barCode) {
-		this.barCode = barCode;
+	public void setSalesOrg(String salesOrg) {
+		this.salesOrg = salesOrg;
+	}
+
+	public String getDeliveryNo() {
+		return deliveryNo;
+	}
+
+	public void setDeliveryNo(String deliveryNo) {
+		this.deliveryNo = deliveryNo;
+	}
+
+	public String getDistrChan() {
+		return distrChan;
+	}
+
+	public void setDistrChan(String distrChan) {
+		this.distrChan = distrChan;
+	}
+
+	public String getDivision() {
+		return division;
+	}
+
+	public void setDivision(String division) {
+		this.division = division;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
+	public String getRefDocCat() {
+		return refDocCat;
+	}
+
+	public void setRefDocCat(String refDocCat) {
+		this.refDocCat = refDocCat;
+	}
+
+	public String getPurchNoCust() {
+		return purchNoCust;
+	}
+
+	public void setPurchNoCust(String purchNoCust) {
+		this.purchNoCust = purchNoCust;
 	}
 
 }

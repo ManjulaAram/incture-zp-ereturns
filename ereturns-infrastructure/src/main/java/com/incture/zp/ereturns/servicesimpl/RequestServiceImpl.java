@@ -37,6 +37,7 @@ public class RequestServiceImpl implements RequestService {
 		
 		try {
 			responseDto = requestRepository.addRequest(importExportUtil.importRequestDto(requestDto));
+			
 			Set<AttachmentDto> setAttachment = requestDto.getSetAttachmentDto();
 			for(AttachmentDto attachmentDto : setAttachment) {
 				Attachment attachment = importExportUtil.importAttachmentDto(attachmentDto);

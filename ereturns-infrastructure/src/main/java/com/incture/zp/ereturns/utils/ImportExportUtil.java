@@ -16,12 +16,14 @@ import com.incture.zp.ereturns.dto.HeaderDto;
 import com.incture.zp.ereturns.dto.ItemDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
+import com.incture.zp.ereturns.dto.RoleDto;
 import com.incture.zp.ereturns.dto.UserDto;
 import com.incture.zp.ereturns.model.Attachment;
 import com.incture.zp.ereturns.model.Header;
 import com.incture.zp.ereturns.model.Item;
 import com.incture.zp.ereturns.model.Request;
 import com.incture.zp.ereturns.model.ReturnOrder;
+import com.incture.zp.ereturns.model.Role;
 import com.incture.zp.ereturns.model.User;
 
 @Component
@@ -32,30 +34,31 @@ public class ImportExportUtil {
 	
 	public User importUserDto(UserDto userDto) {
 		User user = new User();
-		user.setAddress(userDto.getAddress());
 		user.setEmail(userDto.getEmail());
 		user.setSciId(userDto.getSciId());
-		user.setUserCode(userDto.getUserCode());
 		user.setUserId(userDto.getUserId());
 		user.setUserName(userDto.getUserName());
+		user.setMobileToken(userDto.getMobileToken());
+		user.setPhone(userDto.getPhone());
+		user.setWebToken(userDto.getWebToken());
 		
-		Set<Header> headerSet = null;
-		if (userDto.getHeaderSet() != null && userDto.getHeaderSet().size() > 0) {
-			headerSet = setHeaderDetail(userDto.getHeaderSet(), user);
+		Set<Role> roleSet = null;
+		if (userDto.getSetRole() != null && userDto.getSetRole().size() > 0) {
+			roleSet = setRoleDetail(userDto.getSetRole());
 		}
-		user.setSetHeader(headerSet);
+		user.setRoleDetails(roleSet);
 		return user;
 	}
 	
-	private Set<Header> setHeaderDetail(Set<HeaderDto> headerSet, User user) {
-		Set<Header> setHeader = new HashSet<>();
+	private Set<Role> setRoleDetail(Set<RoleDto> roleSet) {
+		Set<Role> setRole = new HashSet<>();
 		
-		for(HeaderDto headerDto : headerSet) {
-			setHeader.add(importHeaderDto(headerDto, user));
+		for(RoleDto roleDto : roleSet) {
+			setRole.add(importRoleDto(roleDto));
 		}
-		return setHeader;
+		return setRole;
 	}
-
+	
 	private Set<ReturnOrder> setReturnOrderDetail(Set<ReturnOrderDto> returnOrderSet, Request request) {
 		Set<ReturnOrder> setReturnOrder = new HashSet<>();
 		
@@ -67,36 +70,24 @@ public class ImportExportUtil {
 
 	public UserDto exportUserDto(User user) {
 		UserDto userDto = new UserDto();
-		userDto.setAddress(user.getAddress());
 		userDto.setEmail(user.getEmail());
-		
-		Set<Header> headers = user.getSetHeader();
-		HeaderDto headerDto = null;
-		Set<HeaderDto> headerSet = new HashSet<>();
-		for(Header header : headers) {
-			headerDto = exportHeaderDto(header);
-			headerSet.add(headerDto);
-		}
-		userDto.setHeaderSet(headerSet);
 		userDto.setSciId(user.getSciId());
-		userDto.setUserCode(user.getUserCode());
 		userDto.setUserId(user.getUserId());
 		userDto.setUserName(user.getUserName());
-		
+		userDto.setMobileToken(user.getMobileToken());
+		userDto.setWebToken(user.getWebToken());
 		return userDto;
 	}
 	
-	public Header importHeaderDto(HeaderDto headerDto, User user) {
+	public Header importHeaderDto(HeaderDto headerDto) {
 		Header header = new Header();
 		header.setAvailableQty(headerDto.getAvailableQty());
 		if(headerDto.getExpiryDate() != null && !(headerDto.getExpiryDate().equals(""))) {
 			header.setExpiryDate(convertStringToDate(headerDto.getExpiryDate()));
 		}
-		header.setHeaderData(user);
 		if(headerDto.getInvoiceDate() != null && !(headerDto.getInvoiceDate().equals(""))) {
 			header.setInvoiceDate(convertStringToDate(headerDto.getInvoiceDate()));
 		}
-		header.setBarCode(headerDto.getBarCode());
 		header.setInvoiceNo(headerDto.getInvoiceNo());
 		header.setInvoiceSeq(headerDto.getInvoiceSeq());
 		header.setNetValue(headerDto.getNetValue());
@@ -107,6 +98,14 @@ public class ImportExportUtil {
 			itemSet = setItemDetail(headerDto.getItemSet(), header);
 		}
 		header.setSetItem(itemSet);
+		header.setCurrency(headerDto.getCurrency());
+		header.setDeliveryNo(headerDto.getDeliveryNo());
+		header.setDistrChan(headerDto.getDistrChan());
+		header.setDivision(headerDto.getDivision());
+		header.setSalesOrg(headerDto.getSalesOrg());
+		header.setPurchNoCust(headerDto.getPurchNoCust());
+		header.setRefDocCat(headerDto.getRefDocCat());
+		header.setSalesOrg(headerDto.getSalesOrg());
 		
 		return header;
 	}
@@ -121,7 +120,6 @@ public class ImportExportUtil {
 		if(header.getInvoiceDate() != null && !(header.getInvoiceDate().equals(""))) {
 			headerDto.setInvoiceDate(convertDateToString(header.getInvoiceDate()));
 		}
-		headerDto.setBarCode(header.getBarCode());
 		headerDto.setInvoiceNo(header.getInvoiceNo());
 		headerDto.setInvoiceSeq(header.getInvoiceSeq());
 		Set<Item> items = header.getSetItem();
@@ -135,6 +133,13 @@ public class ImportExportUtil {
 		headerDto.setNetValue(header.getNetValue());
 		headerDto.setDocumentType(header.getDocumentType());
 		headerDto.setSalesOrder(header.getSalesOrder());
+		headerDto.setCurrency(header.getCurrency());
+		headerDto.setDeliveryNo(header.getDeliveryNo());
+		headerDto.setDivision(header.getDivision());
+		headerDto.setDistrChan(header.getDistrChan());
+		headerDto.setRefDocCat(header.getRefDocCat());
+		headerDto.setPurchNoCust(header.getPurchNoCust());
+		headerDto.setSalesOrg(header.getSalesOrg());
 		
 		return headerDto;
 	}
@@ -163,6 +168,14 @@ public class ImportExportUtil {
 			item.setDeliveryDate(convertStringToDate(itemDto.getDeliveryDate()));
 		}
 		
+		item.setBatch(itemDto.getBatch());
+		item.setDeliveryDocItem(itemDto.getDeliveryDocItem());
+		item.setMaterial(itemDto.getMaterial());
+		item.setMaterialDesc(itemDto.getMaterialDesc());
+		item.setPlant(itemDto.getPlant());
+		item.setSalesOrderItem(itemDto.getSalesOrderItem());
+		item.setStoreLoc(itemDto.getStoreLoc());
+		
 		return item;
 	}
 	
@@ -180,6 +193,14 @@ public class ImportExportUtil {
 			itemDto.setDeliveryDate(convertDateToString(item.getDeliveryDate()));
 		}
 		
+		itemDto.setBatch(item.getBatch());
+		itemDto.setDeliveryDocItem(item.getDeliveryDocItem());
+		itemDto.setMaterial(item.getMaterial());
+		itemDto.setMaterialDesc(item.getMaterialDesc());
+		itemDto.setPlant(item.getPlant());
+		itemDto.setSalesOrderItem(item.getSalesOrderItem());
+		itemDto.setStoreLoc(item.getStoreLoc());
+
 		return itemDto;
 	}
 
@@ -199,6 +220,8 @@ public class ImportExportUtil {
 		request.setRequestPendingWith(requestDto.getRequestPendingWith());
 		request.setRequestStatus(requestDto.getRequestStatus());
 		request.setRequestUpdatedBy(requestDto.getRequestUpdatedBy());
+		request.setSoldTo(requestDto.getSoldTo());
+		request.setShipTo(requestDto.getShipTo());
 		
 		if(requestDto.getRequestUpdatedDate() != null && !(requestDto.getRequestUpdatedDate().equals(""))) {
 			request.setRequestUpdatedDate(convertStringToDate(requestDto.getRequestUpdatedDate()));
@@ -210,6 +233,7 @@ public class ImportExportUtil {
 		}
 
 		request.setSetReturnOrder(returnOrderSet);
+		
 		return request;
 	}
 	
@@ -230,6 +254,8 @@ public class ImportExportUtil {
 		requestDto.setRequestId(request.getRequestId());
 		requestDto.setRequestPendingWith(request.getRequestPendingWith());
 		requestDto.setRequestStatus(request.getRequestStatus());
+		requestDto.setSoldTo(request.getSoldTo());
+		requestDto.setShipTo(request.getShipTo());
 		if(request.getRequestUpdatedDate() != null) {
 			requestDto.setRequestUpdatedDate(convertDateToString(request.getRequestUpdatedDate()));
 		} else {
@@ -252,18 +278,15 @@ public class ImportExportUtil {
 	public ReturnOrder importReturnOrderDto(ReturnOrderDto returnOrderDto, Request request) {
 		ReturnOrder returnOrder = new ReturnOrder();
 		returnOrder.setReturnOrderData(request);
-		returnOrder.setInvoiceNo(returnOrderDto.getInvoiceNo());
 		returnOrder.setItemCode(returnOrderDto.getItemCode());
 		returnOrder.setReason(returnOrderDto.getReason());
 		returnOrder.setRemark(returnOrderDto.getRemark());
 		
-		returnOrder.setReturnEntireOrder(returnOrderDto.getReturnEntireOrder());
 		returnOrder.setReturnOrderId(returnOrderDto.getReturnOrderId());
 		returnOrder.setReturnPrice(returnOrderDto.getReturnPrice());
 		returnOrder.setReturnQty(returnOrderDto.getReturnQty());
 		returnOrder.setReturnValue(returnOrderDto.getReturnValue());
 		
-		returnOrder.setUserCode(returnOrderDto.getUserCode());
 		
 		return returnOrder;
 	}
@@ -271,20 +294,33 @@ public class ImportExportUtil {
 	public ReturnOrderDto exportReturnOrderDto(ReturnOrder returnOrder) {
 		ReturnOrderDto returnOrderDto = new ReturnOrderDto();
 		
-		returnOrderDto.setInvoiceNo(returnOrder.getInvoiceNo());
 		returnOrderDto.setItemCode(returnOrder.getItemCode());
 		returnOrderDto.setReason(returnOrder.getReason());
 		returnOrderDto.setRemark(returnOrder.getRemark());
-		returnOrderDto.setReturnEntireOrder(returnOrder.getReturnEntireOrder());
 		returnOrderDto.setReturnOrderId(returnOrder.getReturnOrderId());
 		returnOrderDto.setReturnPrice(returnOrder.getReturnPrice());
 		returnOrderDto.setReturnQty(returnOrder.getReturnQty());
 		returnOrderDto.setReturnValue(returnOrder.getReturnValue());
-		returnOrderDto.setUserCode(returnOrder.getUserCode());
 		
 		return returnOrderDto;
 	}
 	
+	public RoleDto exportRoleDto(Role role) {
+		RoleDto roleDto = new RoleDto();
+		
+		roleDto.setRoleId(role.getRoleId());
+		roleDto.setRoleName(role.getRoleName());
+		
+		return roleDto;
+	}
+	
+	public Role importRoleDto(RoleDto roleDto) {
+		Role role = new Role();
+		
+		role.setRoleId(roleDto.getRoleId());
+		role.setRoleName(roleDto.getRoleName());
+		return role;
+	}
 	public Attachment importAttachmentDto(AttachmentDto attachmentDto) {
 		Attachment attachment = new Attachment();
 		attachment.setAttachmentId(attachmentDto.getAttachmentId());

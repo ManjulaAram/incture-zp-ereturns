@@ -9,13 +9,9 @@ public class UserDto {
 
 	private String userId;
 	
-	private String userCode;
-	
 	private String userName;
 	
 	private String email;
-	
-	private String address;
 	
 	private String sciId;
 	
@@ -23,9 +19,9 @@ public class UserDto {
 	
 	private String webToken;
 
-	private Set<HeaderDto> headerSet;
+	private Set<RoleDto> setRole;
 	
-	private Set<RoleDto> roleSet;
+	private String phone;
 
 	public String getUserId() {
 		return userId;
@@ -34,15 +30,6 @@ public class UserDto {
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
-
-	public String getUserCode() {
-		return userCode;
-	}
-
-	public void setUserCode(String userCode) {
-		this.userCode = userCode;
-	}
-
 
 	public String getUserName() {
 		return userName;
@@ -60,36 +47,12 @@ public class UserDto {
 		this.email = email;
 	}
 
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
 	public String getSciId() {
 		return sciId;
 	}
 
 	public void setSciId(String sciId) {
 		this.sciId = sciId;
-	}
-
-	public Set<HeaderDto> getHeaderSet() {
-		return headerSet;
-	}
-
-	public void setHeaderSet(Set<HeaderDto> headerSet) {
-		this.headerSet = headerSet;
-	}
-
-	public Set<RoleDto> getRoleSet() {
-		return roleSet;
-	}
-
-	public void setRoleSet(Set<RoleDto> roleSet) {
-		this.roleSet = roleSet;
 	}
 
 	public String getMobileToken() {
@@ -106,6 +69,22 @@ public class UserDto {
 
 	public void setWebToken(String webToken) {
 		this.webToken = webToken;
+	}
+
+	public Set<RoleDto> getSetRole() {
+		return setRole;
+	}
+
+	public void setSetRole(Set<RoleDto> setRole) {
+		this.setRole = setRole;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 }

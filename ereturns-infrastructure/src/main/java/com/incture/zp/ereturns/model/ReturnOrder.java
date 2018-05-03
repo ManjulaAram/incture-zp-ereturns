@@ -33,38 +33,13 @@ public class ReturnOrder {
 	@Column(name = "RETURN_VALUE", length = 10)
 	private String returnValue;
 
-	@Column(name = "INVOICE_NO")
-	private String invoiceNo;  
-	
 	@Column(name = "ITEM_CODE")
 	private String itemCode; 
 
-	@Column(name = "USER_CODE")
-	private String userCode; 
-	
-	@Column(name = "RETURN_ENTIRE_ORDER", length = 5)
-	private String returnEntireOrder;
-	
 	@ManyToOne
 	@JoinColumn(name = "REQUEST_ID", nullable = false, updatable = false)
 	private Request returnOrderData;
 	
-	public String getReturnEntireOrder() {
-		return returnEntireOrder;
-	}
-
-	public void setReturnEntireOrder(String returnEntireOrder) {
-		this.returnEntireOrder = returnEntireOrder;
-	}
-
-	public String getUserCode() {
-		return userCode;
-	}
-
-	public void setUserCode(String userCode) {
-		this.userCode = userCode;
-	}
-
 	public Long getReturnOrderId() {
 		return returnOrderId;
 	}
@@ -95,14 +70,6 @@ public class ReturnOrder {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
-	}
-
-	public String getInvoiceNo() {
-		return invoiceNo;
-	}
-
-	public void setInvoiceNo(String invoiceNo) {
-		this.invoiceNo = invoiceNo;
 	}
 
 	public String getItemCode() {
