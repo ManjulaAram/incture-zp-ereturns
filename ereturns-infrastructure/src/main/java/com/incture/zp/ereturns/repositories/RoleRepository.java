@@ -1,15 +1,14 @@
 package com.incture.zp.ereturns.repositories;
 
-import com.incture.zp.ereturns.dto.ResponseDto;
-import com.incture.zp.ereturns.model.Role;
+import com.incture.zp.ereturns.dto.RoleDto;
 
 public interface RoleRepository {
 
-	public ResponseDto addRole(Role role);
+	/*public ResponseDto addRole(Role role);
 	
 	public ResponseDto updateRole(Role role);
 	
-	public ResponseDto deleteRole(Role role);
+	public ResponseDto deleteRole(Role role);*/
 	
-	public Role getRoleById(String id);
+	public RoleDto getRoleById(String id);
 }
