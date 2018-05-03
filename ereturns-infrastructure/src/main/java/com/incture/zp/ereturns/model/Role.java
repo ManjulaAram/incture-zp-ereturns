@@ -13,6 +13,7 @@ public class Role {
 	@Column(name = "ROLE_ID", nullable = false)
 	private String roleId;
 	
+	@Column(name = "ROLE_NAME", nullable = false)
 	private String roleName;
 	
 	public String getRoleId() {

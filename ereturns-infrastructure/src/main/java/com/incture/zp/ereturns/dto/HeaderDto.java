@@ -4,6 +4,8 @@ import java.util.Set;
 
 public class HeaderDto {
 
+	private String headerId;
+	
 	private String invoiceNo;
 	
 	private String invoiceSeq;
@@ -163,6 +165,14 @@ public class HeaderDto {
 
 	public void setPurchNoCust(String purchNoCust) {
 		this.purchNoCust = purchNoCust;
+	}
+
+	public String getHeaderId() {
+		return headerId;
+	}
+
+	public void setHeaderId(String headerId) {
+		this.headerId = headerId;
 	}
 
 }

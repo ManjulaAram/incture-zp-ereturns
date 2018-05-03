@@ -4,6 +4,10 @@ public class AttachmentDto {
 
 	private String attachmentId;
 	
+	private String content;
+	
+	private String attachmentType;
+	
 	private String attachmentName;
 	
 	private String itemCode;
@@ -18,14 +22,6 @@ public class AttachmentDto {
 
 	public void setAttachmentId(String attachmentId) {
 		this.attachmentId = attachmentId;
-	}
-
-	public String getAttachmentName() {
-		return attachmentName;
-	}
-
-	public void setAttachmentName(String attachmentName) {
-		this.attachmentName = attachmentName;
 	}
 
 	public String getItemCode() {
@@ -50,6 +46,30 @@ public class AttachmentDto {
 
 	public void setRequestId(String requestId) {
 		this.requestId = requestId;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public String getAttachmentType() {
+		return attachmentType;
+	}
+
+	public void setAttachmentType(String attachmentType) {
+		this.attachmentType = attachmentType;
+	}
+
+	public String getAttachmentName() {
+		return attachmentName;
+	}
+
+	public void setAttachmentName(String attachmentName) {
+		this.attachmentName = attachmentName;
 	}
 
 }

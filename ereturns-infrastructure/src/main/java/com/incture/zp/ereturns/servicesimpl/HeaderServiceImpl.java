@@ -23,7 +23,7 @@ public class HeaderServiceImpl implements HeaderService {
 	
 	@Override
 	public HeaderDto getHeaderById(String id) {
-		Header header = headerRepository.getInvoiceById(id);
+		Header header = headerRepository.getHeaderById(id);
 		
 		return importExportUtil.exportHeaderDto(header);
 	}

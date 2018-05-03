@@ -5,7 +5,7 @@ import com.incture.zp.ereturns.model.Header;
 
 public interface HeaderRepository {
 
-	public Header getInvoiceById(String id);
+	public Header getHeaderById(String id);
 	
 	public ResponseDto addHeader(Header header);
 	

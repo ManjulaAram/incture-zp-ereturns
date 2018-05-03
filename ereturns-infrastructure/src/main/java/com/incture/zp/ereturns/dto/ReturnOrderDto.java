@@ -18,11 +18,7 @@ public class ReturnOrderDto implements Serializable {
 	
 	private String returnValue;
 
-	private String invoiceNo;  
-	
 	private String itemCode; 
-
-	private String userCode;
 	
 	public Long getReturnOrderId() {
 		return returnOrderId;
@@ -72,28 +68,12 @@ public class ReturnOrderDto implements Serializable {
 		this.returnValue = returnValue;
 	}
 
-	public String getInvoiceNo() {
-		return invoiceNo;
-	}
-
-	public void setInvoiceNo(String invoiceNo) {
-		this.invoiceNo = invoiceNo;
-	}
-
 	public String getItemCode() {
 		return itemCode;
 	}
 
 	public void setItemCode(String itemCode) {
 		this.itemCode = itemCode;
-	}
-
-	public String getUserCode() {
-		return userCode;
-	}
-
-	public void setUserCode(String userCode) {
-		this.userCode = userCode;
 	}
 
 }

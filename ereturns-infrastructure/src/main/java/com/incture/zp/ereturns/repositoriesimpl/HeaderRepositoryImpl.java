@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.model.Header;
 import com.incture.zp.ereturns.repositories.HeaderRepository;
+import com.incture.zp.ereturns.utils.GetReferenceData;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
 
 @Repository
@@ -20,17 +21,30 @@ public class HeaderRepositoryImpl implements HeaderRepository {
 	@Autowired
 	ImportExportUtil importExportUtil;
 	
+	@Autowired
+	GetReferenceData getReferenceData;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(HeaderRepositoryImpl.class);
 	
 	@Override
-	public Header getInvoiceById(String id) {
+	public Header getHeaderById(String id) {
 		return (Header) sessionFactory.getCurrentSession().get(Header.class, id);
 	}
 
 	@Override
 	public ResponseDto addHeader(Header header) {
+		ResponseDto responseDto = new ResponseDto();
+		String headerId = getReferenceData.getNextSeqNumber(getReferenceData.execute("H"), 6, sessionFactory);
+		if(header.getHeaderId() == null || header.getHeaderId().equals("")) {
+			header.setHeaderId(headerId);
+			responseDto.setMessage("Header "+ headerId +" Saved Successfully");
+		}
+		sessionFactory.getCurrentSession().saveOrUpdate(header);
+		responseDto.setMessage("Header "+header.getHeaderId()+" Updated Successfully");
+		responseDto.setStatus("SUCCESS");
+		responseDto.setCode("00");
 		LOGGER.error("");
-		return null;
+		return responseDto;
 	}
 
 	@Override

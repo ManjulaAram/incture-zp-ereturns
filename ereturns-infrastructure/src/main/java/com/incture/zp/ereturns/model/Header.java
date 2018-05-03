@@ -17,7 +17,6 @@ import javax.persistence.TemporalType;
 @Table(name = "T_INVOICE_HEADER")
 public class Header {
 	
-	
 	@Id
 	@Column(name = "HEADER_ID", nullable = false)
 	private String headerId;
@@ -198,6 +197,14 @@ public class Header {
 
 	public void setPurchNoCust(String purchNoCust) {
 		this.purchNoCust = purchNoCust;
+	}
+
+	public String getHeaderId() {
+		return headerId;
+	}
+
+	public void setHeaderId(String headerId) {
+		this.headerId = headerId;
 	}
 
 }

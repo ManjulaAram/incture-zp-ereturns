@@ -25,13 +25,13 @@ public class RequestDto {
 	
 	private String requestPendingWith;
 	
-	private String invoiceNo;
+	private HeaderDto headerDto;
 	
 	private String customerCode;
 	
 	private Set<ReturnOrderDto> setReturnOrderDto;
 	
-	private Set<AttachmentDto> setAttachmentDto;
+	private Set<AttachmentDto> setAttachments;
 	
 	private String soldTo;
 	
@@ -117,10 +117,6 @@ public class RequestDto {
 		this.setReturnOrderDto = setReturnOrderDto;
 	}
 
-	public Set<AttachmentDto> getSetAttachmentDto() {
-		return setAttachmentDto;
-	}
-	
 	public String getSoldTo() {
 		return soldTo;
 	}
@@ -137,24 +133,28 @@ public class RequestDto {
 		this.shipTo = shipTo;
 	}
 
-	public void setSetAttachmentDto(Set<AttachmentDto> setAttachmentDto) {
-		this.setAttachmentDto = setAttachmentDto;
-	}
-
-	public String getInvoiceNo() {
-		return invoiceNo;
-	}
-
-	public void setInvoiceNo(String invoiceNo) {
-		this.invoiceNo = invoiceNo;
-	}
-
 	public String getCustomerCode() {
 		return customerCode;
 	}
 
 	public void setCustomerCode(String customerCode) {
 		this.customerCode = customerCode;
+	}
+
+	public Set<AttachmentDto> getSetAttachments() {
+		return setAttachments;
+	}
+
+	public void setSetAttachments(Set<AttachmentDto> setAttachments) {
+		this.setAttachments = setAttachments;
+	}
+
+	public HeaderDto getHeaderDto() {
+		return headerDto;
+	}
+
+	public void setHeaderDto(HeaderDto headerDto) {
+		this.headerDto = headerDto;
 	}
 
 }

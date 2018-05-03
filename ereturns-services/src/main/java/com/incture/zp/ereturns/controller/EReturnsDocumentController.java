@@ -27,10 +27,10 @@ public class EReturnsDocumentController {
 	@Autowired
 	EcmDocumentService ecmDocumentService;
 	
-	@RequestMapping(path = "/download/{itemCode}", method = RequestMethod.GET)
-	public ResponseEntity<Resource> download(@PathVariable String itemCode) throws IOException {
+	@RequestMapping(path = "/download/{id}", method = RequestMethod.GET)
+	public ResponseEntity<Resource> download(@PathVariable String id) throws IOException {
 
-		Document document = ecmDocumentService.getAttachmentById("");
+		Document document = ecmDocumentService.getAttachmentById(id);
 	    InputStreamResource resource = new InputStreamResource(document.getContentStream().getStream());
 	    HttpHeaders header = new HttpHeaders();
 	    header.set(HttpHeaders.CONTENT_DISPOSITION,

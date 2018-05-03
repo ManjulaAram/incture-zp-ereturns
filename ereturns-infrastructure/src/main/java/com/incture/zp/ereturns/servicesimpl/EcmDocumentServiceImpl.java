@@ -21,6 +21,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundExcept
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.services.EcmDocumentService;
@@ -31,6 +32,7 @@ import com.sap.ecm.api.RepositoryOptions;
 import com.sap.ecm.api.RepositoryOptions.Visibility;
 
 @Service
+@Transactional
 public class EcmDocumentServiceImpl implements EcmDocumentService {
 
 	private Session openCmisSession = null;
