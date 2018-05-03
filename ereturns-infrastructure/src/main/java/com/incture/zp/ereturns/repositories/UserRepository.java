@@ -1,16 +1,16 @@
 package com.incture.zp.ereturns.repositories;
 
 import com.incture.zp.ereturns.dto.ResponseDto;
+import com.incture.zp.ereturns.dto.UserDto;
 import com.incture.zp.ereturns.model.User;
 
 public interface UserRepository {
 
-	public ResponseDto addUser(User user);
+	public ResponseDto addUser(UserDto userDto);
 	
-	public ResponseDto updateUser(User user);
 	
-	public ResponseDto deleteUser(String id);
+	public ResponseDto delete(UserDto userDto);
 	
-	public User getUserById(String id);
+	public UserDto getUserById(String id);
 	
 }
