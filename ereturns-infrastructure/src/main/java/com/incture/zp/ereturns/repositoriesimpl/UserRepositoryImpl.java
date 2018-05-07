@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.incture.zp.ereturns.dto.ResponseDto;
-import com.incture.zp.ereturns.dto.UserDto;
 import com.incture.zp.ereturns.model.User;
 import com.incture.zp.ereturns.repositories.UserRepository;
 import com.incture.zp.ereturns.utils.GetReferenceData;
@@ -29,34 +28,35 @@ public class UserRepositoryImpl implements UserRepository {
 	}
 
 	@Override
-	public ResponseDto addUser(UserDto userDto) {
+	public ResponseDto addUser(User user) {
 		ResponseDto responseDto = new ResponseDto();
 		String userId = getNextSeqNumber(new GetReferenceData().execute("U"), 6);
-		if (userDto.getUserId() == null || userDto.getUserId().equals("")) {
-			userDto.setUserId(userId);
+		if (user.getUserId() == null || user.getUserId().equals("")) {
+			user.setUserId(userId);
 			responseDto.setMessage("User " + userId + " Created Successfully");
 		}
-		User user=importExportUtil.importUserDto(userDto);
+		
 		sessionFactory.getCurrentSession().saveOrUpdate(user);
-		responseDto.setMessage("User " + userDto.getUserId() + " Updated Successfully");
+		responseDto.setMessage("User " + user.getUserId() + " Updated Successfully");
 		responseDto.setStatus("OK");
 		return responseDto;
 	}
 
 	@Override
-	public UserDto getUserById(String id) {
+	public User getUserById(String id) {
 		User user = (User) sessionFactory.getCurrentSession().get(User.class, id);
-		UserDto userDto= importExportUtil.exportUserDto(user);
-		return userDto;
+		
+		return user;
 	}
 
 	@Override
-	public ResponseDto delete(UserDto userDto) {
+	public ResponseDto delete(User user) {
 		ResponseDto responseDto = new ResponseDto();
 		String queryStr = "DELETE User WHERE userId=:userId";
-		if (!ServiceUtil.isEmpty(userDto)) {
+		if (!ServiceUtil.isEmpty(user)) {
 			Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
-			query.setParameter("userId", userDto.getUserId());
+			query.setParameter("userId", user.getUserId());
+			
 
 			int result = query.executeUpdate();
 			if (result > 0) {
