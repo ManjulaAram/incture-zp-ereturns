@@ -175,6 +175,10 @@ public class ImportExportUtil {
 		item.setPlant(itemDto.getPlant());
 		item.setSalesOrderItem(itemDto.getSalesOrderItem());
 		item.setStoreLoc(itemDto.getStoreLoc());
+		item.setItemId(itemDto.getItemId());
+		item.setPricipal(item.getPricipal());
+		item.setPricipalCode(itemDto.getPricipalCode());
+		item.setMaterialGroup(itemDto.getMaterialGroup());
 		
 		return item;
 	}
@@ -216,7 +220,6 @@ public class ImportExportUtil {
 			request.setRequestCreatedDate(convertStringToDate(requestDto.getRequestCreatedDate()));
 		}
 		request.setRequestId(requestDto.getRequestId());
-		// define rule based on reason and return value
 		request.setRequestPendingWith(requestDto.getRequestPendingWith());
 		request.setRequestStatus(requestDto.getRequestStatus());
 		request.setRequestUpdatedBy(requestDto.getRequestUpdatedBy());
@@ -233,7 +236,7 @@ public class ImportExportUtil {
 		}
 
 		request.setSetReturnOrder(returnOrderSet);
-		
+		request.setRequestHeader(importHeaderDto(requestDto.getHeaderDto()));
 		return request;
 	}
 	
@@ -256,6 +259,7 @@ public class ImportExportUtil {
 		requestDto.setRequestStatus(request.getRequestStatus());
 		requestDto.setSoldTo(request.getSoldTo());
 		requestDto.setShipTo(request.getShipTo());
+		requestDto.setHeaderDto(exportHeaderDto(request.getRequestHeader()));
 		if(request.getRequestUpdatedDate() != null) {
 			requestDto.setRequestUpdatedDate(convertDateToString(request.getRequestUpdatedDate()));
 		} else {
@@ -271,6 +275,7 @@ public class ImportExportUtil {
 			returnOrderSet.add(returnOrderDto);
 		}
 		requestDto.setSetReturnOrderDto(returnOrderSet);
+		requestDto.setHeaderDto(exportHeaderDto(request.getRequestHeader()));
 		
 		return requestDto;
 	}
@@ -286,7 +291,7 @@ public class ImportExportUtil {
 		returnOrder.setReturnPrice(returnOrderDto.getReturnPrice());
 		returnOrder.setReturnQty(returnOrderDto.getReturnQty());
 		returnOrder.setReturnValue(returnOrderDto.getReturnValue());
-		
+		returnOrder.setPaymentType(returnOrderDto.getPaymentType());
 		
 		return returnOrder;
 	}

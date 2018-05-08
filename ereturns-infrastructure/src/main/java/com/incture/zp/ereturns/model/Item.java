@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -14,9 +16,13 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "T_INVOICE_ITEM")
 public class Item {
-
+	
 	@Id
-	@Column(name = "ITEM_CODE", nullable = false)
+	@Column(name = "ITEM_ID")
+	@GeneratedValue(strategy= GenerationType.AUTO)
+	private Long itemId;
+
+	@Column(name = "ITEM_CODE", length = 100)
 	private String itemCode;
 	
 	@Column(name = "ITEM_NAME", length = 100)
@@ -25,10 +31,10 @@ public class Item {
 	@Column(name = "ITEM_DESC", length = 255)
 	private String itemDescription;
 	
-	@Column(name = "AVAILABLE_QTY", length = 5)
+	@Column(name = "AVAILABLE_QTY", length = 50)
 	private String availableQty;
 
-	@Column(name = "NET_VALUE", length = 5)
+	@Column(name = "NET_VALUE", length = 50)
 	private String netValue;
 	
 	@Temporal(TemporalType.TIMESTAMP)
@@ -191,6 +197,38 @@ public class Item {
 
 	public void setMaterialDesc(String materialDesc) {
 		this.materialDesc = materialDesc;
+	}
+
+	public Long getItemId() {
+		return itemId;
+	}
+
+	public void setItemId(Long itemId) {
+		this.itemId = itemId;
+	}
+
+	public String getMaterialGroup() {
+		return materialGroup;
+	}
+
+	public void setMaterialGroup(String materialGroup) {
+		this.materialGroup = materialGroup;
+	}
+
+	public String getPricipal() {
+		return pricipal;
+	}
+
+	public void setPricipal(String pricipal) {
+		this.pricipal = pricipal;
+	}
+
+	public String getPricipalCode() {
+		return pricipalCode;
+	}
+
+	public void setPricipalCode(String pricipalCode) {
+		this.pricipalCode = pricipalCode;
 	}
 
 }

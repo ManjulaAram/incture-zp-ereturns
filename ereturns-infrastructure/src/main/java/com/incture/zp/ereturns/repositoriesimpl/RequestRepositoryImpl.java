@@ -57,7 +57,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 		
 		String constraint = "";
 		StringBuilder queryString = new StringBuilder();
-		queryString.append("SELECT r, o FROM Request r, ReturnOrder o WHERE r.requestId = o.returnOrderData.requestId ");
+		queryString.append("SELECT r, o, h, i FROM Request r, ReturnOrder o WHERE r.requestId = o.returnOrderData.requestId ");
 		
 		if (requestDto.getRequestId() != null && !(requestDto.getRequestId().equals(""))) {
 			queryString.append(" AND r.requestId=:requestId");

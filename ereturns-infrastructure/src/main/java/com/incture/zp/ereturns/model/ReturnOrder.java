@@ -18,7 +18,7 @@ public class ReturnOrder {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long returnOrderId;
 	
-	@Column(name = "RETURN_QTY", length = 10)
+	@Column(name = "RETURN_QTY", length = 50)
 	private String returnQty;
 
 	@Column(name = "REASON", length = 255)
@@ -27,14 +27,17 @@ public class ReturnOrder {
 	@Column(name = "REMARK", length = 255)
 	private String remark;
 	
-	@Column(name = "RETURN_PRICE", length = 10)
+	@Column(name = "RETURN_PRICE", length = 50)
 	private String returnPrice;
 	
-	@Column(name = "RETURN_VALUE", length = 10)
+	@Column(name = "RETURN_VALUE", length = 50)
 	private String returnValue;
 
 	@Column(name = "ITEM_CODE")
 	private String itemCode; 
+	
+	@Column(name = "PAYMENT_TYPE")
+	private String paymentType;
 
 	@ManyToOne
 	@JoinColumn(name = "REQUEST_ID", nullable = false, updatable = false)
@@ -102,6 +105,14 @@ public class ReturnOrder {
 
 	public void setReturnOrderData(Request returnOrderData) {
 		this.returnOrderData = returnOrderData;
+	}
+
+	public String getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(String paymentType) {
+		this.paymentType = paymentType;
 	}
 
 }

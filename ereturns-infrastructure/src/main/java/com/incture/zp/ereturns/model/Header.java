@@ -7,6 +7,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -19,12 +21,13 @@ public class Header {
 	
 	@Id
 	@Column(name = "HEADER_ID", nullable = false)
-	private String headerId;
+	@GeneratedValue(strategy= GenerationType.AUTO)
+	private Long headerId;
 
 	@Column(name = "INVOICE_NO", length = 50)
 	private String invoiceNo;
 
-	@Column(name = "INVOICE_SEQ", length = 3)
+	@Column(name = "INVOICE_SEQ", length = 50)
 	private String invoiceSeq;
 	
 	@Temporal(TemporalType.TIMESTAMP)
@@ -35,37 +38,37 @@ public class Header {
 	@Column(name = "EXPIRY_DATE")
 	private Date expiryDate;
 	
-	@Column(name = "DOCUMENT_TYPE", length = 10)
+	@Column(name = "DOCUMENT_TYPE", length = 50)
 	private String documentType;
 	
-	@Column(name = "SALES_ORDER", length = 10)
+	@Column(name = "SALES_ORDER", length = 50)
 	private String salesOrder;
 
-	@Column(name = "SALES_ORG", length = 10)
+	@Column(name = "SALES_ORG", length = 50)
 	private String salesOrg;
 
-	@Column(name = "DELIVERY_NO", length = 10)
+	@Column(name = "DELIVERY_NO", length = 50)
 	private String deliveryNo;
 
-	@Column(name = "DISTR_CHAN", length = 10)
+	@Column(name = "DISTR_CHAN", length = 50)
 	private String distrChan;
 
-	@Column(name = "DIVISION", length = 10)
+	@Column(name = "DIVISION", length = 50)
 	private String division;
 
-	@Column(name = "CURRENCY", length = 10)
+	@Column(name = "CURRENCY", length = 50)
 	private String currency;
 
-	@Column(name = "REF_DOC_CAT", length = 10)
+	@Column(name = "REF_DOC_CAT", length = 50)
 	private String refDocCat;
 
-	@Column(name = "PURCH_NO_C", length = 10)
+	@Column(name = "PURCH_NO_C", length = 50)
 	private String purchNoCust;
 
-	@Column(name = "AVAILABLE_QTY", length = 5)
+	@Column(name = "AVAILABLE_QTY", length = 50)
 	private String availableQty;
 
-	@Column(name = "NET_VALUE", length = 5)
+	@Column(name = "NET_VALUE", length = 50)
 	private String netValue; // sum of all item level net value to be calculated
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "itemData")
@@ -199,11 +202,11 @@ public class Header {
 		this.purchNoCust = purchNoCust;
 	}
 
-	public String getHeaderId() {
+	public Long getHeaderId() {
 		return headerId;
 	}
 
-	public void setHeaderId(String headerId) {
+	public void setHeaderId(Long headerId) {
 		this.headerId = headerId;
 	}
 

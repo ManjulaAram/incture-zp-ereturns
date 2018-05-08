@@ -4,7 +4,7 @@ import java.util.Set;
 
 public class HeaderDto {
 
-	private String headerId;
+	private Long headerId;
 	
 	private String invoiceNo;
 	
@@ -167,11 +167,11 @@ public class HeaderDto {
 		this.purchNoCust = purchNoCust;
 	}
 
-	public String getHeaderId() {
+	public Long getHeaderId() {
 		return headerId;
 	}
 
-	public void setHeaderId(String headerId) {
+	public void setHeaderId(Long headerId) {
 		this.headerId = headerId;
 	}
 

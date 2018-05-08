@@ -3,6 +3,8 @@ package com.incture.zp.ereturns.servicesimpl;
 import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +16,6 @@ import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.StatusRequestDto;
 import com.incture.zp.ereturns.dto.StatusResponseDto;
 import com.incture.zp.ereturns.model.Attachment;
-import com.incture.zp.ereturns.model.Header;
 import com.incture.zp.ereturns.repositories.AttachmentRepository;
 import com.incture.zp.ereturns.repositories.HeaderRepository;
 import com.incture.zp.ereturns.repositories.RequestRepository;
@@ -41,12 +42,15 @@ public class RequestServiceImpl implements RequestService {
 	@Autowired
 	ImportExportUtil importExportUtil;
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ImportExportUtil.class);
+	
 	@Override
 	public ResponseDto addRequest(RequestDto requestDto) {
 		ResponseDto responseDto = new ResponseDto();
 		boolean processStartFlag = false;
 		
 		try {
+			
 			responseDto = requestRepository.addRequest(importExportUtil.importRequestDto(requestDto));
 			String requestId = null;
 			if(responseDto != null) {
@@ -60,15 +64,13 @@ public class RequestServiceImpl implements RequestService {
 				byte[] decodedString = Base64.decodeBase64(attachmentDto.getContent());
 				String attachmentName = ecmDocumentService.uploadAttachment(decodedString, attachmentDto.getAttachmentName(), 
 						attachmentDto.getAttachmentType());
+				LOGGER.error("Attachment URL:"+attachmentName);
 				attachmentDto.setAttachmentName(attachmentName);
 				attachmentDto.setRequestId(requestId);
 				Attachment attachment = importExportUtil.importAttachmentDto(attachmentDto);
 				attachmentRepository.addAttachment(attachment);
 			}
 
-			
-			Header header = importExportUtil.importHeaderDto(requestDto.getHeaderDto());
-			headerRepository.addHeader(header);
 			
 			if(responseDto != null) {
 				if(responseDto.getCode().equals("00")) {

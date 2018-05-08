@@ -27,13 +27,11 @@ public class RequestDto {
 	
 	private HeaderDto headerDto;
 	
-	private String customerCode;
-	
 	private Set<ReturnOrderDto> setReturnOrderDto;
 	
 	private Set<AttachmentDto> setAttachments;
 	
-	private String soldTo;
+	private String soldTo; //customer code
 	
 	private String shipTo;
 	
@@ -131,14 +129,6 @@ public class RequestDto {
 
 	public void setShipTo(String shipTo) {
 		this.shipTo = shipTo;
-	}
-
-	public String getCustomerCode() {
-		return customerCode;
-	}
-
-	public void setCustomerCode(String customerCode) {
-		this.customerCode = customerCode;
 	}
 
 	public Set<AttachmentDto> getSetAttachments() {

@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -48,17 +49,14 @@ public class Request {
 	@Column(name = "REQ_PENDING_WITH", length = 100)
 	private String requestPendingWith;
 	
-	@Column(name = "SOLD_TO", length = 100)
+	@Column(name = "SOLD_TO", length = 100) // customer code
 	private String soldTo;
 
 	@Column(name = "SHIP_TO", length = 100)
 	private String shipTo;
 	
-	@Column(name = "INVOICE_NO")
-	private String invoiceNo;  
-	
-	@Column(name = "USER_CODE")
-	private String userCode; 
+	@OneToOne(cascade = CascadeType.ALL)
+	private Header requestHeader; 
 	
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "returnOrderData")
 	private Set<ReturnOrder> setReturnOrder;
@@ -157,6 +155,14 @@ public class Request {
 
 	public void setShipTo(String shipTo) {
 		this.shipTo = shipTo;
+	}
+
+	public Header getRequestHeader() {
+		return requestHeader;
+	}
+
+	public void setRequestHeader(Header requestHeader) {
+		this.requestHeader = requestHeader;
 	}
 
 }

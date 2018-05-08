@@ -1,6 +1,8 @@
 package com.incture.zp.ereturns.dto;
 
 public class ItemDto {
+	
+	private Long itemId;
 
 	private String itemCode;
 	
@@ -33,6 +35,8 @@ public class ItemDto {
 	private String pricipal;
 	
 	private String pricipalCode;
+	
+	private String materialGroup;
 
 
 	public String getItemCode() {
@@ -161,6 +165,22 @@ public class ItemDto {
 
 	public void setPricipalCode(String pricipalCode) {
 		this.pricipalCode = pricipalCode;
+	}
+
+	public Long getItemId() {
+		return itemId;
+	}
+
+	public void setItemId(Long itemId) {
+		this.itemId = itemId;
+	}
+
+	public String getMaterialGroup() {
+		return materialGroup;
+	}
+
+	public void setMaterialGroup(String materialGroup) {
+		this.materialGroup = materialGroup;
 	}
 	
 }

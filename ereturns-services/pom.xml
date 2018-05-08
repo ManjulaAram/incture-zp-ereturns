@@ -4,9 +4,13 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.incture.zp</groupId>
+	<parent>
+		<groupId>com.incture.zp</groupId>
+		<artifactId>ereturns</artifactId>
+		<version>1</version>
+	</parent>
+
 	<artifactId>ereturns-services</artifactId>
-	<version>1</version>
 	<packaging>war</packaging>
 	<name>ereturns-services Maven Webapp</name>
 	<url>http://maven.apache.org</url>

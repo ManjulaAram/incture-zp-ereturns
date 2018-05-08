@@ -20,6 +20,8 @@ public class ReturnOrderDto implements Serializable {
 
 	private String itemCode; 
 	
+	private String paymentType;
+	
 	public Long getReturnOrderId() {
 		return returnOrderId;
 	}
@@ -74,6 +76,14 @@ public class ReturnOrderDto implements Serializable {
 
 	public void setItemCode(String itemCode) {
 		this.itemCode = itemCode;
+	}
+
+	public String getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(String paymentType) {
+		this.paymentType = paymentType;
 	}
 
 }

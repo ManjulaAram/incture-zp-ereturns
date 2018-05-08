@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.incture.zp.ereturns.dto.HeaderDto;
-import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.model.Header;
 import com.incture.zp.ereturns.repositories.HeaderRepository;
 import com.incture.zp.ereturns.services.HeaderService;
@@ -22,25 +21,9 @@ public class HeaderServiceImpl implements HeaderService {
 	ImportExportUtil importExportUtil;
 	
 	@Override
-	public HeaderDto getHeaderById(String id) {
+	public HeaderDto getHeaderById(Long id) {
 		Header header = headerRepository.getHeaderById(id);
 		
 		return importExportUtil.exportHeaderDto(header);
 	}
-
-	@Override
-	public ResponseDto addHeader(Header header) {
-		return null;
-	}
-
-	@Override
-	public ResponseDto updateHeader(Header header) {
-		return null;
-	}
-
-	@Override
-	public ResponseDto deleteHeader(String id) {
-		return null;
-	}
-
 }
