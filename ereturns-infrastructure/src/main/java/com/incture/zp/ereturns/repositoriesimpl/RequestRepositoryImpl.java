@@ -57,7 +57,8 @@ public class RequestRepositoryImpl implements RequestRepository {
 		
 		String constraint = "";
 		StringBuilder queryString = new StringBuilder();
-		queryString.append("SELECT r, o, h, i FROM Request r, ReturnOrder o WHERE r.requestId = o.returnOrderData.requestId ");
+		queryString.append("SELECT r, o, h, i FROM Request r, ReturnOrder o, Header h, Item i WHERE r.requestId = o.returnOrderData.requestId "
+				+ "AND r.requestHeader.headerId = h.headerId AND h.headerId = i.itemData.headerId");
 		
 		if (requestDto.getRequestId() != null && !(requestDto.getRequestId().equals(""))) {
 			queryString.append(" AND r.requestId=:requestId");
@@ -69,7 +70,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 		}
 		
 		if (requestDto.getCustomerCode() != null && !(requestDto.getCustomerCode().equals(""))) {
-			queryString.append(" AND o.userCode=:userCode");
+			queryString.append(" AND o.soldTo=:soldTo");
 		}
 		
 		if((requestDto.getStartDate() != null && !(requestDto.getStartDate().equals(""))) && 
@@ -91,7 +92,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 		}
 		
 		if (requestDto.getCustomerCode() != null && !(requestDto.getCustomerCode().equals(""))) {
-			query.setParameter("userCode", requestDto.getCustomerCode());
+			query.setParameter("soldTo", requestDto.getCustomerCode());
 		}
 		
 		if (requestDto.getPendingWith() != null && !(requestDto.getPendingWith().equals(""))) {

@@ -106,6 +106,7 @@ public class ImportExportUtil {
 		header.setPurchNoCust(headerDto.getPurchNoCust());
 		header.setRefDocCat(headerDto.getRefDocCat());
 		header.setSalesOrg(headerDto.getSalesOrg());
+		header.setHeaderId(headerDto.getHeaderId());
 		
 		return header;
 	}
@@ -140,6 +141,7 @@ public class ImportExportUtil {
 		headerDto.setRefDocCat(header.getRefDocCat());
 		headerDto.setPurchNoCust(header.getPurchNoCust());
 		headerDto.setSalesOrg(header.getSalesOrg());
+		headerDto.setHeaderId(header.getHeaderId());
 		
 		return headerDto;
 	}
@@ -204,7 +206,11 @@ public class ImportExportUtil {
 		itemDto.setPlant(item.getPlant());
 		itemDto.setSalesOrderItem(item.getSalesOrderItem());
 		itemDto.setStoreLoc(item.getStoreLoc());
-
+		itemDto.setItemId(item.getItemId());
+		itemDto.setMaterialGroup(item.getMaterialGroup());
+		itemDto.setPricipal(item.getPricipal());
+		itemDto.setPricipalCode(item.getPricipalCode());
+		
 		return itemDto;
 	}
 

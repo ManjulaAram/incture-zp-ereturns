@@ -15,7 +15,7 @@ public class StatusResponseDto implements Serializable {
 	private String status;
 	
 	private List<RequestDto> requestDto;
-
+	
 	public List<RequestDto> getRequestDto() {
 		return requestDto;
 	}

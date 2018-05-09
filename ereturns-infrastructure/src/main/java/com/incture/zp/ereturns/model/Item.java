@@ -76,7 +76,7 @@ public class Item {
 	private String pricipalCode;
 
 	@ManyToOne
-	@JoinColumn(name = "INVOICE_NO", nullable = false, updatable = false)
+	@JoinColumn(name = "HEADER_ID", nullable = false, updatable = false)
 	private Header itemData;
 
 	public String getItemCode() {

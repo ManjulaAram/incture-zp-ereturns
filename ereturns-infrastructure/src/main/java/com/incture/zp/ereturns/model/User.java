@@ -31,10 +31,10 @@ public class User {
 	@Column(name = "SCI_ID", length = 50)
 	private String sciId;
 	
-	@Column(name = "MOBILE_TOKEN", length = 50)
+	@Column(name = "MOBILE_TOKEN", length = 255)
 	private String mobileToken;
 	
-	@Column(name = "WEB_TOKEN", length = 50)
+	@Column(name = "WEB_TOKEN", length = 255)
 	private String webToken;
 	
 	@ManyToMany

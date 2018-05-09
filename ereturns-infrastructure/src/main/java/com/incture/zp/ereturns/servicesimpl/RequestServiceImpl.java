@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.incture.zp.ereturns.dto.AttachmentDto;
-import com.incture.zp.ereturns.dto.HeaderDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.StatusRequestDto;
@@ -96,14 +95,14 @@ public class RequestServiceImpl implements RequestService {
 		
 		Set<AttachmentDto> setAttachmentDto = attachmentRepository.getAttachmentsById(id);
 		requestDto.setSetAttachments(setAttachmentDto);
-		HeaderDto headerDto = importExportUtil.exportHeaderDto(headerRepository.getHeaderById(requestDto.getHeaderDto().getHeaderId()));
-		requestDto.setHeaderDto(headerDto);
 		return requestDto;
 	}
 
 	@Override
 	public StatusResponseDto getStatusDetails(StatusRequestDto requestDto) {
 		StatusResponseDto rList = requestRepository.getStatusDetails(requestDto);
+		
+		
 		return rList;
 	}
 

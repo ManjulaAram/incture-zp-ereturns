@@ -20,7 +20,7 @@ import javax.persistence.TemporalType;
 public class Header {
 	
 	@Id
-	@Column(name = "HEADER_ID", nullable = false)
+	@Column(name = "HEADER_ID")
 	@GeneratedValue(strategy= GenerationType.AUTO)
 	private Long headerId;
 
