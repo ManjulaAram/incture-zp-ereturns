@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.UserDto;
 import com.incture.zp.ereturns.model.Role;
 import com.incture.zp.ereturns.services.UserService;
@@ -41,4 +43,11 @@ public class EReturnsUserController {
 		return userService.getUserById(userId);
 		
 	}
+	
+	@RequestMapping(path="/addUser",consumes="application/json",method=RequestMethod.POST)
+	public ResponseDto addUser(@RequestBody UserDto userDto)
+	{
+		return userService.addUser(userDto);
+	}
+	
 }
