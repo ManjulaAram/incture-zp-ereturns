@@ -14,10 +14,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
+import org.springframework.stereotype.Service;
 
 import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.services.WorkflowTriggerService;
 
+@Service
 public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
 	@Override
@@ -48,8 +50,10 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 				str.addAll(map.get(EReturnConstants.X_CSRF_TOKEN));
 			}
 
-			csrfToken = str.get(0);
-			cookies = urlConnection.getHeaderFields().get("Set-Cookie");
+			if(str.size() > 0) {
+				csrfToken = str.get(0);
+			}
+			cookies = urlConnection.getHeaderFields().get(EReturnConstants.SET_COOKIE);
 
 			HttpURLConnection postUrlConnection = (HttpURLConnection) postUrl.openConnection();
 

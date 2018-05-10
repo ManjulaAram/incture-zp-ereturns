@@ -1,8 +1,11 @@
 package com.incture.zp.ereturns.servicesimpl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import com.incture.zp.ereturns.repositories.HeaderRepository;
 import com.incture.zp.ereturns.repositories.RequestRepository;
 import com.incture.zp.ereturns.services.EcmDocumentService;
 import com.incture.zp.ereturns.services.RequestService;
+import com.incture.zp.ereturns.services.WorkflowTriggerService;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
 
 @Service
@@ -41,17 +45,20 @@ public class RequestServiceImpl implements RequestService {
 	@Autowired
 	ImportExportUtil importExportUtil;
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(ImportExportUtil.class);
+	@Autowired
+	WorkflowTriggerService workflowTriggerService;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(RequestServiceImpl.class);
 	
 	@Override
 	public ResponseDto addRequest(RequestDto requestDto) {
 		ResponseDto responseDto = new ResponseDto();
 		boolean processStartFlag = false;
 		
+		String requestId = null;
 		try {
 			
 			responseDto = requestRepository.addRequest(importExportUtil.importRequestDto(requestDto));
-			String requestId = null;
 			if(responseDto != null) {
 				if(responseDto.getMessage() != null) {
 					requestId = responseDto.getMessage().substring(8, 19);
@@ -83,7 +90,18 @@ public class RequestServiceImpl implements RequestService {
 		}
 		
 		if(processStartFlag) {
+			
 			// start process
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put("requestId", requestId);
+			
+			JSONObject obj = new JSONObject(); 
+			obj.put("context", jsonObj);
+			obj.put("definitionId", "zp_return_test");
+			
+			String payload = obj.toString(); 
+			String output = workflowTriggerService.triggerWorkflow(payload);
+			LOGGER.error("Process triggered successfully :"+output);
 		}
 		return responseDto;
 	}
@@ -92,7 +110,7 @@ public class RequestServiceImpl implements RequestService {
 	public RequestDto getRequestById(String id) {
 		RequestDto requestDto = importExportUtil.exportRequestDto(requestRepository.getRequestById(id));
 		
-		
+		LOGGER.error("Request Id is: "+id);
 		Set<AttachmentDto> setAttachmentDto = attachmentRepository.getAttachmentsById(id);
 		requestDto.setSetAttachments(setAttachmentDto);
 		return requestDto;
@@ -101,8 +119,16 @@ public class RequestServiceImpl implements RequestService {
 	@Override
 	public StatusResponseDto getStatusDetails(StatusRequestDto requestDto) {
 		StatusResponseDto rList = requestRepository.getStatusDetails(requestDto);
-		
-		
+		List<RequestDto> list = rList.getRequestDto();
+		List<RequestDto> modifiedList = new ArrayList<>();
+		for(RequestDto requestDto2 : list) {
+			LOGGER.error("Adding attachment: "+requestDto2.getRequestId());
+			Set<AttachmentDto> setAttachmentDto = attachmentRepository.getAttachmentsById(requestDto2.getRequestId());
+			requestDto2.setSetAttachments(setAttachmentDto);
+			modifiedList.add(requestDto2);
+		}
+		rList.setRequestDto(modifiedList);
+		LOGGER.error("After Adding attachment: "+rList.getMessage());
 		return rList;
 	}
 

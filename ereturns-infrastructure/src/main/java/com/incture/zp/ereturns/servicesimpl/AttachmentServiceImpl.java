@@ -1,5 +1,7 @@
 package com.incture.zp.ereturns.servicesimpl;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +45,11 @@ public class AttachmentServiceImpl implements AttachmentService {
 	@Override
 	public ResponseDto deleteAttachmentByAttachmentId(String id) {
 		return attachmentRepository.deleteAttachmentByAttachmentId(id);
+	}
+
+	@Override
+	public Set<AttachmentDto> getAttachmentURLsByIds(String requestId, String itemId) {
+		return attachmentRepository.getAttachmentURLsByIds(requestId, itemId);
 	}
 
 }

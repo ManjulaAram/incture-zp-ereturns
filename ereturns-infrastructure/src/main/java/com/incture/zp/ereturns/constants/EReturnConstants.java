@@ -2,7 +2,7 @@ package com.incture.zp.ereturns.constants;
 
 public interface EReturnConstants {
 
-	public static final String BASIC = "Basic";
+	public static final String BASIC = "Basic ";
 
 	public static final String AUTH = "Authorization";
 	public static final String POST = "POST";
@@ -37,6 +37,9 @@ public interface EReturnConstants {
 	public static final String ACCEPT_ENCODING_TYPE="gzip, deflate";
 	public static final String X_REQUEST_WITH_TYPE="XMLHttpRequest";
 	public static final String COOKIE="Cookie";
-	public static final String FETCH="fetch";
+	public static final String FETCH="Fetch";
+	public static final String SET_COOKIE = "Set-Cookie";
+	
+	public static final String HCI_ECC_ENDPOINT = "https://l6088-iflmap.hcisbp.ap1.hana.ondemand.com/http/ro";
 	
 }

@@ -6,6 +6,8 @@ import java.util.Set;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -27,6 +29,8 @@ public class AttachmentRepositoryImpl implements AttachmentRepository {
 	
 	@Autowired
 	GetReferenceData getReferenceData;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(AttachmentRepositoryImpl.class);
 
 	@Override
 	public Attachment getAttachmentByAttachmentId(String id) {
@@ -97,10 +101,27 @@ public class AttachmentRepositoryImpl implements AttachmentRepository {
 		Set<AttachmentDto> attachmentDtos = new HashSet<>();
 		StringBuilder queryString = new StringBuilder();
 		if(id.contains("R")) {
-			queryString.append("SELECT a FROM Attachment a WHERE a.requestId = "+id);
+			queryString.append("SELECT a FROM Attachment a WHERE a.requestId =:id");
 		} else {
-			queryString.append("SELECT a FROM Attachment a WHERE a.itemCode = "+id);
+			queryString.append("SELECT a FROM Attachment a WHERE a.itemCode =:id");
 		}
+		LOGGER.error("Query for attachment: "+queryString.toString());
+		Query query = sessionFactory.getCurrentSession().createQuery(queryString.toString());
+		query.setParameter("id", id);
+		@SuppressWarnings("unchecked")
+		List<Attachment> attachmentList = query.list();
+		for(Attachment attachment : attachmentList) {
+			AttachmentDto attachmentDto = importExportUtil.exportAttachmentDto(attachment);
+			attachmentDtos.add(attachmentDto);
+		}
+		return attachmentDtos;
+	}
+
+	@Override
+	public Set<AttachmentDto> getAttachmentURLsByIds(String requestId, String itemId) {
+		Set<AttachmentDto> attachmentDtos = new HashSet<>();
+		StringBuilder queryString = new StringBuilder();
+		queryString.append("SELECT a FROM Attachment a WHERE a.itemCode = "+itemId+" AND a.requestId = "+requestId);
 
 		Query query = sessionFactory.getCurrentSession().createQuery(queryString.toString());
 		@SuppressWarnings("unchecked")

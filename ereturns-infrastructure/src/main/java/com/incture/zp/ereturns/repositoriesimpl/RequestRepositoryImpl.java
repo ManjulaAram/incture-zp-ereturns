@@ -82,6 +82,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 			queryString.append(" AND r.requestPendingWith=:requestPendingWith");
 		}
 		
+		LOGGER.error("Query for Status details:"+queryString.toString());
 		Query query = sessionFactory.getCurrentSession().createQuery(queryString.toString());
 		if (requestDto.getRequestId() != null && !(requestDto.getRequestId().equals(""))) {
 			query.setParameter("requestId", requestDto.getRequestId());
@@ -114,6 +115,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 		Set<ReturnOrder> setReturnOrder = new HashSet<>();
 		@SuppressWarnings("unchecked")
 		List<Object[]> objectsList = query.list();
+		LOGGER.error("Results for Request:"+objectsList.size());
 		for (Object[] objects : objectsList) {
 			request = (Request) objects[0];
 			returnOrder = (ReturnOrder) objects[1];
@@ -140,6 +142,8 @@ public class RequestRepositoryImpl implements RequestRepository {
 			}
 		}
 		statusResponseDto.setRequestDto(reqList);
+		statusResponseDto.setMessage("Successfully Retrieved.");
+		statusResponseDto.setStatus("SUCCESS");
 		return statusResponseDto;
 	}
 

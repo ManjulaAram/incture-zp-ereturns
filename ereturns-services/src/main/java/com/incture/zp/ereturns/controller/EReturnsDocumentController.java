@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.incture.zp.ereturns.services.AttachmentService;
 import com.incture.zp.ereturns.services.EcmDocumentService;
 
 @RestController
@@ -26,6 +27,9 @@ public class EReturnsDocumentController {
 
 	@Autowired
 	EcmDocumentService ecmDocumentService;
+	
+	@Autowired
+	AttachmentService attachmentService;
 	
 	@RequestMapping(path = "/download/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Resource> download(@PathVariable String id) throws IOException {
@@ -41,5 +45,13 @@ public class EReturnsDocumentController {
 	    		.contentType(MediaType.parseMediaType(document.getContentStream().getMimeType()))
 	            .body(resource);
 	}
+	
+	@RequestMapping(path = "/downloadLink/{id}", method = RequestMethod.GET)
+	public String downloadLink(@PathVariable String id) throws IOException {
+		Document document = ecmDocumentService.getAttachmentById(id);
+		String link = document.getContentUrl();
+		return link;
+	}
+
 
 }

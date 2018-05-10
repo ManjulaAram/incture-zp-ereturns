@@ -63,4 +63,10 @@ public class EReturnsRequestController {
 	public ResponseDto deleteReturnOrderByInvoiceNo(@PathVariable(value = "invoiceNo") String invoiceNo) {
 		return returnOrderService.deleteReturnOrderByInvoiceNo(invoiceNo);
 	}
+	
+	@RequestMapping(value = "/getRequestById/{requestId}", method = RequestMethod.GET)
+	@ResponseBody
+	public RequestDto getRequestById(@PathVariable(value = "requestId") String requestId) {
+		return requestService.getRequestById(requestId);
+	}
 }

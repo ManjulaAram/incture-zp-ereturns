@@ -20,4 +20,6 @@ public interface AttachmentRepository {
 	
 	public Set<AttachmentDto> getAttachmentsById(String id);
 	
+	public Set<AttachmentDto> getAttachmentURLsByIds(String requestId, String itemId);
+	
 }
