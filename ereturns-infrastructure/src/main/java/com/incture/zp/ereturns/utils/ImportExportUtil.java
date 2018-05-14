@@ -357,7 +357,7 @@ public class ImportExportUtil {
 		return attachmentDto;
 	}
 
-	public ReturnReasonDto exportDto(ReturnReason returnReason) {
+	public ReturnReasonDto exportReasonCodeDto(ReturnReason returnReason) {
 		ReturnReasonDto returnReasonDto = new ReturnReasonDto();
 		returnReasonDto.setBusinessUnit(returnReason.getBusinessUnit());
 		returnReasonDto.setReasonCode(returnReason.getReasonCode());
@@ -368,7 +368,7 @@ public class ImportExportUtil {
 
 	}
 
-	public ReturnReason importDto(ReturnReasonDto returnReasonDto) {
+	public ReturnReason importReasonCodeDto(ReturnReasonDto returnReasonDto) {
 		ReturnReason returnReason = new ReturnReason();
 		returnReason.setBusinessUnit(returnReasonDto.getBusinessUnit());
 		returnReason.setReasonCode(returnReasonDto.getReasonCode());

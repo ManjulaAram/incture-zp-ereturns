@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.services.EcmDocumentService;
-import com.incture.zp.ereturns.utils.ImportExportUtil;
 import com.incture.zp.ereturns.utils.ServiceUtil;
 import com.sap.ecm.api.EcmService;
 import com.sap.ecm.api.RepositoryOptions;
@@ -37,7 +36,7 @@ public class EcmDocumentServiceImpl implements EcmDocumentService {
 
 	private Session openCmisSession = null;
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(ImportExportUtil.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(EcmDocumentServiceImpl.class);
 
 	@Override
 	public Document getAttachmentById(String id) {

@@ -35,7 +35,7 @@ public class ReturnReasonRepositoryImpl implements ReturnReasonRepository {
 		reasonList = query.list();
 
 		for (ReturnReason retRes : reasonList) {
-			reasonDtoList.add(importExportUtil.exportDto(retRes));
+			reasonDtoList.add(importExportUtil.exportReasonCodeDto(retRes));
 		}
 
 		return reasonDtoList;

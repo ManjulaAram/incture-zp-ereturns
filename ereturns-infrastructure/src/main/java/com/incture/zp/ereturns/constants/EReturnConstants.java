@@ -40,6 +40,4 @@ public interface EReturnConstants {
 	public static final String FETCH="Fetch";
 	public static final String SET_COOKIE = "Set-Cookie";
 	
-	public static final String HCI_ECC_ENDPOINT = "https://l6088-iflmap.hcisbp.ap1.hana.ondemand.com/http/ro";
-	
 }

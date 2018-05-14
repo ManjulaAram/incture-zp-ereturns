@@ -1,6 +1,9 @@
 package com.incture.zp.ereturns.services;
 
+import com.incture.zp.ereturns.dto.RequestDto;
+import com.incture.zp.ereturns.dto.ResponseDto;
+
 public interface HciMappingEccService {
 
-	public void pushDataToEcc();
+	public ResponseDto pushDataToEcc(RequestDto requestDto);
 }
