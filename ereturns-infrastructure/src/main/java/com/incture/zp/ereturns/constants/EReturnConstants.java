@@ -40,4 +40,9 @@ public interface EReturnConstants {
 	public static final String FETCH="Fetch";
 	public static final String SET_COOKIE = "Set-Cookie";
 	
+	public static final String APPROVAL_XCSRF_TOKEN="https://bpmworkflowruntimecbbe88bff-ce7231891.ap1.hana.ondemand.com/workflow-service/rest/v1/xsrf-token";
+	public static final String APPROVAL_URL="https://bpmworkflowruntimecbbe88bff-ce7231891.ap1.hana.ondemand.com/workflow-service/rest/v1/task-instances/";
+	public static final String GET_WORK_FLOW_INSTANCE="https://bpmworkflowruntimecbbe88bff-ce7231891.ap1.hana.ondemand.com/workflow-service/rest/v1/task-instances?workflowInstanceId=";
+	public static final String PATCH="PATCH";
+	
 }

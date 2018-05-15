@@ -19,7 +19,7 @@ public interface EReturnsHciConstants {
 	public static final String PURCHASE_CUSTOMER_NO = "purch_no_c";
 	public static final String REF_DOC_CAT = "ref_doc_cat";
 	public static final String CURRENCY = "currency";
-	public static final String SALES_ORG = "salesOrg";
+	public static final String SALES_ORG = "sales_org";
 	public static final String DISTRIBUTION_CHANNEL = "distr_chan";
 	public static final String DIVISION = "division";
 	

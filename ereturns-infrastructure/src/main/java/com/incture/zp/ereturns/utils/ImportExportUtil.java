@@ -14,19 +14,21 @@ import org.springframework.stereotype.Component;
 import com.incture.zp.ereturns.dto.AttachmentDto;
 import com.incture.zp.ereturns.dto.HeaderDto;
 import com.incture.zp.ereturns.dto.ItemDto;
-import com.incture.zp.ereturns.dto.ReturnReasonDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
+import com.incture.zp.ereturns.dto.ReturnReasonDto;
 import com.incture.zp.ereturns.dto.RoleDto;
 import com.incture.zp.ereturns.dto.UserDto;
+import com.incture.zp.ereturns.dto.WorkFlowDto;
 import com.incture.zp.ereturns.model.Attachment;
 import com.incture.zp.ereturns.model.Header;
 import com.incture.zp.ereturns.model.Item;
-import com.incture.zp.ereturns.model.ReturnReason;
 import com.incture.zp.ereturns.model.Request;
 import com.incture.zp.ereturns.model.ReturnOrder;
+import com.incture.zp.ereturns.model.ReturnReason;
 import com.incture.zp.ereturns.model.Role;
 import com.incture.zp.ereturns.model.User;
+import com.incture.zp.ereturns.model.WorkFlow;
 
 @Component
 public class ImportExportUtil {
@@ -376,6 +378,30 @@ public class ImportExportUtil {
 		returnReason.setReasonName(returnReasonDto.getReasonName());
 
 		return returnReason;
+	}
+	
+	public WorkFlowDto exportWorkFlowDto(WorkFlow workFlowInstance) {
+		WorkFlowDto workFlowDto = new WorkFlowDto();
+		workFlowDto.setRequestId(workFlowInstance.getRequestId());
+		workFlowDto.setWorkFlowInstanceId(workFlowInstance.getWorkFlowInstanceId());
+		workFlowDto.setMaterialCode(workFlowInstance.getMaterialCode());
+		workFlowDto.setPrincipal(workFlowInstance.getPrincipal());
+		workFlowDto.setTaskInstanceId(workFlowInstance.getTaskInstanceId());
+
+		return workFlowDto;
+
+	}
+
+	public WorkFlow importWorkFlowDto(WorkFlowDto workFlowDto) {
+		WorkFlow workFlow = new WorkFlow();
+		workFlow.setRequestId(workFlowDto.getRequestId());
+		workFlow.setWorkFlowInstanceId(workFlowDto.getWorkFlowInstanceId());
+		workFlow.setMaterialCode(workFlowDto.getMaterialCode());
+		workFlow.setPrincipal(workFlowDto.getPrincipal());
+		workFlow.setTaskInstanceId(workFlowDto.getTaskInstanceId()); 
+
+		return workFlow;
+
 	}
 
 	private String convertDateToString(Date input) {

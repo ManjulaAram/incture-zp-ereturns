@@ -17,12 +17,14 @@ import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.StatusRequestDto;
 import com.incture.zp.ereturns.dto.StatusResponseDto;
+import com.incture.zp.ereturns.dto.WorkFlowDto;
 import com.incture.zp.ereturns.model.Attachment;
 import com.incture.zp.ereturns.repositories.AttachmentRepository;
 import com.incture.zp.ereturns.repositories.HeaderRepository;
 import com.incture.zp.ereturns.repositories.RequestRepository;
 import com.incture.zp.ereturns.services.EcmDocumentService;
 import com.incture.zp.ereturns.services.RequestService;
+import com.incture.zp.ereturns.services.WorkFlowService;
 import com.incture.zp.ereturns.services.WorkflowTriggerService;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
 
@@ -47,6 +49,9 @@ public class RequestServiceImpl implements RequestService {
 	
 	@Autowired
 	WorkflowTriggerService workflowTriggerService;
+	
+	@Autowired
+	WorkFlowService workFlowService;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequestServiceImpl.class);
 	
@@ -91,6 +96,9 @@ public class RequestServiceImpl implements RequestService {
 		
 		if(processStartFlag) {
 			
+			String workFlowInstanceId="";
+			WorkFlowDto workFlowDto=new WorkFlowDto();
+			
 			// start process
 			JSONObject jsonObj = new JSONObject();
 			jsonObj.put("requestId", requestId);
@@ -101,6 +109,13 @@ public class RequestServiceImpl implements RequestService {
 			
 			String payload = obj.toString(); 
 			String output = workflowTriggerService.triggerWorkflow(payload);
+			JSONObject resultJsonObject = new JSONObject(output);
+			workFlowInstanceId=resultJsonObject.getString("id");
+			
+			workFlowDto.setRequestId(requestId);
+			workFlowDto.setWorkFlowInstanceId(workFlowInstanceId);
+			workFlowService.addWorkflowInstance(workFlowDto);
+			
 			LOGGER.error("Process triggered successfully :"+output);
 		}
 		return responseDto;

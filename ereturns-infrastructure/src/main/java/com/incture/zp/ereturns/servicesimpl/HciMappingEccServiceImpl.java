@@ -3,6 +3,8 @@ package com.incture.zp.ereturns.servicesimpl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,6 +21,7 @@ import com.incture.zp.ereturns.services.HciMappingEccService;
 import com.incture.zp.ereturns.utils.RestInvoker;
 
 @Service
+@Transactional
 public class HciMappingEccServiceImpl implements HciMappingEccService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(HciMappingEccServiceImpl.class);
