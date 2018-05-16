@@ -387,6 +387,7 @@ public class ImportExportUtil {
 		workFlowDto.setMaterialCode(workFlowInstance.getMaterialCode());
 		workFlowDto.setPrincipal(workFlowInstance.getPrincipal());
 		workFlowDto.setTaskInstanceId(workFlowInstance.getTaskInstanceId());
+		workFlowDto.setWorkflowId(workFlowInstance.getWorkflowId());
 
 		return workFlowDto;
 
@@ -398,7 +399,8 @@ public class ImportExportUtil {
 		workFlow.setWorkFlowInstanceId(workFlowDto.getWorkFlowInstanceId());
 		workFlow.setMaterialCode(workFlowDto.getMaterialCode());
 		workFlow.setPrincipal(workFlowDto.getPrincipal());
-		workFlow.setTaskInstanceId(workFlowDto.getTaskInstanceId()); 
+		workFlow.setTaskInstanceId(workFlowDto.getTaskInstanceId());
+		workFlow.setWorkflowId(workFlowDto.getWorkflowId());
 
 		return workFlow;
 

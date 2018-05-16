@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.incture.zp.ereturns.dto.AttachmentDto;
+import com.incture.zp.ereturns.dto.ItemDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.StatusRequestDto;
@@ -114,8 +115,13 @@ public class RequestServiceImpl implements RequestService {
 			
 			workFlowDto.setRequestId(requestId);
 			workFlowDto.setWorkFlowInstanceId(workFlowInstanceId);
-			workFlowService.addWorkflowInstance(workFlowDto);
 			
+			for(ItemDto itemDto : requestDto.getHeaderDto().getItemSet()) { 
+				workFlowDto.setMaterialCode(itemDto.getMaterial());
+				workFlowDto.setPrincipal(itemDto.getPricipal());
+				}
+			workFlowDto.setTaskInstanceId("");
+			workFlowService.addWorkflowInstance(workFlowDto);
 			LOGGER.error("Process triggered successfully :"+output);
 		}
 		return responseDto;

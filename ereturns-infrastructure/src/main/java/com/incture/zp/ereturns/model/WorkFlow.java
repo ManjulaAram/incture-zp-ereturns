@@ -2,6 +2,8 @@ package com.incture.zp.ereturns.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -10,7 +12,10 @@ import javax.persistence.Table;
 public class WorkFlow {
 
 	@Id
-	@Column(name = "REQUEST_ID", nullable = false, length = 20)
+	@Column(name = "WORKFLOW_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long workflowId;
+	@Column(name = "REQUEST_ID", length = 100)
 	private String requestId;
 	@Column(name = "WORK_FLOW_INS_ID", length = 100)
 	private String workFlowInstanceId;
@@ -20,6 +25,14 @@ public class WorkFlow {
 	private String materialCode;
 	@Column(name = "PRINCIPAL", length = 50)
 	private String principal;
+
+	public Long getWorkflowId() {
+		return workflowId;
+	}
+
+	public void setWorkflowId(Long workflowId) {
+		this.workflowId = workflowId;
+	}
 
 	public String getRequestId() {
 		return requestId;

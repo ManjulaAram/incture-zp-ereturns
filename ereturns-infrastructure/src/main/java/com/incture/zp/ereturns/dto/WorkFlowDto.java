@@ -11,11 +11,21 @@ public class WorkFlowDto implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 3582711983158216234L;
+	private Long workflowId;
 	private String requestId;
 	private String workFlowInstanceId;
 	private String taskInstanceId;
 	private String materialCode;
 	private String principal;
+
+	
+	public Long getWorkflowId() {
+		return workflowId;
+	}
+
+	public void setWorkflowId(Long workflowId) {
+		this.workflowId = workflowId;
+	}
 
 	public String getRequestId() {
 		return requestId;
