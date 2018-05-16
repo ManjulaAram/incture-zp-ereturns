@@ -1,5 +1,6 @@
 package com.incture.zp.ereturns.repositoriesimpl;
 
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -33,8 +34,13 @@ public class WorkFlowRepositoryImpl implements WorkflowRepository {
 
 	@Override
 	public WorkFlow getWorkFlowInstance(String requestId) {
+		WorkFlow workflow = new WorkFlow();
+		String queryStr = "select w from WorkFlow w where w.requestId=:requestId";
+		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
 
-		return (WorkFlow) sessionFactory.getCurrentSession().get(WorkFlow.class, requestId);
+		query.setParameter("requestId", requestId);
+		workflow = (WorkFlow) query.list().get(0);
+		return workflow;
 
 	}
 
