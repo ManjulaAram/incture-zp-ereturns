@@ -152,4 +152,20 @@ public class RequestRepositoryImpl implements RequestRepository {
 		return (Request) sessionFactory.getCurrentSession().get(Request.class, id);
 	}
 
+
+	@Override
+	public List<RequestDto> getAllRequests() {
+		List<RequestDto> list = new ArrayList<>();
+		StringBuilder queryString = new StringBuilder();
+		queryString.append("SELECT r FROM Request r");
+
+		Query query = sessionFactory.getCurrentSession().createQuery(queryString.toString());
+		@SuppressWarnings("unchecked")
+		List<Request> requestList = (List<Request>) query.list();
+		for(Request request : requestList) {
+			list.add(importExportUtil.exportRequestDto(request));
+		}
+		return list;
+	}
+
 }

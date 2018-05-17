@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.incture.zp.ereturns.dto.AttachmentDto;
+import com.incture.zp.ereturns.dto.DuplicateMaterialDto;
 import com.incture.zp.ereturns.dto.ItemDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
@@ -35,94 +36,100 @@ public class RequestServiceImpl implements RequestService {
 
 	@Autowired
 	RequestRepository requestRepository;
-	
+
 	@Autowired
 	AttachmentRepository attachmentRepository;
-	
+
 	@Autowired
 	HeaderRepository headerRepository;
-	
+
 	@Autowired
 	EcmDocumentService ecmDocumentService;
-	
+
 	@Autowired
 	ImportExportUtil importExportUtil;
-	
+
 	@Autowired
 	WorkflowTriggerService workflowTriggerService;
-	
+
 	@Autowired
 	WorkFlowService workFlowService;
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequestServiceImpl.class);
-	
+
 	@Override
 	public ResponseDto addRequest(RequestDto requestDto) {
 		ResponseDto responseDto = new ResponseDto();
 		boolean processStartFlag = false;
-		
-		String requestId = null;
-		try {
-			
-			responseDto = requestRepository.addRequest(importExportUtil.importRequestDto(requestDto));
-			if(responseDto != null) {
-				if(responseDto.getMessage() != null) {
-					requestId = responseDto.getMessage().substring(8, 19);
-				}
-			}
-			
-			Set<AttachmentDto> setAttachment = requestDto.getSetAttachments();
-			for(AttachmentDto attachmentDto : setAttachment) {
-				byte[] decodedString = Base64.decodeBase64(attachmentDto.getContent());
-				String attachmentName = ecmDocumentService.uploadAttachment(decodedString, attachmentDto.getAttachmentName(), 
-						attachmentDto.getAttachmentType());
-				LOGGER.error("Attachment URL:"+attachmentName);
-				attachmentDto.setAttachmentName(attachmentName);
-				attachmentDto.setRequestId(requestId);
-				Attachment attachment = importExportUtil.importAttachmentDto(attachmentDto);
-				attachmentRepository.addAttachment(attachment);
-			}
 
-			
-			if(responseDto != null) {
-				if(responseDto.getCode().equals("00")) {
-					processStartFlag = true;
+		String requestId = null;
+		DuplicateMaterialDto duplicateDto = findDuplicate(requestDto);
+		duplicateDto.setDuplicate(false);
+		if(duplicateDto.isDuplicate()) {
+			responseDto.setCode("02");
+			responseDto.setMessage(duplicateDto.getMaterials().toString());
+			responseDto.setStatus("DUPLICATE");
+		} else {
+			try { 
+				responseDto = requestRepository.addRequest(importExportUtil.importRequestDto(requestDto));
+				if (responseDto != null) {
+					if (responseDto.getMessage() != null) {
+						requestId = responseDto.getMessage().substring(8, 19);
+					}
 				}
+
+				Set<AttachmentDto> setAttachment = requestDto.getSetAttachments();
+				for (AttachmentDto attachmentDto : setAttachment) {
+					byte[] decodedString = Base64.decodeBase64(attachmentDto.getContent());
+					String attachmentName = ecmDocumentService.uploadAttachment(decodedString,
+							attachmentDto.getAttachmentName(), attachmentDto.getAttachmentType());
+					LOGGER.error("Attachment URL:" + attachmentName);
+					attachmentDto.setAttachmentName(attachmentName);
+					attachmentDto.setRequestId(requestId);
+					Attachment attachment = importExportUtil.importAttachmentDto(attachmentDto);
+					attachmentRepository.addAttachment(attachment);
+				}
+
+				if (responseDto != null) {
+					if (responseDto.getCode().equals("00")) {
+						processStartFlag = true;
+					}
+				}
+			} catch (Exception e) {
+				responseDto.setCode("01");
+				responseDto.setStatus("ERROR");
+				responseDto.setMessage(e.getMessage());
 			}
-		} catch (Exception e) {
-			responseDto.setCode("01");
-			responseDto.setStatus("ERROR");
-			responseDto.setMessage(e.getMessage());
 		}
 		
-		if(processStartFlag) {
-			
-			String workFlowInstanceId="";
-			WorkFlowDto workFlowDto=new WorkFlowDto();
-			
+		if (processStartFlag) {
+
+			String workFlowInstanceId = "";
+			WorkFlowDto workFlowDto = new WorkFlowDto();
+
 			// start process
 			JSONObject jsonObj = new JSONObject();
 			jsonObj.put("requestId", requestId);
-			
-			JSONObject obj = new JSONObject(); 
+
+			JSONObject obj = new JSONObject();
 			obj.put("context", jsonObj);
 			obj.put("definitionId", "zp_return_test");
-			
-			String payload = obj.toString(); 
+
+			String payload = obj.toString();
 			String output = workflowTriggerService.triggerWorkflow(payload);
 			JSONObject resultJsonObject = new JSONObject(output);
-			workFlowInstanceId=resultJsonObject.getString("id");
-			
+			workFlowInstanceId = resultJsonObject.getString("id");
+
 			workFlowDto.setRequestId(requestId);
 			workFlowDto.setWorkFlowInstanceId(workFlowInstanceId);
-			
-			for(ItemDto itemDto : requestDto.getHeaderDto().getItemSet()) { 
+
+			for (ItemDto itemDto : requestDto.getHeaderDto().getItemSet()) {
 				workFlowDto.setMaterialCode(itemDto.getMaterial());
 				workFlowDto.setPrincipal(itemDto.getPricipal());
-				}
+			}
 			workFlowDto.setTaskInstanceId("");
 			workFlowService.addWorkflowInstance(workFlowDto);
-			LOGGER.error("Process triggered successfully :"+output);
+			LOGGER.error("Process triggered successfully :" + output);
 		}
 		return responseDto;
 	}
@@ -130,8 +137,8 @@ public class RequestServiceImpl implements RequestService {
 	@Override
 	public RequestDto getRequestById(String id) {
 		RequestDto requestDto = importExportUtil.exportRequestDto(requestRepository.getRequestById(id));
-		
-		LOGGER.error("Request Id is: "+id);
+
+		LOGGER.error("Request Id is: " + id);
 		Set<AttachmentDto> setAttachmentDto = attachmentRepository.getAttachmentsById(id);
 		requestDto.setSetAttachments(setAttachmentDto);
 		return requestDto;
@@ -142,14 +149,14 @@ public class RequestServiceImpl implements RequestService {
 		StatusResponseDto rList = requestRepository.getStatusDetails(requestDto);
 		List<RequestDto> list = rList.getRequestDto();
 		List<RequestDto> modifiedList = new ArrayList<>();
-		for(RequestDto requestDto2 : list) {
-			LOGGER.error("Adding attachment: "+requestDto2.getRequestId());
+		for (RequestDto requestDto2 : list) {
+			LOGGER.error("Adding attachment: " + requestDto2.getRequestId());
 			Set<AttachmentDto> setAttachmentDto = attachmentRepository.getAttachmentsById(requestDto2.getRequestId());
 			requestDto2.setSetAttachments(setAttachmentDto);
 			modifiedList.add(requestDto2);
 		}
 		rList.setRequestDto(modifiedList);
-		LOGGER.error("After Adding attachment: "+rList.getMessage());
+		LOGGER.error("After Adding attachment: " + rList.getMessage());
 		return rList;
 	}
 
@@ -166,4 +173,36 @@ public class RequestServiceImpl implements RequestService {
 		return responseDto;
 	}
 
+	@Override
+	public List<RequestDto> getAllRequests() {
+		return requestRepository.getAllRequests();
+	}
+
+	private DuplicateMaterialDto findDuplicate(RequestDto requestDto) {
+		DuplicateMaterialDto duplicateMaterialDto = new DuplicateMaterialDto();
+		List<String> materials = new ArrayList<>();
+		boolean duplicate = false;
+		List<RequestDto> list = getAllRequests();
+		if (list != null && list.size() > 0) {
+			for (RequestDto requestDto2 : list) {
+				if (requestDto2.getHeaderDto().getInvoiceNo().equals(requestDto.getHeaderDto().getInvoiceNo())) {
+					for (ItemDto itemDto : requestDto2.getHeaderDto().getItemSet()) {
+						for (ItemDto itemDto2 : requestDto.getHeaderDto().getItemSet()) {
+							if (itemDto.getMaterial().equals(itemDto2.getMaterial())) {
+								duplicate = true;
+								materials.add("Duplicate Invoice "+requestDto.getHeaderDto().getInvoiceNo()
+										+" and Material "+itemDto.getMaterial() +" exist");
+								break;
+							} else {
+								duplicate = false;
+							}
+						}
+					}
+				}
+			}
+		}
+		duplicateMaterialDto.setMaterials(materials);
+		duplicateMaterialDto.setDuplicate(duplicate);
+		return duplicateMaterialDto;
+	}
 }

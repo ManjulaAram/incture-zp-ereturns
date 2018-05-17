@@ -1,5 +1,7 @@
 package com.incture.zp.ereturns.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -74,6 +76,11 @@ public class EReturnsRequestController {
 		return requestService.getRequestById(requestId);
 	}
 
+	@RequestMapping(value = "/getAllRequests", method = RequestMethod.GET)
+	@ResponseBody
+	public List<RequestDto> getAllRequests() {
+		return requestService.getAllRequests();
+	}
 	
 	@RequestMapping(value = "/completeWorkflow", method = RequestMethod.POST, consumes = { "application/json" })
 	@ResponseBody
