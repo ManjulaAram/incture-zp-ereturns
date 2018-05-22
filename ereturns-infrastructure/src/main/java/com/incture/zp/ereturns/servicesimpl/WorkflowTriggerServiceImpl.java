@@ -180,6 +180,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 	}
 
 	public ResponseDto requestAction(String taskInstanceId, String reqStatus) {
+		@SuppressWarnings("unused")
 		String responseData="";
 		List<String> cookies = null;
 		String csrfToken = "";

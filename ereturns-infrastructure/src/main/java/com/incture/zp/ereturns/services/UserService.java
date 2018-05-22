@@ -13,4 +13,6 @@ public interface UserService {
 	public UserDto getUserById(String id);
 
 	public List<Role> getUserRole(String userId);
+	
+	public ResponseDto updateUser(UserDto userDto);
 }

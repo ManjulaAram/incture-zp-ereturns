@@ -79,7 +79,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 		}
 
 		if (requestDto.getPendingWith() != null && !(requestDto.getPendingWith().equals(""))) {
-			queryString.append(" AND r.requestPendingWith=:requestPendingWith");
+			queryString.append(" AND o.orderPendingWith=:orderPendingWith");
 		}
 		
 		LOGGER.error("Query for Status details:"+queryString.toString());
@@ -97,7 +97,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 		}
 		
 		if (requestDto.getPendingWith() != null && !(requestDto.getPendingWith().equals(""))) {
-			query.setParameter("requestPendingWith", requestDto.getPendingWith());
+			query.setParameter("orderPendingWith", requestDto.getPendingWith());
 		}
 		if((requestDto.getStartDate() != null && !(requestDto.getStartDate().equals(""))) && 
 				(requestDto.getEndDate() != null) && !(requestDto.getEndDate().equals(""))) {

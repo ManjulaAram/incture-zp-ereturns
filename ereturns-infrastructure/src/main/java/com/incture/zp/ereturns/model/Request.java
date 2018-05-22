@@ -55,6 +55,9 @@ public class Request {
 	@Column(name = "SHIP_TO", length = 100)
 	private String shipTo;
 	
+	@Column(name = "CUSTOMER_GROUP", length = 255)
+	private String customerGroup;
+	
 	@OneToOne(cascade = CascadeType.ALL)
 	private Header requestHeader; 
 	
@@ -163,6 +166,14 @@ public class Request {
 
 	public void setRequestHeader(Header requestHeader) {
 		this.requestHeader = requestHeader;
+	}
+
+	public String getCustomerGroup() {
+		return customerGroup;
+	}
+
+	public void setCustomerGroup(String customerGroup) {
+		this.customerGroup = customerGroup;
 	}
 
 }

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.dto.AttachmentDto;
 import com.incture.zp.ereturns.dto.DuplicateMaterialDto;
 import com.incture.zp.ereturns.dto.ItemDto;
@@ -96,9 +97,11 @@ public class RequestServiceImpl implements RequestService {
 					}
 				}
 			} catch (Exception e) {
-				responseDto.setCode("01");
-				responseDto.setStatus("ERROR");
-				responseDto.setMessage(e.getMessage());
+				if(responseDto != null) {
+					responseDto.setCode("01");
+					responseDto.setStatus("ERROR");
+					responseDto.setMessage(e.getMessage());
+				}
 			}
 		}
 		
@@ -125,7 +128,7 @@ public class RequestServiceImpl implements RequestService {
 
 			for (ItemDto itemDto : requestDto.getHeaderDto().getItemSet()) {
 				workFlowDto.setMaterialCode(itemDto.getMaterial());
-				workFlowDto.setPrincipal(itemDto.getPricipal());
+				workFlowDto.setPrincipal(itemDto.getPrincipal());
 			}
 			workFlowDto.setTaskInstanceId("");
 			workFlowService.addWorkflowInstance(workFlowDto);
@@ -166,9 +169,11 @@ public class RequestServiceImpl implements RequestService {
 		try {
 			responseDto = requestRepository.addRequest(importExportUtil.importRequestDto(requestDto));
 		} catch (Exception e) {
-			responseDto.setCode("01");
-			responseDto.setStatus("ERROR");
-			responseDto.setMessage(e.getMessage());
+			if(responseDto != null) {
+				responseDto.setCode("01");
+				responseDto.setStatus("ERROR");
+				responseDto.setMessage(e.getMessage());
+			}
 		}
 		return responseDto;
 	}
@@ -185,7 +190,9 @@ public class RequestServiceImpl implements RequestService {
 		List<RequestDto> list = getAllRequests();
 		if (list != null && list.size() > 0) {
 			for (RequestDto requestDto2 : list) {
-				if (requestDto2.getHeaderDto().getInvoiceNo().equals(requestDto.getHeaderDto().getInvoiceNo())) {
+				if (requestDto2.getHeaderDto().getInvoiceNo().equals(requestDto.getHeaderDto().getInvoiceNo()) &&
+						((requestDto2.getRequestStatus().equalsIgnoreCase(EReturnConstants.NEW)) || 
+								(requestDto2.getRequestStatus().equalsIgnoreCase(EReturnConstants.INPROGRESS)))) {
 					for (ItemDto itemDto : requestDto2.getHeaderDto().getItemSet()) {
 						for (ItemDto itemDto2 : requestDto.getHeaderDto().getItemSet()) {
 							if (itemDto.getMaterial().equals(itemDto2.getMaterial())) {

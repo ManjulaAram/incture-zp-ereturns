@@ -1,5 +1,7 @@
 package com.incture.zp.ereturns.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "T_RETURN_ORDER")
@@ -38,6 +42,34 @@ public class ReturnOrder {
 	
 	@Column(name = "PAYMENT_TYPE")
 	private String paymentType;
+	
+	@Column(name = "OORDER_CREATED_BY", length = 100)
+	private String orderCreatedBy;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "ORDER_CREATED_DATE")
+	private Date orderCreatedDate;
+	
+	@Column(name = "ORDER_STATUS", length = 100)
+	private String orderStatus;
+	
+	@Column(name = "ORDER_UPDATED_BY", length = 100)
+	private String orderUpdatedBy;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "ORDER_UPDATED_DATE")
+	private Date orderUpdatedDate;
+
+	@Column(name = "ORDER_APPROVED_BY", length = 100)
+	private String orderApprovedBy;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "ORDER_APPROVED_DATE")
+	private Date orderApprovedDate;
+	
+	@Column(name = "ORDER_PENDING_WITH", length = 100)
+	private String orderPendingWith;
+
 
 	@ManyToOne
 	@JoinColumn(name = "REQUEST_ID", nullable = false, updatable = false)
@@ -113,6 +145,70 @@ public class ReturnOrder {
 
 	public void setPaymentType(String paymentType) {
 		this.paymentType = paymentType;
+	}
+
+	public String getOrderCreatedBy() {
+		return orderCreatedBy;
+	}
+
+	public void setOrderCreatedBy(String orderCreatedBy) {
+		this.orderCreatedBy = orderCreatedBy;
+	}
+
+	public Date getOrderCreatedDate() {
+		return orderCreatedDate;
+	}
+
+	public void setOrderCreatedDate(Date orderCreatedDate) {
+		this.orderCreatedDate = orderCreatedDate;
+	}
+
+	public String getOrderStatus() {
+		return orderStatus;
+	}
+
+	public void setOrderStatus(String orderStatus) {
+		this.orderStatus = orderStatus;
+	}
+
+	public String getOrderUpdatedBy() {
+		return orderUpdatedBy;
+	}
+
+	public void setOrderUpdatedBy(String orderUpdatedBy) {
+		this.orderUpdatedBy = orderUpdatedBy;
+	}
+
+	public Date getOrderUpdatedDate() {
+		return orderUpdatedDate;
+	}
+
+	public void setOrderUpdatedDate(Date orderUpdatedDate) {
+		this.orderUpdatedDate = orderUpdatedDate;
+	}
+
+	public String getOrderApprovedBy() {
+		return orderApprovedBy;
+	}
+
+	public void setOrderApprovedBy(String orderApprovedBy) {
+		this.orderApprovedBy = orderApprovedBy;
+	}
+
+	public Date getOrderApprovedDate() {
+		return orderApprovedDate;
+	}
+
+	public void setOrderApprovedDate(Date orderApprovedDate) {
+		this.orderApprovedDate = orderApprovedDate;
+	}
+
+	public String getOrderPendingWith() {
+		return orderPendingWith;
+	}
+
+	public void setOrderPendingWith(String orderPendingWith) {
+		this.orderPendingWith = orderPendingWith;
 	}
 
 }

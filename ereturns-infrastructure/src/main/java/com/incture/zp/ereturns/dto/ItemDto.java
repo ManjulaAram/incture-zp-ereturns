@@ -32,12 +32,15 @@ public class ItemDto {
 	
 	private String materialDesc;
 
-	private String pricipal;
+	private String principal;
 	
-	private String pricipalCode;
+	private String principalCode;
+	
+	private String principalGroup;
 	
 	private String materialGroup;
 
+	private String storeType;
 
 	public String getItemCode() {
 		return itemCode;
@@ -151,20 +154,29 @@ public class ItemDto {
 		this.materialDesc = materialDesc;
 	}
 
-	public String getPricipal() {
-		return pricipal;
+
+	public String getPrincipal() {
+		return principal;
 	}
 
-	public void setPricipal(String pricipal) {
-		this.pricipal = pricipal;
+	public void setPrincipal(String principal) {
+		this.principal = principal;
 	}
 
-	public String getPricipalCode() {
-		return pricipalCode;
+	public String getPrincipalCode() {
+		return principalCode;
 	}
 
-	public void setPricipalCode(String pricipalCode) {
-		this.pricipalCode = pricipalCode;
+	public void setPrincipalCode(String principalCode) {
+		this.principalCode = principalCode;
+	}
+
+	public String getPrincipalGroup() {
+		return principalGroup;
+	}
+
+	public void setPrincipalGroup(String principalGroup) {
+		this.principalGroup = principalGroup;
 	}
 
 	public Long getItemId() {
@@ -182,5 +194,13 @@ public class ItemDto {
 	public void setMaterialGroup(String materialGroup) {
 		this.materialGroup = materialGroup;
 	}
-	
+
+	public String getStoreType() {
+		return storeType;
+	}
+
+	public void setStoreType(String storeType) {
+		this.storeType = storeType;
+	}
+
 }

@@ -39,6 +39,7 @@ public class UserRepositoryImpl implements UserRepository {
 		sessionFactory.getCurrentSession().saveOrUpdate(user);
 		responseDto.setMessage("User " + user.getUserId() + " Updated Successfully");
 		responseDto.setStatus("OK");
+		responseDto.setCode("00");
 		return responseDto;
 	}
 

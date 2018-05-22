@@ -182,9 +182,11 @@ public class ImportExportUtil {
 		item.setSalesOrderItem(itemDto.getSalesOrderItem());
 		item.setStoreLoc(itemDto.getStoreLoc());
 		item.setItemId(itemDto.getItemId());
-		item.setPricipal(item.getPricipal());
-		item.setPricipalCode(itemDto.getPricipalCode());
+		item.setPrincipal(itemDto.getPrincipal());
+		item.setPrincipalCode(itemDto.getPrincipalCode());
 		item.setMaterialGroup(itemDto.getMaterialGroup());
+		item.setPrincipalGroup(itemDto.getPrincipalGroup());
+		item.setStoreType(itemDto.getStoreType());
 
 		return item;
 	}
@@ -212,8 +214,12 @@ public class ImportExportUtil {
 		itemDto.setStoreLoc(item.getStoreLoc());
 		itemDto.setItemId(item.getItemId());
 		itemDto.setMaterialGroup(item.getMaterialGroup());
-		itemDto.setPricipal(item.getPricipal());
-		itemDto.setPricipalCode(item.getPricipalCode());
+		itemDto.setPrincipal(item.getPrincipal());
+		itemDto.setPrincipalCode(item.getPrincipalCode());
+		
+		itemDto.setPrincipalGroup(item.getPrincipalGroup());
+		itemDto.setStoreType(item.getStoreType());
+
 
 		return itemDto;
 	}
@@ -247,6 +253,7 @@ public class ImportExportUtil {
 
 		request.setSetReturnOrder(returnOrderSet);
 		request.setRequestHeader(importHeaderDto(requestDto.getHeaderDto()));
+		request.setCustomerGroup(requestDto.getCustomerGroup());
 		return request;
 	}
 
@@ -286,6 +293,7 @@ public class ImportExportUtil {
 		}
 		requestDto.setSetReturnOrderDto(returnOrderSet);
 		requestDto.setHeaderDto(exportHeaderDto(request.getRequestHeader()));
+		requestDto.setCustomerGroup(request.getCustomerGroup());
 
 		return requestDto;
 	}
@@ -303,6 +311,21 @@ public class ImportExportUtil {
 		returnOrder.setReturnValue(returnOrderDto.getReturnValue());
 		returnOrder.setPaymentType(returnOrderDto.getPaymentType());
 
+		returnOrder.setOrderApprovedBy(returnOrderDto.getOrderApprovedBy());
+		if(returnOrderDto.getOrderApprovedDate() != null && !(returnOrderDto.getOrderApprovedDate().equals(""))) {
+			returnOrder.setOrderApprovedDate(convertStringToDate(returnOrderDto.getOrderApprovedDate()));
+		} 
+		returnOrder.setOrderCreatedBy(returnOrderDto.getOrderCreatedBy());
+		if(returnOrderDto.getOrderCreatedDate() != null && !(returnOrderDto.getOrderCreatedDate().equals(""))) {
+			returnOrder.setOrderCreatedDate(convertStringToDate(returnOrderDto.getOrderCreatedDate()));
+		}
+		returnOrder.setOrderPendingWith(returnOrderDto.getOrderPendingWith());
+		returnOrder.setOrderStatus(returnOrderDto.getOrderStatus());
+		returnOrder.setOrderUpdatedBy(returnOrderDto.getOrderUpdatedBy());
+		if(returnOrderDto.getOrderUpdatedDate() != null && !(returnOrderDto.getOrderUpdatedDate().equals(""))) {
+			returnOrder.setOrderUpdatedDate(convertStringToDate(returnOrderDto.getOrderUpdatedDate()));
+		}
+		
 		return returnOrder;
 	}
 
@@ -316,6 +339,21 @@ public class ImportExportUtil {
 		returnOrderDto.setReturnPrice(returnOrder.getReturnPrice());
 		returnOrderDto.setReturnQty(returnOrder.getReturnQty());
 		returnOrderDto.setReturnValue(returnOrder.getReturnValue());
+		
+		returnOrderDto.setOrderApprovedBy(returnOrder.getOrderApprovedBy());
+		if(returnOrder.getOrderApprovedDate() != null) {
+			returnOrderDto.setOrderApprovedDate(convertDateToString(returnOrder.getOrderApprovedDate()));
+		} 
+		returnOrderDto.setOrderCreatedBy(returnOrder.getOrderCreatedBy());
+		if(returnOrder.getOrderCreatedDate() != null) {
+			returnOrderDto.setOrderCreatedDate(convertDateToString(returnOrder.getOrderCreatedDate()));
+		}
+		returnOrderDto.setOrderPendingWith(returnOrder.getOrderPendingWith());
+		returnOrderDto.setOrderStatus(returnOrder.getOrderStatus());
+		returnOrderDto.setOrderUpdatedBy(returnOrder.getOrderUpdatedBy());
+		if(returnOrder.getOrderUpdatedDate() != null) {
+			returnOrderDto.setOrderUpdatedDate(convertDateToString(returnOrder.getOrderUpdatedDate()));
+		}
 
 		return returnOrderDto;
 	}

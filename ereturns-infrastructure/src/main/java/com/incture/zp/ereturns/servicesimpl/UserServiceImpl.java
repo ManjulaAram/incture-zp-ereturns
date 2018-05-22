@@ -64,4 +64,15 @@ public class UserServiceImpl implements UserService {
 		return listRoles;
 	}
 
+	@Override
+	public ResponseDto updateUser(UserDto userDto) {
+		ResponseDto responseDto = new ResponseDto();
+		if(userDto != null) {
+			if(userDto.getUserId() != null && !(userDto.getUserId().equals(""))) {
+				UserDto userDto2 = getUserById(userDto.getUserId());
+				responseDto = userRepository.addUser(importExportUtil.importUserDto(userDto2));
+			}
+		}
+		return responseDto;
+	}
 }

@@ -35,6 +35,8 @@ public class RequestDto {
 	
 	private String shipTo;
 	
+	private String customerGroup;
+	
 	public String getRequestId() {
 		return requestId;
 	}
@@ -145,6 +147,14 @@ public class RequestDto {
 
 	public void setHeaderDto(HeaderDto headerDto) {
 		this.headerDto = headerDto;
+	}
+
+	public String getCustomerGroup() {
+		return customerGroup;
+	}
+
+	public void setCustomerGroup(String customerGroup) {
+		this.customerGroup = customerGroup;
 	}
 
 }

@@ -25,23 +25,13 @@ public class EReturnsUserController {
 	@Autowired
 	UserService userService;
 
-	@RequestMapping("/hello")
-	public String helloWorld()
-	{
-		return "HELLo GET ROLES";
-	}
-	
 	@RequestMapping("/getUserRole/{userId}")
 	public List<Role> getRole(@RequestBody @PathVariable String userId) {
-		
 		return userService.getUserRole(userId);
-		
 	}
 	@RequestMapping("/getUser/{userId}")
 	public UserDto getUser(@RequestBody @PathVariable String userId) {
-		
 		return userService.getUserById(userId);
-		
 	}
 	
 	@RequestMapping(path="/addUser",consumes="application/json",method=RequestMethod.POST)
@@ -50,4 +40,9 @@ public class EReturnsUserController {
 		return userService.addUser(userDto);
 	}
 	
+	@RequestMapping(path="/updateMobileToken",consumes="application/json",method=RequestMethod.POST)
+	public ResponseDto updateUser(@RequestBody UserDto userDto)
+	{
+		return userService.updateUser(userDto);
+	}
 }

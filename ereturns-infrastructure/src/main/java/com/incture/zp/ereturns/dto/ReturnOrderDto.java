@@ -22,6 +22,23 @@ public class ReturnOrderDto implements Serializable {
 	
 	private String paymentType;
 	
+	private String orderCreatedBy;
+	
+	private String orderCreatedDate;
+	
+	private String orderStatus;
+	
+	private String orderUpdatedBy;
+	
+	private String orderUpdatedDate;
+
+	private String orderApprovedBy;
+	
+	private String orderApprovedDate;
+	
+	private String orderPendingWith;
+
+	
 	public Long getReturnOrderId() {
 		return returnOrderId;
 	}
@@ -84,6 +101,70 @@ public class ReturnOrderDto implements Serializable {
 
 	public void setPaymentType(String paymentType) {
 		this.paymentType = paymentType;
+	}
+
+	public String getOrderCreatedBy() {
+		return orderCreatedBy;
+	}
+
+	public void setOrderCreatedBy(String orderCreatedBy) {
+		this.orderCreatedBy = orderCreatedBy;
+	}
+
+	public String getOrderCreatedDate() {
+		return orderCreatedDate;
+	}
+
+	public void setOrderCreatedDate(String orderCreatedDate) {
+		this.orderCreatedDate = orderCreatedDate;
+	}
+
+	public String getOrderStatus() {
+		return orderStatus;
+	}
+
+	public void setOrderStatus(String orderStatus) {
+		this.orderStatus = orderStatus;
+	}
+
+	public String getOrderUpdatedBy() {
+		return orderUpdatedBy;
+	}
+
+	public void setOrderUpdatedBy(String orderUpdatedBy) {
+		this.orderUpdatedBy = orderUpdatedBy;
+	}
+
+	public String getOrderUpdatedDate() {
+		return orderUpdatedDate;
+	}
+
+	public void setOrderUpdatedDate(String orderUpdatedDate) {
+		this.orderUpdatedDate = orderUpdatedDate;
+	}
+
+	public String getOrderApprovedBy() {
+		return orderApprovedBy;
+	}
+
+	public void setOrderApprovedBy(String orderApprovedBy) {
+		this.orderApprovedBy = orderApprovedBy;
+	}
+
+	public String getOrderApprovedDate() {
+		return orderApprovedDate;
+	}
+
+	public void setOrderApprovedDate(String orderApprovedDate) {
+		this.orderApprovedDate = orderApprovedDate;
+	}
+
+	public String getOrderPendingWith() {
+		return orderPendingWith;
+	}
+
+	public void setOrderPendingWith(String orderPendingWith) {
+		this.orderPendingWith = orderPendingWith;
 	}
 
 }

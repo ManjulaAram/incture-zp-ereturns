@@ -57,6 +57,7 @@ public class Item {
 	@Column(name = "STORE_LOC", length = 50)
 	private String storeLoc;
 	
+
 	@Column(name = "MATERIAL", length = 50)
 	private String material;
 	
@@ -70,10 +71,16 @@ public class Item {
 	private String materialDesc;
 	
 	@Column(name = "PRINCIPAL", length = 50)
-	private String pricipal;
+	private String principal;
 	
 	@Column(name = "PRICIPAL_CODE", length = 50)
-	private String pricipalCode;
+	private String principalCode;
+
+	@Column(name = "PRICIPAL_GROUP", length = 50)
+	private String principalGroup;
+
+	@Column(name = "STORE_TYPE", length = 255)
+	private String storeType;
 
 	@ManyToOne
 	@JoinColumn(name = "HEADER_ID", nullable = false, updatable = false)
@@ -215,20 +222,36 @@ public class Item {
 		this.materialGroup = materialGroup;
 	}
 
-	public String getPricipal() {
-		return pricipal;
+	public String getStoreType() {
+		return storeType;
 	}
 
-	public void setPricipal(String pricipal) {
-		this.pricipal = pricipal;
+	public void setStoreType(String storeType) {
+		this.storeType = storeType;
 	}
 
-	public String getPricipalCode() {
-		return pricipalCode;
+	public String getPrincipal() {
+		return principal;
 	}
 
-	public void setPricipalCode(String pricipalCode) {
-		this.pricipalCode = pricipalCode;
+	public void setPrincipal(String principal) {
+		this.principal = principal;
+	}
+
+	public String getPrincipalCode() {
+		return principalCode;
+	}
+
+	public void setPrincipalCode(String principalCode) {
+		this.principalCode = principalCode;
+	}
+
+	public String getPrincipalGroup() {
+		return principalGroup;
+	}
+
+	public void setPrincipalGroup(String principalGroup) {
+		this.principalGroup = principalGroup;
 	}
 
 }

@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "T_WORK_FLOW_INS")
+@Table(name = "T_WORKFLOW_INSTANCE")
 public class WorkFlow {
 
 	@Id
@@ -17,11 +17,11 @@ public class WorkFlow {
 	private Long workflowId;
 	@Column(name = "REQUEST_ID", length = 100)
 	private String requestId;
-	@Column(name = "WORK_FLOW_INS_ID", length = 100)
+	@Column(name = "WORKFLOW_INSTANCE_ID", length = 100)
 	private String workFlowInstanceId;
-	@Column(name = "TASK_INS_ID", length = 100)
+	@Column(name = "TASK_INSTANCE_ID", length = 100)
 	private String taskInstanceId;
-	@Column(name = "MAT_CODE", length = 20)
+	@Column(name = "MATERIAL_CODE", length = 20)
 	private String materialCode;
 	@Column(name = "PRINCIPAL", length = 50)
 	private String principal;
