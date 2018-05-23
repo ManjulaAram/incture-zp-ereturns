@@ -48,4 +48,7 @@ public interface EReturnConstants {
 	public static final String GET_WORK_FLOW_INSTANCE="https://bpmworkflowruntimecbbe88bff-ce7231891.ap1.hana.ondemand.com/workflow-service/rest/v1/task-instances?workflowInstanceId=";
 	public static final String PATCH="PATCH";
 	
+	public static final String WORKFLOW_REST_API="https://bpmworkflowruntimecbbe88bff-ce7231891.ap1.hana.ondemand.com/workflow-service/rest/";
+	public static final String COMPLETED="COMPLETED";
+	public static final String IN_PROGRESS="IN PROGRESS";
 }

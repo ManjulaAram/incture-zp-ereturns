@@ -16,8 +16,10 @@ import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.StatusRequestDto;
 import com.incture.zp.ereturns.dto.StatusResponseDto;
+import com.incture.zp.ereturns.dto.WorkflowInstanceDto;
 import com.incture.zp.ereturns.services.RequestService;
 import com.incture.zp.ereturns.services.ReturnOrderService;
+import com.incture.zp.ereturns.services.WorkflowTrackerService;
 import com.incture.zp.ereturns.services.WorkflowTriggerService;
 
 @RestController
@@ -28,6 +30,9 @@ public class EReturnsRequestController {
 
 	@Autowired
 	RequestService requestService;
+	
+	@Autowired
+	WorkflowTrackerService wfTraackerService;
 
 	@Autowired
 	ReturnOrderService returnOrderService;
@@ -87,7 +92,12 @@ public class EReturnsRequestController {
 	public ResponseDto completeWorkflow(@RequestBody RequestDto requestDto) {
 
 		return	workFlowTriggerService.completeTask(requestDto);
-
 		 
+	}
+	
+	@RequestMapping(value = "/getTaskInstance/{requestId}", method = RequestMethod.GET)
+	@ResponseBody
+	public WorkflowInstanceDto getAllRequests(@PathVariable String requestId) {
+		return wfTraackerService.getTaskDetails(requestId);
 	}
 }
