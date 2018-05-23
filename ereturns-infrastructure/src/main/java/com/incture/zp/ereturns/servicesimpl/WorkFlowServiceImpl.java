@@ -21,9 +21,9 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 	WorkflowRepository workflowRepository;
 	
 	@Override
-	public WorkFlowDto getWorkFLowInstance(String requestId) {
+	public WorkFlowDto getWorkFLowInstance(String requestId,String matCode) {
 		
-		return importExportUtil.exportWorkFlowDto(workflowRepository.getWorkFlowInstance(requestId));
+		return importExportUtil.exportWorkFlowDto(workflowRepository.getWorkFlowInstance(requestId,matCode));
 	}
 
 	@Override

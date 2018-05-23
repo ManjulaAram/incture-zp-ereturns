@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 
 import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.constants.EReturnsWorkflowConstants;
-import com.incture.zp.ereturns.dto.RequestDto;
+import com.incture.zp.ereturns.dto.CompleteTaskRequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.services.HciMappingEccService;
 import com.incture.zp.ereturns.services.RequestService;
@@ -125,10 +125,10 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 	}
 
 	@Override
-	public ResponseDto completeTask(RequestDto requestDto) {
+	public ResponseDto completeTask(CompleteTaskRequestDto requestDto) {
 		ResponseDto responseDto = new ResponseDto();
 		ResponseDto requestActionResponse=new ResponseDto();
-		String workFlowInstanceId = workFlowService.getWorkFLowInstance(requestDto.getRequestId())
+		String workFlowInstanceId = workFlowService.getWorkFLowInstance(requestDto.getRequestId(), requestDto.getItemCode())
 				.getWorkFlowInstanceId();
 		String responseData = "";
 
@@ -154,25 +154,24 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			jsonObject = jsonArray.getJSONObject(0);
 			LOGGER.error("taskInstance" + jsonObject.get("id").toString());
 			
-			requestActionResponse=requestAction(jsonObject.get("id").toString(), requestDto.getRequestStatus());
+			requestActionResponse=requestAction(jsonObject.get("id").toString(), requestDto.getFlag());
 			if(requestActionResponse.getStatus().equals("SUCCESS"))
 			{
 				if(requestService.getRequestById(requestDto.getRequestId()).getRequestStatus().equals("APPROVED"))
 				{
-					hciMappingService.pushDataToEcc(requestService.getRequestById(requestDto.getRequestId()));
+					responseDto = hciMappingService.pushDataToEcc(requestService.getRequestById(requestDto.getRequestId()));
 				}
 			}
 
-			responseDto.setStatus("SUCCESS");
 
 		} catch (MalformedURLException e) {
-			responseDto.setCode("1");
-			responseDto.setMessage("FAILURE");
+			responseDto.setCode("01");
+			responseDto.setMessage("FAILURE"+e.getMessage());
 			responseDto.setStatus("ERROR");
 			return responseDto;
 		} catch (IOException e) {
-			responseDto.setCode("1");
-			responseDto.setMessage("FAILURE");
+			responseDto.setCode("01");
+			responseDto.setMessage("FAILURE"+e.getMessage());
 			responseDto.setStatus("ERROR");
 			return responseDto;
 		}

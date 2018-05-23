@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.incture.zp.ereturns.dto.CompleteTaskRequestDto;
+import com.incture.zp.ereturns.dto.CompleteTasksDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.StatusRequestDto;
@@ -89,15 +91,18 @@ public class EReturnsRequestController {
 	
 	@RequestMapping(value = "/completeWorkflow", method = RequestMethod.POST, consumes = { "application/json" })
 	@ResponseBody
-	public ResponseDto completeWorkflow(@RequestBody RequestDto requestDto) {
-
-		return	workFlowTriggerService.completeTask(requestDto);
+	public ResponseDto completeWorkflow(@RequestBody CompleteTasksDto completeTasksDto) {
+		ResponseDto responseDto = null;
+		for(CompleteTaskRequestDto completeTaskRequestDto : completeTasksDto.getCompleteRequestDto()) {
+			responseDto = workFlowTriggerService.completeTask(completeTaskRequestDto);
+		}
+		return responseDto;
 		 
 	}
 	
 	@RequestMapping(value = "/getTaskInstance", method = RequestMethod.POST,consumes = { "application/json" })
 	@ResponseBody
-	public WorkflowInstanceDto getAllRequests(@RequestBody RequestDto requestDto) {
-		return wfTraackerService.getTaskDetails(requestDto);
+	public WorkflowInstanceDto getAllRequests(@RequestBody CompleteTaskRequestDto completeTaskRequestDto) {
+		return wfTraackerService.getTaskDetails(completeTaskRequestDto);
 	}
 }

@@ -108,33 +108,33 @@ public class RequestServiceImpl implements RequestService {
 		
 		if (processStartFlag) {
 
-			String workFlowInstanceId = "";
-			WorkFlowDto workFlowDto = new WorkFlowDto();
-
-			// start process
-			JSONObject jsonObj = new JSONObject();
-			jsonObj.put(EReturnsWorkflowConstants.REQUEST_ID, requestId);
-			jsonObj.put(EReturnsWorkflowConstants.ITEM_CODE, "");
-
-			JSONObject obj = new JSONObject();
-			obj.put(EReturnsWorkflowConstants.CONTEXT, jsonObj);
-			obj.put(EReturnsWorkflowConstants.DEFINITION_ID, EReturnsWorkflowConstants.DEFINITION_VALUE);
-
-			String payload = obj.toString();
-			String output = workflowTriggerService.triggerWorkflow(payload);
-			JSONObject resultJsonObject = new JSONObject(output);
-			workFlowInstanceId = resultJsonObject.getString(EReturnsWorkflowConstants.WORKFLOW_INSTANCE_ID);
-
-			workFlowDto.setRequestId(requestId);
-			workFlowDto.setWorkFlowInstanceId(workFlowInstanceId);
-
 			for (ItemDto itemDto : requestDto.getHeaderDto().getItemSet()) {
-				workFlowDto.setMaterialCode(itemDto.getMaterial());
-				workFlowDto.setPrincipal(itemDto.getPrincipal());
+				String workFlowInstanceId = "";
+				WorkFlowDto workFlowDto = new WorkFlowDto();
+	
+				// start process
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put(EReturnsWorkflowConstants.REQUEST_ID, requestId);
+				jsonObj.put(EReturnsWorkflowConstants.ITEM_CODE, itemDto.getItemCode());
+	
+				JSONObject obj = new JSONObject();
+				obj.put(EReturnsWorkflowConstants.CONTEXT, jsonObj);
+				obj.put(EReturnsWorkflowConstants.DEFINITION_ID, EReturnsWorkflowConstants.DEFINITION_VALUE);
+	
+				String payload = obj.toString();
+				String output = workflowTriggerService.triggerWorkflow(payload);
+				JSONObject resultJsonObject = new JSONObject(output);
+				workFlowInstanceId = resultJsonObject.getString(EReturnsWorkflowConstants.WORKFLOW_INSTANCE_ID);
+	
+				workFlowDto.setRequestId(requestId);
+				workFlowDto.setWorkFlowInstanceId(workFlowInstanceId);
+	
+				workFlowDto.setMaterialCode(itemDto.getItemCode());
+				workFlowDto.setPrincipal(itemDto.getPrincipalCode());
+				workFlowDto.setTaskInstanceId("");
+				workFlowService.addWorkflowInstance(workFlowDto);
+				LOGGER.error("Process triggered successfully :" + output);
 			}
-			workFlowDto.setTaskInstanceId("");
-			workFlowService.addWorkflowInstance(workFlowDto);
-			LOGGER.error("Process triggered successfully :" + output);
 		}
 		return responseDto;
 	}

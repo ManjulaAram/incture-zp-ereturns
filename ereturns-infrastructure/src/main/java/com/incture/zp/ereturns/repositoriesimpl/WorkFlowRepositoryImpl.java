@@ -33,13 +33,14 @@ public class WorkFlowRepositoryImpl implements WorkflowRepository {
 	}
 
 	@Override
-	public WorkFlow getWorkFlowInstance(String requestId) {
-		WorkFlow workflow = new WorkFlow();
-		String queryStr = "select w from WorkFlow w where w.requestId=:requestId";
+	public WorkFlow getWorkFlowInstance(String requestId,String matCode) {
+		
+		String queryStr = "select w from WorkFlow w where w.requestId=:requestId and w.materialCode=:materialCode";
 		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
-
 		query.setParameter("requestId", requestId);
-		workflow = (WorkFlow) query.list().get(0);
+		query.setParameter("materialCode",matCode );
+		
+		WorkFlow workflow = (WorkFlow) query.list();
 		return workflow;
 
 	}

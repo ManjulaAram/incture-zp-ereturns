@@ -7,6 +7,6 @@ public interface WorkflowRepository {
 
 	public ResponseDto addWorkflowInstance(WorkFlow workFlow);
 
-	public WorkFlow getWorkFlowInstance(String requestId);
+	public WorkFlow getWorkFlowInstance(String requestId,String matCode);
 
 }
