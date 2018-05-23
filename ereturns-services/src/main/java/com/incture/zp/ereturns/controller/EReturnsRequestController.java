@@ -95,9 +95,9 @@ public class EReturnsRequestController {
 		 
 	}
 	
-	@RequestMapping(value = "/getTaskInstance/{requestId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/getTaskInstance", method = RequestMethod.POST,consumes = { "application/json" })
 	@ResponseBody
-	public WorkflowInstanceDto getAllRequests(@PathVariable String requestId) {
-		return wfTraackerService.getTaskDetails(requestId);
+	public WorkflowInstanceDto getAllRequests(@RequestBody RequestDto requestDto) {
+		return wfTraackerService.getTaskDetails(requestDto);
 	}
 }

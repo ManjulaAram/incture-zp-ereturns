@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.incture.zp.ereturns.constants.EReturnConstants;
+import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.WorkFlowDto;
 import com.incture.zp.ereturns.dto.WorkflowInstanceDto;
 import com.incture.zp.ereturns.services.WorkFlowService;
@@ -30,7 +31,7 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkflowTrackerService.class);
 	@Override
-	public WorkflowInstanceDto getTaskDetails(String requestId) {
+	public WorkflowInstanceDto getTaskDetails(RequestDto requestDto) {
 		String url = EReturnConstants.WORKFLOW_REST_API;
 		String username = EReturnConstants.WF_INITIATOR_USER_NAME;
 		String password = EReturnConstants.WF_INITIATOR_PASSWORD;
@@ -38,7 +39,7 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService{
 		WorkflowInstanceDto instanceDto = new WorkflowInstanceDto();
 		String taskInstanceId = "";
 		WorkFlowDto workflowDto=new WorkFlowDto();
-		workflowDto=workflowService.getWorkFLowInstance(requestId);
+		workflowDto=workflowService.getWorkFLowInstance(requestDto.getRequestId());
 		String workflowInstanceId=workflowDto.getWorkFlowInstanceId();
 		RestInvoker restInvoker = new RestInvoker(url, username, password);
 		
