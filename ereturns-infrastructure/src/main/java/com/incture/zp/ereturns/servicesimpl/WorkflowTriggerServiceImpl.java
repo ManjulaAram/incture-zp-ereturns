@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.incture.zp.ereturns.constants.EReturnConstants;
+import com.incture.zp.ereturns.constants.EReturnsWorkflowConstants;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.services.HciMappingEccService;
@@ -56,16 +57,16 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 		String csrfToken = "";
 
 		try {
-			URL getUrl = new URL(EReturnConstants.GET_XCSRF_TOKEN_ENDPOINT);
-			URL postUrl = new URL(EReturnConstants.START_WF_ENDPOINT);
+			URL getUrl = new URL(EReturnsWorkflowConstants.GET_XCSRF_TOKEN_ENDPOINT);
+			URL postUrl = new URL(EReturnsWorkflowConstants.START_WF_ENDPOINT);
 
 			HttpURLConnection urlConnection = (HttpURLConnection) getUrl.openConnection();
 
-			String authString = EReturnConstants.WF_INITIATOR_USER_NAME + EReturnConstants.COLON
-					+ EReturnConstants.WF_INITIATOR_PASSWORD;
+			String authString = EReturnsWorkflowConstants.WF_INITIATOR_USER_NAME + EReturnConstants.COLON
+					+ EReturnsWorkflowConstants.WF_INITIATOR_PASSWORD;
 			String authStringEnc = new String(Base64.encodeBase64(authString.getBytes()));
 			urlConnection.setRequestProperty(EReturnConstants.AUTH, (EReturnConstants.BASIC + authStringEnc));
-			urlConnection.setRequestProperty(EReturnConstants.X_CSRF_TOKEN, EReturnConstants.FETCH);
+			urlConnection.setRequestProperty(EReturnsWorkflowConstants.X_CSRF_TOKEN, EReturnsWorkflowConstants.FETCH);
 			urlConnection.setRequestMethod(EReturnConstants.GET);
 
 			urlConnection.connect();
@@ -73,14 +74,14 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			Map<String, List<String>> map = new HashMap<String, List<String>>();
 			map = urlConnection.getHeaderFields();
 			List<String> str = new ArrayList<String>();
-			if (map.containsKey(EReturnConstants.X_CSRF_TOKEN)) {
-				str.addAll(map.get(EReturnConstants.X_CSRF_TOKEN));
+			if (map.containsKey(EReturnsWorkflowConstants.X_CSRF_TOKEN)) {
+				str.addAll(map.get(EReturnsWorkflowConstants.X_CSRF_TOKEN));
 			}
 
 			if (str.size() > 0) {
 				csrfToken = str.get(0);
 			}
-			cookies = urlConnection.getHeaderFields().get(EReturnConstants.SET_COOKIE);
+			cookies = urlConnection.getHeaderFields().get(EReturnsWorkflowConstants.SET_COOKIE);
 
 			HttpURLConnection postUrlConnection = (HttpURLConnection) postUrl.openConnection();
 
@@ -88,20 +89,20 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			postUrlConnection.setDoInput(true);
 			postUrlConnection.setUseCaches(false);
 			postUrlConnection.setRequestProperty(EReturnConstants.AUTH, (EReturnConstants.BASIC + authStringEnc));
-			postUrlConnection.setRequestProperty(EReturnConstants.X_CSRF_TOKEN, csrfToken);
+			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.X_CSRF_TOKEN, csrfToken);
 			postUrlConnection.setRequestMethod(EReturnConstants.POST);
 			postUrlConnection.setRequestProperty(EReturnConstants.CONTENT_TYPE, EReturnConstants.CONTENT_APPLICATION);
-			postUrlConnection.setRequestProperty(EReturnConstants.ACCEPT, EReturnConstants.CONTENT_APPLICATION);
-			postUrlConnection.setRequestProperty(EReturnConstants.DATA_SERVICE_VERSION, "2.0");
-			postUrlConnection.setRequestProperty(EReturnConstants.X_REQUESTED_WITH,
-					EReturnConstants.X_REQUEST_WITH_TYPE);
-			postUrlConnection.setRequestProperty(EReturnConstants.ACCEPT_ENCODING,
-					EReturnConstants.ACCEPT_ENCODING_TYPE);
-			postUrlConnection.setRequestProperty(EReturnConstants.ACCEPT_CHARSET, EReturnConstants.UTF_8);
+			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.ACCEPT, EReturnConstants.CONTENT_APPLICATION);
+			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.DATA_SERVICE_VERSION, "2.0");
+			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.X_REQUESTED_WITH,
+					EReturnsWorkflowConstants.X_REQUEST_WITH_TYPE);
+			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.ACCEPT_ENCODING,
+					EReturnsWorkflowConstants.ACCEPT_ENCODING_TYPE);
+			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.ACCEPT_CHARSET, EReturnsWorkflowConstants.UTF_8);
 			postUrlConnection.setUseCaches(false);
 			for (String cookie : cookies) {
 				String tmp = cookie.split(";", 2)[0];
-				postUrlConnection.addRequestProperty(EReturnConstants.COOKIE, tmp);
+				postUrlConnection.addRequestProperty(EReturnsWorkflowConstants.COOKIE, tmp);
 			}
 
 			OutputStream os = postUrlConnection.getOutputStream();
@@ -133,11 +134,11 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
 		LOGGER.error("workflowInstanceId" + workFlowInstanceId);
 		try {
-			URL getUrl = new URL(EReturnConstants.GET_WORK_FLOW_INSTANCE + workFlowInstanceId);
+			URL getUrl = new URL(EReturnsWorkflowConstants.GET_WORK_FLOW_INSTANCE + workFlowInstanceId);
 			HttpURLConnection urlConnection = (HttpURLConnection) getUrl.openConnection();
 
-			String authString = EReturnConstants.WF_INITIATOR_USER_NAME + EReturnConstants.COLON
-					+ EReturnConstants.WF_INITIATOR_PASSWORD;
+			String authString = EReturnsWorkflowConstants.WF_INITIATOR_USER_NAME + EReturnConstants.COLON
+					+ EReturnsWorkflowConstants.WF_INITIATOR_PASSWORD;
 			String authStringEnc = new String(Base64.encodeBase64(authString.getBytes()));
 			urlConnection.setRequestProperty(EReturnConstants.AUTH, (EReturnConstants.BASIC + authStringEnc));
 			urlConnection.setRequestMethod(EReturnConstants.GET);
@@ -191,16 +192,16 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 		LOGGER.error(payloadData);
 		try {
 
-			URL getUrl = new URL(EReturnConstants.APPROVAL_XCSRF_TOKEN);
-			URL postUrl = new URL(EReturnConstants.APPROVAL_URL + taskInstanceId);
+			URL getUrl = new URL(EReturnsWorkflowConstants.APPROVAL_XCSRF_TOKEN);
+			URL postUrl = new URL(EReturnsWorkflowConstants.APPROVAL_URL + taskInstanceId);
 
 			HttpURLConnection urlConnection = (HttpURLConnection) getUrl.openConnection();
 
-			String authString = EReturnConstants.WF_INITIATOR_USER_NAME + EReturnConstants.COLON
-					+ EReturnConstants.WF_INITIATOR_PASSWORD;
+			String authString = EReturnsWorkflowConstants.WF_INITIATOR_USER_NAME + EReturnConstants.COLON
+					+ EReturnsWorkflowConstants.WF_INITIATOR_PASSWORD;
 			String authStringEnc = new String(Base64.encodeBase64(authString.getBytes()));
 			urlConnection.setRequestProperty(EReturnConstants.AUTH, (EReturnConstants.BASIC + authStringEnc));
-			urlConnection.setRequestProperty(EReturnConstants.X_CSRF_TOKEN, EReturnConstants.FETCH);
+			urlConnection.setRequestProperty(EReturnsWorkflowConstants.X_CSRF_TOKEN, EReturnsWorkflowConstants.FETCH);
 			urlConnection.setRequestMethod(EReturnConstants.GET);
 
 			urlConnection.connect();
@@ -208,15 +209,15 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			Map<String, List<String>> map = new HashMap<String, List<String>>();
 			map = urlConnection.getHeaderFields();
 			List<String> str = new ArrayList<String>();
-			if (map.containsKey(EReturnConstants.X_CSRF_TOKEN)) {
-				str.addAll(map.get(EReturnConstants.X_CSRF_TOKEN));
+			if (map.containsKey(EReturnsWorkflowConstants.X_CSRF_TOKEN)) {
+				str.addAll(map.get(EReturnsWorkflowConstants.X_CSRF_TOKEN));
 			}
 
 			if (str.size() > 0) {
 				csrfToken = str.get(0);
 			}
 			LOGGER.error(csrfToken);
-			cookies = urlConnection.getHeaderFields().get(EReturnConstants.SET_COOKIE);
+			cookies = urlConnection.getHeaderFields().get(EReturnsWorkflowConstants.SET_COOKIE);
 
 			allowMethods("PATCH");
 			HttpURLConnection postUrlConnection = (HttpURLConnection) postUrl.openConnection();
@@ -225,23 +226,23 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			postUrlConnection.setDoInput(true);
 			postUrlConnection.setUseCaches(false);
 			postUrlConnection.setRequestProperty(EReturnConstants.AUTH, (EReturnConstants.BASIC + authStringEnc));
-			postUrlConnection.setRequestProperty(EReturnConstants.X_CSRF_TOKEN, csrfToken);
-			postUrlConnection.setRequestMethod(EReturnConstants.PATCH);
+			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.X_CSRF_TOKEN, csrfToken);
+			postUrlConnection.setRequestMethod(EReturnsWorkflowConstants.PATCH);
 			// postUrlConnection.setRequestProperty("X-HTTP-Method-Override",
 			// "PATCH");
 
 			postUrlConnection.setRequestProperty(EReturnConstants.CONTENT_TYPE, EReturnConstants.CONTENT_APPLICATION);
-			postUrlConnection.setRequestProperty(EReturnConstants.ACCEPT, EReturnConstants.CONTENT_APPLICATION);
-			postUrlConnection.setRequestProperty(EReturnConstants.DATA_SERVICE_VERSION, "2.0");
-			postUrlConnection.setRequestProperty(EReturnConstants.X_REQUESTED_WITH,
-					EReturnConstants.X_REQUEST_WITH_TYPE);
-			postUrlConnection.setRequestProperty(EReturnConstants.ACCEPT_ENCODING,
-					EReturnConstants.ACCEPT_ENCODING_TYPE);
-			postUrlConnection.setRequestProperty(EReturnConstants.ACCEPT_CHARSET, EReturnConstants.UTF_8);
+			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.ACCEPT, EReturnConstants.CONTENT_APPLICATION);
+			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.DATA_SERVICE_VERSION, "2.0");
+			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.X_REQUESTED_WITH,
+					EReturnsWorkflowConstants.X_REQUEST_WITH_TYPE);
+			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.ACCEPT_ENCODING,
+					EReturnsWorkflowConstants.ACCEPT_ENCODING_TYPE);
+			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.ACCEPT_CHARSET, EReturnsWorkflowConstants.UTF_8);
 			postUrlConnection.setUseCaches(false);
 			for (String cookie : cookies) {
 				String tmp = cookie.split(";", 2)[0];
-				postUrlConnection.addRequestProperty(EReturnConstants.COOKIE, tmp);
+				postUrlConnection.addRequestProperty(EReturnsWorkflowConstants.COOKIE, tmp);
 			}
 
 			OutputStream os = postUrlConnection.getOutputStream();

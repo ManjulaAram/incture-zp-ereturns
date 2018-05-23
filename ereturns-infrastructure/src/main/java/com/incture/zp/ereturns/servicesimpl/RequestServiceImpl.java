@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.incture.zp.ereturns.constants.EReturnConstants;
+import com.incture.zp.ereturns.constants.EReturnsWorkflowConstants;
 import com.incture.zp.ereturns.dto.AttachmentDto;
 import com.incture.zp.ereturns.dto.DuplicateMaterialDto;
 import com.incture.zp.ereturns.dto.ItemDto;
@@ -112,16 +113,17 @@ public class RequestServiceImpl implements RequestService {
 
 			// start process
 			JSONObject jsonObj = new JSONObject();
-			jsonObj.put("requestId", requestId);
+			jsonObj.put(EReturnsWorkflowConstants.REQUEST_ID, requestId);
+			jsonObj.put(EReturnsWorkflowConstants.ITEM_CODE, "");
 
 			JSONObject obj = new JSONObject();
-			obj.put("context", jsonObj);
-			obj.put("definitionId", "zp_return_test");
+			obj.put(EReturnsWorkflowConstants.CONTEXT, jsonObj);
+			obj.put(EReturnsWorkflowConstants.DEFINITION_ID, EReturnsWorkflowConstants.DEFINITION_VALUE);
 
 			String payload = obj.toString();
 			String output = workflowTriggerService.triggerWorkflow(payload);
 			JSONObject resultJsonObject = new JSONObject(output);
-			workFlowInstanceId = resultJsonObject.getString("id");
+			workFlowInstanceId = resultJsonObject.getString(EReturnsWorkflowConstants.WORKFLOW_INSTANCE_ID);
 
 			workFlowDto.setRequestId(requestId);
 			workFlowDto.setWorkFlowInstanceId(workFlowInstanceId);

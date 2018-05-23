@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.incture.zp.ereturns.constants.EReturnConstants;
+import com.incture.zp.ereturns.constants.EReturnsWorkflowConstants;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.WorkFlowDto;
 import com.incture.zp.ereturns.dto.WorkflowInstanceDto;
@@ -32,9 +32,9 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService{
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkflowTrackerService.class);
 	@Override
 	public WorkflowInstanceDto getTaskDetails(RequestDto requestDto) {
-		String url = EReturnConstants.WORKFLOW_REST_API;
-		String username = EReturnConstants.WF_INITIATOR_USER_NAME;
-		String password = EReturnConstants.WF_INITIATOR_PASSWORD;
+		String url = EReturnsWorkflowConstants.WORKFLOW_REST_API;
+		String username = EReturnsWorkflowConstants.WF_INITIATOR_USER_NAME;
+		String password = EReturnsWorkflowConstants.WF_INITIATOR_PASSWORD;
 
 		WorkflowInstanceDto instanceDto = new WorkflowInstanceDto();
 		String taskInstanceId = "";
@@ -69,9 +69,9 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService{
 			}
 			if (logObject.get("type").equals("WORKFLOW_COMPLETED")) {
 				instanceDto.setCompletedAt(formatDateString(logObject.get("timestamp").toString()));
-				instanceDto.setStatus(EReturnConstants.COMPLETED);
+				instanceDto.setStatus(EReturnsWorkflowConstants.COMPLETED);
 			} else {
-				instanceDto.setStatus(EReturnConstants.IN_PROGRESS);
+				instanceDto.setStatus(EReturnsWorkflowConstants.IN_PROGRESS);
 			}
 
 			
