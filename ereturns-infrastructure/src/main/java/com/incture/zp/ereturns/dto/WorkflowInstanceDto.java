@@ -20,7 +20,7 @@ public class WorkflowInstanceDto implements Serializable {
 	private String createdAt;
 	private String pendingWith;
 	private String status;
-	private Map<String,String> approvedBy;
+	private List<ApproverDto> approverList;
 	private String completedAt;
 	private List<String> receipents;
 	public String getCreatedBy() {
@@ -67,11 +67,12 @@ public class WorkflowInstanceDto implements Serializable {
 	public void setCreatedAt(String createdAt) {
 		this.createdAt = createdAt;
 	}
-	public Map<String, String> getApprovedBy() {
-		return approvedBy;
+	
+	public List<ApproverDto> getApproverList() {
+		return approverList;
 	}
-	public void setApprovedBy(Map<String, String> approvedBy) {
-		this.approvedBy = approvedBy;
+	public void setApproverList(List<ApproverDto> approverList) {
+		this.approverList = approverList;
 	}
 	public String getCompletedAt() {
 		return completedAt;
