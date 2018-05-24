@@ -41,7 +41,7 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService{
 		WorkflowInstanceDto instanceDto = new WorkflowInstanceDto();
 		String taskInstanceId = "";
 		WorkFlowDto workflowDto=new WorkFlowDto();
-//		workflowDto=workflowService.getWorkFLowInstance(completeTaskRequestDto.getRequestId(), completeTaskRequestDto.getMaterialCode());
+		workflowDto=workflowService.getWorkFLowInstance(completeTaskRequestDto.getRequestId(), completeTaskRequestDto.getItemCode());
 		String workflowInstanceId=workflowDto.getWorkFlowInstanceId();
 		RestInvoker restInvoker = new RestInvoker(url, username, password);
 		

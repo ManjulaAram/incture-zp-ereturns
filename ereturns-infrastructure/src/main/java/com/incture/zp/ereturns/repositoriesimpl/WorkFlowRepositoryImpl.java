@@ -1,5 +1,7 @@
 package com.incture.zp.ereturns.repositoriesimpl;
 
+import java.util.List;
+
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +41,14 @@ public class WorkFlowRepositoryImpl implements WorkflowRepository {
 		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
 		query.setParameter("requestId", requestId);
 		query.setParameter("materialCode",matCode );
-		
-		WorkFlow workflow = (WorkFlow) query.list();
+		WorkFlow workflow = null;
+		@SuppressWarnings("unchecked")
+		List<WorkFlow> workflowList = (List<WorkFlow>) query.list();
+		if(workflowList != null && workflowList.size() > 0) {
+			for(int i = 0; i < workflowList.size(); i++) {
+				workflow = workflowList.get(i);
+			}
+		}
 		return workflow;
 
 	}
