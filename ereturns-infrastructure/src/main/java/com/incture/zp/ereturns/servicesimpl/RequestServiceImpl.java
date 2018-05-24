@@ -19,6 +19,7 @@ import com.incture.zp.ereturns.dto.DuplicateMaterialDto;
 import com.incture.zp.ereturns.dto.ItemDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
+import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.StatusRequestDto;
 import com.incture.zp.ereturns.dto.StatusResponseDto;
 import com.incture.zp.ereturns.dto.WorkFlowDto;
@@ -27,6 +28,7 @@ import com.incture.zp.ereturns.repositories.AttachmentRepository;
 import com.incture.zp.ereturns.repositories.HeaderRepository;
 import com.incture.zp.ereturns.repositories.RequestRepository;
 import com.incture.zp.ereturns.services.EcmDocumentService;
+import com.incture.zp.ereturns.services.HciMappingEccService;
 import com.incture.zp.ereturns.services.RequestService;
 import com.incture.zp.ereturns.services.WorkFlowService;
 import com.incture.zp.ereturns.services.WorkflowTriggerService;
@@ -56,6 +58,9 @@ public class RequestServiceImpl implements RequestService {
 
 	@Autowired
 	WorkFlowService workFlowService;
+	
+	@Autowired
+	HciMappingEccService hciMappingService;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequestServiceImpl.class);
 
@@ -133,7 +138,18 @@ public class RequestServiceImpl implements RequestService {
 				workFlowDto.setPrincipal(itemDto.getPrincipalCode());
 				workFlowDto.setTaskInstanceId("");
 				workFlowService.addWorkflowInstance(workFlowDto);
+				
+				
 				LOGGER.error("Process triggered successfully :" + output);
+			}
+			
+			for(ReturnOrderDto returnOrderDto : requestDto.getSetReturnOrderDto()) {
+				if(returnOrderDto.getRequestId().equalsIgnoreCase(requestId)) {
+					if(returnOrderDto.getOrderStatus().equalsIgnoreCase("COMPLETED")) {
+						responseDto = hciMappingService.pushDataToEcc(getRequestById(requestId));
+						LOGGER.error("Data pushed to HCI successfully :" + responseDto.getMessage());
+					}
+				}
 			}
 		}
 		return responseDto;

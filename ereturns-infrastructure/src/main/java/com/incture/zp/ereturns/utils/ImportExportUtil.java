@@ -45,6 +45,9 @@ public class ImportExportUtil {
 		user.setMobileToken(userDto.getMobileToken());
 		user.setPhone(userDto.getPhone());
 		user.setWebToken(userDto.getWebToken());
+		user.setIosToken(userDto.getIosToken());
+		user.setSapAccessToken(userDto.getSapAccessToken());
+		user.setSapRefreshToken(userDto.getSapRefreshToken());
 
 		Set<Role> roleSet = null;
 		if (userDto.getSetRole() != null && userDto.getSetRole().size() > 0) {
@@ -80,6 +83,11 @@ public class ImportExportUtil {
 		userDto.setUserName(user.getUserName());
 		userDto.setMobileToken(user.getMobileToken());
 		userDto.setWebToken(user.getWebToken());
+		
+		userDto.setIosToken(user.getIosToken());
+		userDto.setSapAccessToken(user.getSapAccessToken());
+		userDto.setSapRefreshToken(user.getSapRefreshToken());
+
 		return userDto;
 	}
 
@@ -354,7 +362,7 @@ public class ImportExportUtil {
 		if(returnOrder.getOrderUpdatedDate() != null) {
 			returnOrderDto.setOrderUpdatedDate(convertDateToString(returnOrder.getOrderUpdatedDate()));
 		}
-
+		returnOrderDto.setRequestId(returnOrder.getReturnOrderData().getRequestId());
 		return returnOrderDto;
 	}
 

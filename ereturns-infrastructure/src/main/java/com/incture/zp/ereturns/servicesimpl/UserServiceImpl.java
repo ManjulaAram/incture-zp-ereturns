@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.Query;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,9 +28,6 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	ImportExportUtil importExportUtil;
 
-	@Autowired
-	private SessionFactory sessionFactory;
-
 	@Override
 	public ResponseDto addUser(UserDto userDto) {
 		return userRepository.addUser(importExportUtil.importUserDto(userDto));
@@ -50,29 +45,19 @@ public class UserServiceImpl implements UserService {
 		return userDto;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<Role> getUserRole(String userId) {
-
-		List<Role> listRoles = new ArrayList<Role>();
-		String queryStr = "select r from User u join u.roleDetails r" + " where u.userId =:userId";
-
-		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
-		query.setParameter("userId", userId);
-		listRoles = query.list();
-
+	public List<RoleDto> getUserRole(String userId) {
+		List<RoleDto> listRoles = new ArrayList<RoleDto>();
+		List<Role> roles = userRepository.getUserRole(userId);
+		for(Role role : roles) {
+			listRoles.add(importExportUtil.exportRoleDto(role));
+		}
 		return listRoles;
 	}
 
 	@Override
-	public ResponseDto updateUser(UserDto userDto) {
-		ResponseDto responseDto = new ResponseDto();
-		if(userDto != null) {
-			if(userDto.getUserId() != null && !(userDto.getUserId().equals(""))) {
-				UserDto userDto2 = getUserById(userDto.getUserId());
-				responseDto = userRepository.addUser(importExportUtil.importUserDto(userDto2));
-			}
-		}
+	public ResponseDto updateMobileToken(UserDto userDto) {
+		ResponseDto responseDto = userRepository.updateMobileToken(importExportUtil.importUserDto(userDto));
 		return responseDto;
 	}
 }

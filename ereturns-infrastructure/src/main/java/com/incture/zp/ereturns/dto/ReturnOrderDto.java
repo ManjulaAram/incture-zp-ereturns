@@ -38,6 +38,7 @@ public class ReturnOrderDto implements Serializable {
 	
 	private String orderPendingWith;
 
+	private String requestId;
 	
 	public Long getReturnOrderId() {
 		return returnOrderId;
@@ -165,6 +166,14 @@ public class ReturnOrderDto implements Serializable {
 
 	public void setOrderPendingWith(String orderPendingWith) {
 		this.orderPendingWith = orderPendingWith;
+	}
+
+	public String getRequestId() {
+		return requestId;
+	}
+
+	public void setRequestId(String requestId) {
+		this.requestId = requestId;
 	}
 
 }

@@ -36,7 +36,16 @@ public class User {
 	
 	@Column(name = "WEB_TOKEN", length = 255)
 	private String webToken;
-	
+
+	@Column(name = "IOS_TOKEN", length = 255)
+	private String iosToken;
+
+	@Column(name = "SAP_ACCESS_TOKEN", length = 255)
+	private String sapAccessToken;
+
+	@Column(name = "SAP_REFRESH_TOKEN", length = 255)
+	private String sapRefreshToken;
+
 	@ManyToMany
 	@JoinTable(name = "T_USER_ROLE", joinColumns = @JoinColumn(name = "USER_ID"), 
 	inverseJoinColumns = @JoinColumn(name = "ROLE_ID") )
@@ -89,6 +98,24 @@ public class User {
 	}
 	public void setRoleDetails(Set<Role> roleDetails) {
 		this.roleDetails = roleDetails;
+	}
+	public String getIosToken() {
+		return iosToken;
+	}
+	public void setIosToken(String iosToken) {
+		this.iosToken = iosToken;
+	}
+	public String getSapAccessToken() {
+		return sapAccessToken;
+	}
+	public void setSapAccessToken(String sapAccessToken) {
+		this.sapAccessToken = sapAccessToken;
+	}
+	public String getSapRefreshToken() {
+		return sapRefreshToken;
+	}
+	public void setSapRefreshToken(String sapRefreshToken) {
+		this.sapRefreshToken = sapRefreshToken;
 	}
 	
 }

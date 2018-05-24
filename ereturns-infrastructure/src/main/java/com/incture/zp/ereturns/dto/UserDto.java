@@ -22,6 +22,36 @@ public class UserDto {
 	private Set<RoleDto> setRole;
 	
 	private String phone;
+	
+	private String iosToken;
+
+	private String sapAccessToken;
+
+	private String sapRefreshToken;
+
+	public String getIosToken() {
+		return iosToken;
+	}
+
+	public void setIosToken(String iosToken) {
+		this.iosToken = iosToken;
+	}
+
+	public String getSapAccessToken() {
+		return sapAccessToken;
+	}
+
+	public void setSapAccessToken(String sapAccessToken) {
+		this.sapAccessToken = sapAccessToken;
+	}
+
+	public String getSapRefreshToken() {
+		return sapRefreshToken;
+	}
+
+	public void setSapRefreshToken(String sapRefreshToken) {
+		this.sapRefreshToken = sapRefreshToken;
+	}
 
 	public String getUserId() {
 		return userId;

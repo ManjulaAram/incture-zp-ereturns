@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.incture.zp.ereturns.dto.ResponseDto;
+import com.incture.zp.ereturns.dto.RoleDto;
 import com.incture.zp.ereturns.dto.UserDto;
-import com.incture.zp.ereturns.model.Role;
 import com.incture.zp.ereturns.services.UserService;
 
 @RestController
@@ -26,7 +26,7 @@ public class EReturnsUserController {
 	UserService userService;
 
 	@RequestMapping("/getUserRole/{userId}")
-	public List<Role> getRole(@RequestBody @PathVariable String userId) {
+	public List<RoleDto> getRole(@RequestBody @PathVariable String userId) {
 		return userService.getUserRole(userId);
 	}
 	@RequestMapping("/getUser/{userId}")
@@ -41,8 +41,8 @@ public class EReturnsUserController {
 	}
 	
 	@RequestMapping(path="/updateMobileToken",consumes="application/json",method=RequestMethod.POST)
-	public ResponseDto updateUser(@RequestBody UserDto userDto)
+	public ResponseDto updateMobileToken(@RequestBody UserDto userDto)
 	{
-		return userService.updateUser(userDto);
+		return userService.updateMobileToken(userDto);
 	}
 }
