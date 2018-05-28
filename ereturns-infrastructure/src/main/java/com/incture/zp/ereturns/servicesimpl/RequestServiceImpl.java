@@ -28,6 +28,7 @@ import com.incture.zp.ereturns.model.Attachment;
 import com.incture.zp.ereturns.repositories.AttachmentRepository;
 import com.incture.zp.ereturns.repositories.HeaderRepository;
 import com.incture.zp.ereturns.repositories.RequestRepository;
+import com.incture.zp.ereturns.repositories.ReturnOrderRepository;
 import com.incture.zp.ereturns.services.EcmDocumentService;
 import com.incture.zp.ereturns.services.HciMappingEccService;
 import com.incture.zp.ereturns.services.RequestService;
@@ -41,6 +42,9 @@ public class RequestServiceImpl implements RequestService {
 
 	@Autowired
 	RequestRepository requestRepository;
+	
+	@Autowired
+	ReturnOrderRepository returnOrderRepository;
 
 	@Autowired
 	AttachmentRepository attachmentRepository;
@@ -144,11 +148,13 @@ public class RequestServiceImpl implements RequestService {
 				LOGGER.error("Process triggered successfully :" + output);
 			}
 			
-			for(ReturnOrderDto returnOrderDto : requestDto.getSetReturnOrderDto()) {
+			List<ReturnOrderDto> returnList = returnOrderRepository.getReturnOrderByRequestId(requestId);
+			for(ReturnOrderDto returnOrderDto : returnList) {
 				if(returnOrderDto.getRequestId().equalsIgnoreCase(requestId)) {
-					if(returnOrderDto.getOrderStatus().equalsIgnoreCase("COMPLETED")) {
+					if(returnOrderDto.getOrderStatus().equalsIgnoreCase(EReturnConstants.COMPLETE)) {
 						responseDto = hciMappingService.pushDataToEcc(getRequestById(requestId));
 						LOGGER.error("Data pushed to HCI successfully :" + responseDto.getMessage());
+						break;
 					}
 				}
 			}

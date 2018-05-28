@@ -1,5 +1,7 @@
  package com.incture.zp.ereturns.repositoriesimpl;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,7 +109,6 @@ public class RequestRepositoryImpl implements RequestRepository {
 		List<StatusResponseDto> reqList = new ArrayList<>();
 		Request request = null;
 		ReturnOrder returnOrder = null;
-		@SuppressWarnings("unused")
 		Header header = null;
 		Item item = null;
 		StatusResponseDto statusResponseDto = null;
@@ -120,12 +121,18 @@ public class RequestRepositoryImpl implements RequestRepository {
 			header = (Header) objects[2];
 			item = (Item) objects[3];
 			
-			if(request.getRequestId().equalsIgnoreCase(returnOrder.getReturnOrderData().getRequestId())) {
+			if(request.getRequestId().equalsIgnoreCase(returnOrder.getReturnOrderData().getRequestId()) &&
+					request.getRequestHeader().getHeaderId().equals(header.getHeaderId())) {
 				if(returnOrder.getItemCode().equalsIgnoreCase(item.getItemCode())) {
 					statusResponseDto = new StatusResponseDto();
 					statusResponseDto.setItemCode(item.getItemCode());
 					statusResponseDto.setCreatedBy(returnOrder.getOrderCreatedBy());
-					statusResponseDto.setCreatedOn(returnOrder.getOrderCreatedDate().toString());
+					if(returnOrder.getOrderCreatedDate() != null && !(returnOrder.getOrderCreatedDate().equals("")))
+					{
+						DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+						String output = dateFormat.format(returnOrder.getOrderCreatedDate());
+						statusResponseDto.setCreatedOn(output);
+					}
 					statusResponseDto.setMaterialCode(item.getMaterial());
 					statusResponseDto.setMaterialDescription(item.getMaterialDesc());
 					statusResponseDto.setRequestStatus(returnOrder.getOrderStatus());
@@ -136,7 +143,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 					statusResponseDto.setRemark(returnOrder.getRemark());
 					statusResponseDto.setReturnType(returnOrder.getPaymentType());
 					statusResponseDto.setReturnValue(returnOrder.getReturnValue());
-					statusResponseDto.setSalesPerson("BOM");
+					statusResponseDto.setSalesPerson("");
 	
 					//Request Level
 					statusResponseDto.setRequestId(request.getRequestId());
@@ -144,13 +151,13 @@ public class RequestRepositoryImpl implements RequestRepository {
 					statusResponseDto.setSoldTo(request.getSoldTo());
 					statusResponseDto.setInvoiceNo(request.getRequestHeader().getInvoiceNo());
 					
+					statusResponseDto.setMessage("Successfully Retrieved.");
+					statusResponseDto.setStatus("SUCCESS");
 					reqList.add(statusResponseDto);
 				}
 			}
 			
 		}
-		statusResponseDto.setMessage("Successfully Retrieved.");
-		statusResponseDto.setStatus("SUCCESS");
 		return reqList;
 	}
 
