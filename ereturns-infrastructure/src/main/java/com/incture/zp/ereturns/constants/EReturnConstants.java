@@ -26,4 +26,8 @@ public interface EReturnConstants {
 
 	public static final String SERVER_KEY = "AIzaSyDyQzSX_J3W4vuaoiqpnc5MO4AbRqewJSA";
 
+	public static final String COMPLETE = "COMPLETED";
+	public static final String REJECT = "REJECTED";
+	public static final String DUPLICATE = "DUPLICATE";
+	public static final String SUCCESS = "SUCCESS";
 }

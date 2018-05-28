@@ -1,6 +1,8 @@
 package com.incture.zp.ereturns.servicesimpl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -39,8 +41,8 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		
 		JSONObject header = new JSONObject();
 		JSONArray itemsArry = new JSONArray();
-		JSONObject schedules = new JSONObject();
-		 
+		JSONArray scheduleArry = new JSONArray();
+		
 		partnerShipTo.put(EReturnsHciConstants.PARTNER_NUMBER, requestDto.getShipTo());
 		partnerShipTo.put(EReturnsHciConstants.PARTNER_ROLE, EReturnsHciConstants.SHIP_TO_PARTY);
 		partnerArry.put(partnerShipTo);
@@ -78,12 +80,21 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 			item.put(EReturnsHciConstants.CURRENCY, requestDto.getHeaderDto().getCurrency());
 			item.put(EReturnsHciConstants.ORDER_REASON, returnOrderList.get(i).getReason());
 			itemsArry.put(item);
+			
+			JSONObject schedules = new JSONObject();
+			schedules.put(EReturnsHciConstants.ITEM_NO, itemDto.getItemCode());
+			schedules.put(EReturnsHciConstants.SCHEDULE_LINE, "0001");
+			schedules.put(EReturnsHciConstants.REQ_DATE, new SimpleDateFormat("yyyyMMdd").format(new Date()));
+			schedules.put(EReturnsHciConstants.REQ_QTY, returnOrderList.get(i).getReturnQty());
+
+			scheduleArry.put(schedules);
 		}
 		 
+
 		orderCreation.put(EReturnsHciConstants.RETURN_PARTNERS, partnerArry);
 		orderCreation.put(EReturnsHciConstants.RETURN_HEADER, header);
 		orderCreation.put(EReturnsHciConstants.RETURN_ITEMS, itemsArry);
-		orderCreation.put(EReturnsHciConstants.RETURN_SCHEDULES_IN, schedules);
+		orderCreation.put(EReturnsHciConstants.RETURN_SCHEDULES_IN, scheduleArry);
 		 
 		returnOrder.put(EReturnsHciConstants.RETURN_ORDER_CREATION, orderCreation);
 		 
@@ -95,6 +106,7 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		String password = EReturnsHciConstants.PASSWORD;
 
 		RestInvoker restInvoker = new RestInvoker(url, username, password);
+		LOGGER.error("Response coming from ECC1:");
 		String response = restInvoker.postDataToServer("/http/ro", returnOrder.toString());
 		LOGGER.error("Response coming from ECC:"+response);
 		if(response != null && !(response.equals(""))) {
@@ -109,6 +121,6 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		}
 		return responseDto;
 	}
-
+	
 }
 

@@ -1,6 +1,7 @@
 package com.incture.zp.ereturns.servicesimpl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -75,7 +76,7 @@ public class RequestServiceImpl implements RequestService {
 		if(duplicateDto.isDuplicate()) {
 			responseDto.setCode("02");
 			responseDto.setMessage(duplicateDto.getMaterials().toString());
-			responseDto.setStatus("DUPLICATE");
+			responseDto.setStatus(EReturnConstants.DUPLICATE);
 		} else {
 			try { 
 				responseDto = requestRepository.addRequest(importExportUtil.importRequestDto(requestDto));
@@ -166,21 +167,22 @@ public class RequestServiceImpl implements RequestService {
 	}
 
 	@Override
-	public StatusResponseDto getStatusDetails(StatusRequestDto requestDto) {
-		StatusResponseDto rList = requestRepository.getStatusDetails(requestDto);
-		List<RequestDto> list = rList.getRequestDto();
-		List<RequestDto> modifiedList = new ArrayList<>();
-		for (RequestDto requestDto2 : list) {
-			LOGGER.error("Adding attachment: " + requestDto2.getRequestId());
-			Set<AttachmentDto> setAttachmentDto = attachmentRepository.getAttachmentsById(requestDto2.getRequestId());
-			requestDto2.setSetAttachments(setAttachmentDto);
-			modifiedList.add(requestDto2);
+	public List<StatusResponseDto> getStatusDetails(StatusRequestDto requestDto) {
+		List<StatusResponseDto> rList = requestRepository.getStatusDetails(requestDto);
+		
+		List<StatusResponseDto> modifiedList = new ArrayList<StatusResponseDto>();
+		for(Iterator<StatusResponseDto> itr = rList.iterator(); itr.hasNext();) {
+			StatusResponseDto statusResponseDto = itr.next();
+			Set<AttachmentDto> setAttachmentDto = attachmentRepository.getAttachmentsById(statusResponseDto.getRequestId());
+			statusResponseDto.setAttachments(setAttachmentDto);
+			modifiedList.add(statusResponseDto);
+			LOGGER.error("Adding attachment: " + statusResponseDto.getRequestId());
 		}
-		rList.setRequestDto(modifiedList);
-		LOGGER.error("After Adding attachment: " + rList.getMessage());
+		rList.addAll(modifiedList);
 		return rList;
 	}
 
+	
 	@Override
 	public ResponseDto updateRequestStatus(RequestDto requestDto) {
 		ResponseDto responseDto = null;
@@ -230,4 +232,5 @@ public class RequestServiceImpl implements RequestService {
 		duplicateMaterialDto.setDuplicate(duplicate);
 		return duplicateMaterialDto;
 	}
+
 }

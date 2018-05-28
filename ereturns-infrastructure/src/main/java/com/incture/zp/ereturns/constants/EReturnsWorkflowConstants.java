@@ -29,6 +29,7 @@ public class EReturnsWorkflowConstants {
 	public static final String DEFINITION_ID = "definitionId";
 	public static final String DEFINITION_VALUE = "Ereturns";
 	public static final String ITEM_CODE = "Itemcode";
+	public static final String INITIATOR ="Initiator";
 	
 	public static final String WORKFLOW_INSTANCE_ID = "id";
 	public static final String WORKFLOW_REST_API="https://bpmworkflowruntimecbbe88bff-ce7231891.ap1.hana.ondemand.com/workflow-service/rest/";

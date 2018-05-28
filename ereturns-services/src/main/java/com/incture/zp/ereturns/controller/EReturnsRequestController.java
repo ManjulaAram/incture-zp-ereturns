@@ -16,9 +16,11 @@ import com.incture.zp.ereturns.dto.CompleteTaskRequestDto;
 import com.incture.zp.ereturns.dto.CompleteTasksDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
+import com.incture.zp.ereturns.dto.StatusPendingDto;
 import com.incture.zp.ereturns.dto.StatusRequestDto;
 import com.incture.zp.ereturns.dto.StatusResponseDto;
 import com.incture.zp.ereturns.dto.WorkflowInstanceDto;
+import com.incture.zp.ereturns.services.HciMappingEccService;
 import com.incture.zp.ereturns.services.RequestService;
 import com.incture.zp.ereturns.services.ReturnOrderService;
 import com.incture.zp.ereturns.services.WorkflowTrackerService;
@@ -38,6 +40,9 @@ public class EReturnsRequestController {
 
 	@Autowired
 	ReturnOrderService returnOrderService;
+	
+	@Autowired
+	HciMappingEccService hciMappingEccService;
 
 	@Autowired
 	WorkflowTriggerService workFlowTriggerService;
@@ -61,7 +66,7 @@ public class EReturnsRequestController {
 
 	@RequestMapping(value = "/getStatusDetails", method = RequestMethod.POST, consumes = { "application/json" })
 	@ResponseBody
-	public StatusResponseDto getStatusDetails(@RequestBody StatusRequestDto requestDto) {
+	public List<StatusResponseDto> getStatusDetails(@RequestBody StatusRequestDto requestDto) {
 		return requestService.getStatusDetails(requestDto);
 	}
 
@@ -104,5 +109,17 @@ public class EReturnsRequestController {
 	@ResponseBody
 	public WorkflowInstanceDto getAllRequests(@RequestBody CompleteTaskRequestDto completeTaskRequestDto) {
 		return wfTraackerService.getTaskDetails(completeTaskRequestDto);
+	}
+	
+	@RequestMapping(value = "/pushData", method = RequestMethod.POST, consumes = { "application/json" })
+	@ResponseBody
+	public ResponseDto pushData(@RequestBody RequestDto requestDto) {
+		return hciMappingEccService.pushDataToEcc(requestDto);
+	}
+
+	@RequestMapping(value = "/getPendingStatus/{userId}", method = RequestMethod.GET)
+	@ResponseBody
+	public StatusPendingDto getRequestStatusByUserId(@PathVariable(value = "userId") String userId) {
+		return returnOrderService.getRequestStatusByUserId(userId);
 	}
 }

@@ -2,16 +2,12 @@ package com.incture.zp.ereturns.dto;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class WorkflowInstanceDto implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6262133189534334957L;
 	
 	private String materialCode;

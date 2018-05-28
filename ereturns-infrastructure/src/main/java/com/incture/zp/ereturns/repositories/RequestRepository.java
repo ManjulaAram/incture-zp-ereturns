@@ -14,7 +14,7 @@ public interface RequestRepository {
 	
 	public Request getRequestById(String id);
 	
-	public StatusResponseDto getStatusDetails(StatusRequestDto requestDto);
+	public List<StatusResponseDto> getStatusDetails(StatusRequestDto requestDto);
 	
 	public List<RequestDto> getAllRequests();
 }

@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.constants.EReturnsWorkflowConstants;
 import com.incture.zp.ereturns.dto.CompleteTaskRequestDto;
+import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.services.HciMappingEccService;
 import com.incture.zp.ereturns.services.RequestService;
@@ -153,13 +154,19 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject = jsonArray.getJSONObject(0);
 			LOGGER.error("taskInstance" + jsonObject.get("id").toString());
-			
 			requestActionResponse=requestAction(jsonObject.get("id").toString(), requestDto.getFlag());
-			if(requestActionResponse.getStatus().equals("SUCCESS"))
+			LOGGER.error("taskInstance1" + requestActionResponse.getStatus());
+			if(requestActionResponse.getStatus().equalsIgnoreCase(EReturnConstants.SUCCESS))
 			{
-				if(requestService.getRequestById(requestDto.getRequestId()).getRequestStatus().equals("APPROVED"))
+				LOGGER.error("taskInstance3 coming inside");
+				RequestDto res = requestService.getRequestById(requestDto.getRequestId());
+				
+				LOGGER.error("taskInstance31 coming inside"+res.getRequestStatus());
+				if(res != null && res.getRequestStatus().equalsIgnoreCase(EReturnConstants.COMPLETE))
 				{
-					responseDto = hciMappingService.pushDataToEcc(requestService.getRequestById(requestDto.getRequestId()));
+					LOGGER.error("taskInstance4 coming inside"+res.getRequestStatus());
+					responseDto = hciMappingService.pushDataToEcc(res);
+					LOGGER.error("taskInstance5 coming inside"+responseDto.getMessage());
 				}
 			}
 
@@ -180,7 +187,6 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 	}
 
 	public ResponseDto requestAction(String taskInstanceId, String reqStatus) {
-		@SuppressWarnings("unused")
 		String responseData="";
 		List<String> cookies = null;
 		String csrfToken = "";
@@ -227,8 +233,6 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			postUrlConnection.setRequestProperty(EReturnConstants.AUTH, (EReturnConstants.BASIC + authStringEnc));
 			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.X_CSRF_TOKEN, csrfToken);
 			postUrlConnection.setRequestMethod(EReturnsWorkflowConstants.PATCH);
-			// postUrlConnection.setRequestProperty("X-HTTP-Method-Override",
-			// "PATCH");
 
 			postUrlConnection.setRequestProperty(EReturnConstants.CONTENT_TYPE, EReturnConstants.CONTENT_APPLICATION);
 			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.ACCEPT, EReturnConstants.CONTENT_APPLICATION);
@@ -249,19 +253,16 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			os.flush();
 
 			postUrlConnection.connect();
-
-			// System.out.println("Workflow " + 1 + " Response Code :" +
-			// postUrlConnection.getResponseCode());
-
 			responseData = getDataFromStream(postUrlConnection.getInputStream());
-			responseDto.setStatus("SUCESS");
+			LOGGER.error("response data after complete workflow:"+responseData.toString());
+			responseDto.setStatus(EReturnConstants.SUCCESS);
 		} catch (MalformedURLException e) {
-			//e.printStackTrace();
+			responseDto.setCode("01");
 			responseDto.setMessage(e.getMessage());
 			responseDto.setStatus("ERROR");
 			return responseDto;
 		} catch (IOException e) {
-			//e.printStackTrace();
+			responseDto.setCode("01");
 			responseDto.setMessage(e.getMessage());
 			responseDto.setStatus("ERROR");
 			return responseDto;

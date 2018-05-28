@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
+import com.incture.zp.ereturns.dto.StatusPendingDto;
 import com.incture.zp.ereturns.model.ReturnOrder;
 
 public interface ReturnOrderService {
@@ -15,5 +16,7 @@ public interface ReturnOrderService {
 	public ResponseDto deleteReturnOrderByItemCode(String itemCode);
 	
 	public ResponseDto deleteReturnOrderByInvoiceNo(String invoiceNo);
+	
+	public StatusPendingDto getRequestStatusByUserId(String userId);
 
 }

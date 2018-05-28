@@ -13,10 +13,10 @@ public interface RequestService {
 	
 	public RequestDto getRequestById(String id);
 	
-	public StatusResponseDto getStatusDetails(StatusRequestDto requestDto);
+	public List<StatusResponseDto> getStatusDetails(StatusRequestDto requestDto);
 	
 	public ResponseDto updateRequestStatus(RequestDto requestDto);
 	
 	public List<RequestDto> getAllRequests();
-
+	
 }

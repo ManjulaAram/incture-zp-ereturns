@@ -362,7 +362,7 @@ public class ImportExportUtil {
 		if(returnOrder.getOrderUpdatedDate() != null) {
 			returnOrderDto.setOrderUpdatedDate(convertDateToString(returnOrder.getOrderUpdatedDate()));
 		}
-		returnOrderDto.setRequestId(returnOrder.getReturnOrderData().getRequestId());
+		returnOrderDto.setPaymentType(returnOrder.getPaymentType());
 		return returnOrderDto;
 	}
 

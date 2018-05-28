@@ -32,4 +32,7 @@ public interface EReturnsHciConstants {
 	public static final String USERNAME = "S0019321680";
 	public static final String PASSWORD = "0WV1]2{Q";
 
+	public static final String SCHEDULE_LINE = "sched_line";
+	public static final String REQ_DATE = "req_date";
+	public static final String REQ_QTY = "req_qty";
 }
