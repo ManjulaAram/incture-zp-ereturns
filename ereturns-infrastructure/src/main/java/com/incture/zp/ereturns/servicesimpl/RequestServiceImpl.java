@@ -35,6 +35,7 @@ import com.incture.zp.ereturns.services.RequestService;
 import com.incture.zp.ereturns.services.WorkFlowService;
 import com.incture.zp.ereturns.services.WorkflowTriggerService;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
+import com.incture.zp.ereturns.utils.ServiceUtil;
 
 @Service
 @Transactional
@@ -67,6 +68,9 @@ public class RequestServiceImpl implements RequestService {
 	@Autowired
 	HciMappingEccService hciMappingService;
 
+	@Autowired
+	ServiceUtil serviceUtil;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequestServiceImpl.class);
 
 	@Override
@@ -126,6 +130,7 @@ public class RequestServiceImpl implements RequestService {
 				JSONObject jsonObj = new JSONObject();
 				jsonObj.put(EReturnsWorkflowConstants.REQUEST_ID, requestId);
 				jsonObj.put(EReturnsWorkflowConstants.ITEM_CODE, itemDto.getItemCode());
+				jsonObj.put(EReturnsWorkflowConstants.INITIATOR, requestDto.getRequestCreatedBy());
 	
 				JSONObject obj = new JSONObject();
 				obj.put(EReturnsWorkflowConstants.CONTEXT, jsonObj);
@@ -148,16 +153,21 @@ public class RequestServiceImpl implements RequestService {
 				LOGGER.error("Process triggered successfully :" + output);
 			}
 			
-			List<ReturnOrderDto> returnList = returnOrderRepository.getReturnOrderByRequestId(requestId);
-			for(ReturnOrderDto returnOrderDto : returnList) {
-				if(returnOrderDto.getRequestId().equalsIgnoreCase(requestId)) {
-					if(returnOrderDto.getOrderStatus().equalsIgnoreCase(EReturnConstants.COMPLETE)) {
-						responseDto = hciMappingService.pushDataToEcc(getRequestById(requestId));
-						LOGGER.error("Data pushed to HCI successfully :" + responseDto.getMessage());
-						break;
-					}
-				}
-			}
+//			try {
+//				Thread.sleep(5000);
+//				List<ReturnOrderDto> returnList = returnOrderRepository.getReturnOrderByRequestId(requestId);
+//				for(ReturnOrderDto returnOrderDto : returnList) {
+//					if(returnOrderDto.getRequestId().equalsIgnoreCase(requestId)) {
+//						if(returnOrderDto.getOrderStatus().equalsIgnoreCase(EReturnConstants.COMPLETE)) {
+//							responseDto = hciMappingService.pushDataToEcc(getRequestById(requestId));
+//							LOGGER.error("Data pushed to HCI successfully :" + responseDto.getMessage());
+//							break;
+//						}
+//					}
+//				}
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
 		}
 		return responseDto;
 	}

@@ -31,13 +31,11 @@ import com.incture.zp.ereturns.constants.EReturnsWorkflowConstants;
 import com.incture.zp.ereturns.dto.CompleteTaskRequestDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
-import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.services.HciMappingEccService;
 import com.incture.zp.ereturns.services.RequestService;
 import com.incture.zp.ereturns.services.ReturnOrderService;
 import com.incture.zp.ereturns.services.WorkFlowService;
 import com.incture.zp.ereturns.services.WorkflowTriggerService;
-import com.incture.zp.ereturns.utils.ImportExportUtil;
 import com.incture.zp.ereturns.utils.RestInvoker;
 
 @Service
@@ -54,7 +52,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
 	@Autowired
 	ReturnOrderService returnOrderService;
-	private static final Logger LOGGER = LoggerFactory.getLogger(ImportExportUtil.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(WorkflowTriggerServiceImpl.class);
 
 	@Override
 	public String triggerWorkflow(String payloadData) {
@@ -136,53 +134,44 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 	public ResponseDto completeTask(CompleteTaskRequestDto requestDto) {
 		ResponseDto responseDto = new ResponseDto();
 		ResponseDto requestActionResponse = new ResponseDto();
-		ResponseDto updateDto = new ResponseDto();
 		String workFlowInstanceId = workFlowService
 				.getWorkFLowInstance(requestDto.getRequestId(), requestDto.getItemCode()).getWorkFlowInstanceId();
 		String responseData = "";
 
 		LOGGER.error("workflowInstanceId" + workFlowInstanceId);
 		try {
-			URL getUrl = new URL(EReturnsWorkflowConstants.GET_WORK_FLOW_INSTANCE + workFlowInstanceId);
-			HttpURLConnection urlConnection = (HttpURLConnection) getUrl.openConnection();
-
-			String authString = EReturnsWorkflowConstants.WF_INITIATOR_USER_NAME + EReturnConstants.COLON
-					+ EReturnsWorkflowConstants.WF_INITIATOR_PASSWORD;
-			String authStringEnc = new String(Base64.encodeBase64(authString.getBytes()));
-			urlConnection.setRequestProperty(EReturnConstants.AUTH, (EReturnConstants.BASIC + authStringEnc));
-			urlConnection.setRequestMethod(EReturnConstants.GET);
-			urlConnection.setRequestProperty(EReturnConstants.CONTENT_TYPE, EReturnConstants.CONTENT_APPLICATION);
-
-			urlConnection.connect();
-			responseData = getDataFromStream(urlConnection.getInputStream());
-
-			LOGGER.error(responseData);
+			synchronized(this) {
+				URL getUrl = new URL(EReturnsWorkflowConstants.GET_WORK_FLOW_INSTANCE + workFlowInstanceId);
+				HttpURLConnection urlConnection = (HttpURLConnection) getUrl.openConnection();
+				
+				String authString = EReturnsWorkflowConstants.WF_INITIATOR_USER_NAME + EReturnConstants.COLON
+						+ EReturnsWorkflowConstants.WF_INITIATOR_PASSWORD;
+				String authStringEnc = new String(Base64.encodeBase64(authString.getBytes()));
+				urlConnection.setRequestProperty(EReturnConstants.AUTH, (EReturnConstants.BASIC + authStringEnc));
+				urlConnection.setRequestMethod(EReturnConstants.GET);
+				urlConnection.setRequestProperty(EReturnConstants.CONTENT_TYPE, EReturnConstants.CONTENT_APPLICATION);
+				
+				urlConnection.connect();
+				responseData = getDataFromStream(urlConnection.getInputStream());
+			}
+			LOGGER.error("Response coming from data stream:"+responseData);
 
 			JSONArray jsonArray = new JSONArray(responseData);
 			JSONObject jsonObject = new JSONObject();
 			jsonObject = jsonArray.getJSONObject(0);
 			LOGGER.error("taskInstance" + jsonObject.get("id").toString());
 			requestActionResponse = requestAction(jsonObject.get("id").toString(), requestDto.getFlag());
-
-			// updating db
+			LOGGER.error(requestActionResponse.getCode()+"taskInstance1" + requestActionResponse.getStatus());
 			if (requestActionResponse.getCode().equals("204")) {
-				updateDto = updateOrderDetails(jsonObject.get("id").toString());
-			}
-			LOGGER.error("taskInstance1" + requestActionResponse.getStatus());
-			if (requestActionResponse.getCode().equals("204")) {
-				if (updateDto.getStatus().equalsIgnoreCase(EReturnConstants.SUCCESS)) {
-					LOGGER.error("taskInstance3 coming inside");
+				Thread.sleep(5000);
+				String status = updateOrderDetails(jsonObject.get("id").toString());
+				if(status.equalsIgnoreCase(EReturnConstants.COMPLETE)) {
 					RequestDto res = requestService.getRequestById(requestDto.getRequestId());
-
 					LOGGER.error("taskInstance31 coming inside" + res.getRequestStatus());
-					if (res != null && res.getRequestStatus().equalsIgnoreCase(EReturnConstants.COMPLETE)) {
-						LOGGER.error("taskInstance4 coming inside" + res.getRequestStatus());
-						responseDto = hciMappingService.pushDataToEcc(res);
-						LOGGER.error("taskInstance5 coming inside" + responseDto.getMessage());
-					}
+					responseDto = hciMappingService.pushDataToEcc(res);
+					LOGGER.error("taskInstance5 coming inside" + responseDto.getMessage());
 				}
 			}
-
 		} catch (MalformedURLException e) {
 			responseDto.setCode("01");
 			responseDto.setMessage("FAILURE" + e.getMessage());
@@ -193,12 +182,14 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			responseDto.setMessage("FAILURE" + e.getMessage());
 			responseDto.setStatus("ERROR");
 			return responseDto;
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 
 		return responseDto;
 	}
 
-	public ResponseDto requestAction(String taskInstanceId, String reqStatus) {
+	public synchronized ResponseDto requestAction(String taskInstanceId, String reqStatus) {
 		String responseData = "";
 		List<String> cookies = null;
 		String csrfToken = "";
@@ -271,7 +262,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			postUrlConnection.connect();
 			responseData = getDataFromStream(postUrlConnection.getInputStream());
 			responseCode = postUrlConnection.getResponseCode() + "";
-			LOGGER.error("response data after complete workflow:" + responseData.toString());
+			LOGGER.error(responseCode+":response data after complete workflow:" + responseData.toString());
 			responseDto.setStatus(EReturnConstants.SUCCESS);
 			responseDto.setCode(responseCode);
 		} catch (MalformedURLException e) {
@@ -345,8 +336,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 		return dataBuffer.toString();
 	}
 
-	private ResponseDto updateOrderDetails(String taskInstanceId) {
-		ResponseDto responseDto = new ResponseDto();
+	private String updateOrderDetails(String taskInstanceId) {
 		String url = EReturnsWorkflowConstants.WORKFLOW_REST_API;
 		String username = EReturnsWorkflowConstants.WF_INITIATOR_USER_NAME;
 		String password = EReturnsWorkflowConstants.WF_INITIATOR_PASSWORD;
@@ -354,42 +344,15 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 		RestInvoker restInvoker = new RestInvoker(url, username, password);
 
 		String response = restInvoker.getData("v1/task-instances/" + taskInstanceId + "/context");
-		ReturnOrderDto returnOrderDto = new ReturnOrderDto();
 
 		JSONObject updateObject = new JSONObject(response);
 
 		JSONObject updateContent = new JSONObject();
 		updateContent = updateObject.getJSONObject("UpdateContent");
-
-		returnOrderDto.setOrderUpdatedBy(updateContent.getString("UpdatedBy").toString());
-		returnOrderDto.setOrderUpdatedDate(formatDateString(updateContent.getString("UpdatedOn").toString()));
-		returnOrderDto.setOrderPendingWith(updateContent.getString("PendingWith").toString());
-		returnOrderDto.setRequestId(updateContent.getString("RequestId").toString());
-		returnOrderDto.setItemCode(updateContent.getString("Itemcode").toString());
-		returnOrderDto.setOrderApprovedBy(updateContent.getString("ActionBy").toString());
-		returnOrderDto.setOrderApprovedDate(formatDateString(updateContent.getString("ActionDate").toString()));
-		returnOrderDto.setOrderStatus(updateContent.getString("Status").toString());
-
-		ResponseDto returnResponse = returnOrderService.updateReturnOrderDetails(returnOrderDto);
-		ResponseDto requestResponse = requestService.updateRequestDetails(returnOrderDto);
-
-		if (returnResponse.getStatus().equals("SUCCESS") && requestResponse.getStatus().equals("SUCCESS")) {
-			responseDto.setMessage("Tables updated successfully");
-			responseDto.setStatus("SUCCESS");
-		} else {
-			responseDto.setCode("01");
-			responseDto.setMessage("Error while updating");
-			responseDto.setStatus("ERROR");
-		}
-		return responseDto;
+		String status = updateContent.getString("Status").toString();
+		LOGGER.error("Status from context:"+status);
+		return status;
 
 	}
-	private String formatDateString(String date) {
-		String output = null;
-		String[] strArr = date.split("T");
 
-		output = (strArr[0] + " " + strArr[1].substring(0, strArr[1].length() - 1));
-
-		return output;
-	}
 }

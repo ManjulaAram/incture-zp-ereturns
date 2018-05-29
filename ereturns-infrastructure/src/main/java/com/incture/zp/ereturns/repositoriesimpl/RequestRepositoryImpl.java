@@ -185,8 +185,8 @@ public class RequestRepositoryImpl implements RequestRepository {
 		ResponseDto responseDto = new ResponseDto();
 
 		String queryString = ("update Request r set r.requestUpdatedBy=:requestUpdatedBy"
-				+ ", r.requestUpdatedDate=:requestUpdatedDate" + ", r.requestApprovedBy=:requestApprovedBy"
-				+ ", r.requestApprovedDate=:requestApprovedDate" + ", r.requestStatus=:requestStatus"
+				+ ", r.requestUpdatedDate=:requestUpdatedDate, r.requestApprovedBy=:requestApprovedBy"
+				+ ", r.requestApprovedDate=:requestApprovedDate, r.requestStatus=:requestStatus"
 				+ ", r.requestPendingWith=:requestPendingWith");
 		StringBuilder queryBuilder = new StringBuilder(queryString);
 		queryBuilder.append(" where requestId=:requestId");
@@ -195,19 +195,21 @@ public class RequestRepositoryImpl implements RequestRepository {
 
 		Query updateQuery = sessionFactory.getCurrentSession().createQuery(query);
 
-		if (returnOrderDto.getRequestId() != null || returnOrderDto.getRequestId() != "")
+		if (returnOrderDto.getItemCode() != null && !(returnOrderDto.getItemCode().equals("")))
+			updateQuery.setParameter("itemCode", returnOrderDto.getItemCode());
+		if (returnOrderDto.getRequestId() != null && !(returnOrderDto.getRequestId().equals("")))
 			updateQuery.setParameter("requestId", returnOrderDto.getRequestId());
-		if (returnOrderDto.getOrderUpdatedBy() != null || returnOrderDto.getOrderUpdatedBy() != "")
+		if (returnOrderDto.getOrderUpdatedBy() != null && !(returnOrderDto.getOrderUpdatedBy().equals("")))
 			updateQuery.setParameter("requestUpdatedBy", returnOrderDto.getOrderUpdatedBy());
-		if (returnOrderDto.getOrderApprovedBy() != null || returnOrderDto.getOrderApprovedBy() != "")
+		if (returnOrderDto.getOrderApprovedBy() != null && !(returnOrderDto.getOrderApprovedBy().equals("")))
 			updateQuery.setParameter("requestApprovedBy", returnOrderDto.getOrderApprovedBy());
-		if (returnOrderDto.getOrderApprovedDate() != null || returnOrderDto.getOrderApprovedDate() != "")
+		if (returnOrderDto.getOrderApprovedDate() != null && !(returnOrderDto.getOrderApprovedDate().equals("")))
 			updateQuery.setParameter("requestApprovedDate", returnOrderDto.getOrderApprovedDate());
-		if (returnOrderDto.getOrderStatus() != null || returnOrderDto.getOrderStatus() != "")
+		if (returnOrderDto.getOrderStatus() != null && !(returnOrderDto.getOrderStatus().equals("")))
 			updateQuery.setParameter("requestStatus", returnOrderDto.getOrderStatus());
-		if (returnOrderDto.getOrderPendingWith() != null || returnOrderDto.getOrderPendingWith() != "")
+		if (returnOrderDto.getOrderPendingWith() != null && !(returnOrderDto.getOrderPendingWith().equals("")))
 			updateQuery.setParameter("requestPendingWith", returnOrderDto.getOrderPendingWith());
-		if (returnOrderDto.getOrderUpdatedDate() != null || returnOrderDto.getOrderUpdatedDate() != "")
+		if (returnOrderDto.getOrderUpdatedDate() != null  && !(returnOrderDto.getOrderUpdatedDate().equals("")))
 			updateQuery.setParameter("requestUpdatedDate", returnOrderDto.getOrderUpdatedDate());
 
 		if (updateQuery.executeUpdate() > 0) {

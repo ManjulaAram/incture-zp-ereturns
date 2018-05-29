@@ -111,8 +111,10 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		LOGGER.error("Response coming from ECC:"+response);
 		if(response != null && !(response.equals(""))) {
 			JSONObject returnObj = new JSONObject(response);
+			JSONObject bapiObj = new JSONObject();
+			bapiObj = returnObj.getJSONObject("rfc:BAPI_CUSTOMERRETURN_CREATE.Response");
 			responseDto.setCode(String.valueOf(HttpStatus.SC_OK));
-			responseDto.setMessage(returnObj.getString("SALESDOCUMENT"));
+			responseDto.setMessage(bapiObj.getString("SALESDOCUMENT"));
 			responseDto.setStatus("SUCCESS");
 		} else {
 			responseDto.setCode(String.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR));

@@ -9,7 +9,7 @@ public class CompleteTaskRequestDto implements Serializable {
 
 	private static final long serialVersionUID = -9176163763906937576L;
 
-	
+	private String loginUser;
 	private String requestId;
 	private String itemCode;
 	private String flag;
@@ -31,6 +31,12 @@ public class CompleteTaskRequestDto implements Serializable {
 	}
 	public void setItemCode(String itemCode) {
 		this.itemCode = itemCode;
+	}
+	public String getLoginUser() {
+		return loginUser;
+	}
+	public void setLoginUser(String loginUser) {
+		this.loginUser = loginUser;
 	}
 	
 }
