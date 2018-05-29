@@ -122,9 +122,9 @@ public class ReturnOrderRepositoryImpl implements ReturnOrderRepository {
 	public ResponseDto updateReturnOrderDetails(ReturnOrderDto returnOrderDto) {
 		ResponseDto responseDto = new ResponseDto();
 		String queryString = ("update ReturnOrder o set o.orderUpdatedBy=:orderUpdatedBy"
-				+ ", set o.orderUpdatedDate=:orderApprovedDate" + ", set o.orderApprovedBy=:orderApprovedBy"
-				+ ", set o.orderApprovedDate=:orderApprovedDate" + ", set o.orderStatus=:orderStatus"
-				+ ", set o.orderPendingWith=:orderPendingWith");
+				+ ", o.orderUpdatedDate=:orderApprovedDate" + ", o.orderApprovedBy=:orderApprovedBy"
+				+ ", o.orderApprovedDate=:orderApprovedDate" + ", o.orderStatus=:orderStatus"
+				+ ", o.orderPendingWith=:orderPendingWith");
 		StringBuilder queryBuilder = new StringBuilder(queryString);
 		queryBuilder.append(" where requestId=:requestId and itemCode=:itemCode");
 

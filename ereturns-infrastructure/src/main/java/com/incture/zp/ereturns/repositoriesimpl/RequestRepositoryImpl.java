@@ -185,9 +185,9 @@ public class RequestRepositoryImpl implements RequestRepository {
 		ResponseDto responseDto = new ResponseDto();
 
 		String queryString = ("update Request r set r.requestUpdatedBy=:requestUpdatedBy"
-				+ ", set r.requestUpdatedDate=:requestUpdatedDate" + ", set r.requestApprovedBy=:requestApprovedBy"
-				+ ", set r.requestApprovedDate=:requestApprovedDate" + ", set r.requestStatus=:requestStatus"
-				+ ", set r.requestPendingWith=:requestPendingWith");
+				+ ", r.requestUpdatedDate=:requestUpdatedDate" + ", r.requestApprovedBy=:requestApprovedBy"
+				+ ", r.requestApprovedDate=:requestApprovedDate" + ", r.requestStatus=:requestStatus"
+				+ ", r.requestPendingWith=:requestPendingWith");
 		StringBuilder queryBuilder = new StringBuilder(queryString);
 		queryBuilder.append(" where requestId=:requestId");
 
