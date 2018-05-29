@@ -155,16 +155,26 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 				responseData = getDataFromStream(urlConnection.getInputStream());
 			}
 			LOGGER.error("Response coming from data stream:"+responseData);
-
+			
+			String instanceId="";
 			JSONArray jsonArray = new JSONArray(responseData);
-			JSONObject jsonObject = new JSONObject();
-			jsonObject = jsonArray.getJSONObject(0);
-			LOGGER.error("taskInstance" + jsonObject.get("id").toString());
-			requestActionResponse = requestAction(jsonObject.get("id").toString(), requestDto.getFlag());
+			for (int counter = 0; counter < jsonArray.length(); counter++) {
+				JSONObject instanceObject = jsonArray.getJSONObject(counter);
+				if(instanceObject.get("status").equals("READY"))
+				{
+					instanceId=instanceObject.get("id").toString();
+				}
+			}
+			/*JSONObject jsonObject = new JSONObject();
+			jsonObject = jsonArray.getJSONObject(0);*/
+			LOGGER.error("taskInstance" + instanceId);
+			if(instanceId!=null && instanceId!=""){
+			requestActionResponse = requestAction(instanceId, requestDto.getFlag());
+			}
 			LOGGER.error(requestActionResponse.getCode()+"taskInstance1" + requestActionResponse.getStatus());
 			if (requestActionResponse.getCode().equals("204")) {
 				Thread.sleep(5000);
-				String status = updateOrderDetails(jsonObject.get("id").toString());
+				String status = updateOrderDetails(instanceId);
 				if(status.equalsIgnoreCase(EReturnConstants.COMPLETE)) {
 					RequestDto res = requestService.getRequestById(requestDto.getRequestId());
 					LOGGER.error("taskInstance31 coming inside" + res.getRequestStatus());
