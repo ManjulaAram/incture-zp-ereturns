@@ -45,4 +45,9 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
 		return returnOrderRepository.getRequestStatusByUserId(userId);
 	}
 
+	@Override
+	public ResponseDto updateReturnOrderDetails(ReturnOrderDto returnOrderDto)
+	{
+		return returnOrderRepository.updateReturnOrderDetails(returnOrderDto);
+	}
 }

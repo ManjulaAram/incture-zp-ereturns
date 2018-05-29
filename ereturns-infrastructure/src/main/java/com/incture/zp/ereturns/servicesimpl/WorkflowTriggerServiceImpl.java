@@ -31,11 +31,14 @@ import com.incture.zp.ereturns.constants.EReturnsWorkflowConstants;
 import com.incture.zp.ereturns.dto.CompleteTaskRequestDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
+import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.services.HciMappingEccService;
 import com.incture.zp.ereturns.services.RequestService;
+import com.incture.zp.ereturns.services.ReturnOrderService;
 import com.incture.zp.ereturns.services.WorkFlowService;
 import com.incture.zp.ereturns.services.WorkflowTriggerService;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
+import com.incture.zp.ereturns.utils.RestInvoker;
 
 @Service
 public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
@@ -45,10 +48,12 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
 	@Autowired
 	HciMappingEccService hciMappingService;
-	
+
 	@Autowired
 	RequestService requestService;
 
+	@Autowired
+	ReturnOrderService returnOrderService;
 	private static final Logger LOGGER = LoggerFactory.getLogger(ImportExportUtil.class);
 
 	@Override
@@ -93,13 +98,15 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.X_CSRF_TOKEN, csrfToken);
 			postUrlConnection.setRequestMethod(EReturnConstants.POST);
 			postUrlConnection.setRequestProperty(EReturnConstants.CONTENT_TYPE, EReturnConstants.CONTENT_APPLICATION);
-			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.ACCEPT, EReturnConstants.CONTENT_APPLICATION);
+			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.ACCEPT,
+					EReturnConstants.CONTENT_APPLICATION);
 			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.DATA_SERVICE_VERSION, "2.0");
 			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.X_REQUESTED_WITH,
 					EReturnsWorkflowConstants.X_REQUEST_WITH_TYPE);
 			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.ACCEPT_ENCODING,
 					EReturnsWorkflowConstants.ACCEPT_ENCODING_TYPE);
-			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.ACCEPT_CHARSET, EReturnsWorkflowConstants.UTF_8);
+			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.ACCEPT_CHARSET,
+					EReturnsWorkflowConstants.UTF_8);
 			postUrlConnection.setUseCaches(false);
 			for (String cookie : cookies) {
 				String tmp = cookie.split(";", 2)[0];
@@ -128,9 +135,10 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 	@Override
 	public ResponseDto completeTask(CompleteTaskRequestDto requestDto) {
 		ResponseDto responseDto = new ResponseDto();
-		ResponseDto requestActionResponse=new ResponseDto();
-		String workFlowInstanceId = workFlowService.getWorkFLowInstance(requestDto.getRequestId(), requestDto.getItemCode())
-				.getWorkFlowInstanceId();
+		ResponseDto requestActionResponse = new ResponseDto();
+		ResponseDto updateDto = new ResponseDto();
+		String workFlowInstanceId = workFlowService
+				.getWorkFLowInstance(requestDto.getRequestId(), requestDto.getItemCode()).getWorkFlowInstanceId();
 		String responseData = "";
 
 		LOGGER.error("workflowInstanceId" + workFlowInstanceId);
@@ -154,31 +162,35 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject = jsonArray.getJSONObject(0);
 			LOGGER.error("taskInstance" + jsonObject.get("id").toString());
-			requestActionResponse=requestAction(jsonObject.get("id").toString(), requestDto.getFlag());
+			requestActionResponse = requestAction(jsonObject.get("id").toString(), requestDto.getFlag());
+
+			// updating db
+			if (requestActionResponse.getCode().equals("204")) {
+				updateDto = updateOrderDetails(jsonObject.get("id").toString());
+			}
 			LOGGER.error("taskInstance1" + requestActionResponse.getStatus());
-			if(requestActionResponse.getStatus().equalsIgnoreCase(EReturnConstants.SUCCESS))
-			{
-				LOGGER.error("taskInstance3 coming inside");
-				RequestDto res = requestService.getRequestById(requestDto.getRequestId());
-				
-				LOGGER.error("taskInstance31 coming inside"+res.getRequestStatus());
-				if(res != null && res.getRequestStatus().equalsIgnoreCase(EReturnConstants.COMPLETE))
-				{
-					LOGGER.error("taskInstance4 coming inside"+res.getRequestStatus());
-					responseDto = hciMappingService.pushDataToEcc(res);
-					LOGGER.error("taskInstance5 coming inside"+responseDto.getMessage());
+			if (requestActionResponse.getCode().equals("204")) {
+				if (updateDto.getStatus().equalsIgnoreCase(EReturnConstants.SUCCESS)) {
+					LOGGER.error("taskInstance3 coming inside");
+					RequestDto res = requestService.getRequestById(requestDto.getRequestId());
+
+					LOGGER.error("taskInstance31 coming inside" + res.getRequestStatus());
+					if (res != null && res.getRequestStatus().equalsIgnoreCase(EReturnConstants.COMPLETE)) {
+						LOGGER.error("taskInstance4 coming inside" + res.getRequestStatus());
+						responseDto = hciMappingService.pushDataToEcc(res);
+						LOGGER.error("taskInstance5 coming inside" + responseDto.getMessage());
+					}
 				}
 			}
 
-
 		} catch (MalformedURLException e) {
 			responseDto.setCode("01");
-			responseDto.setMessage("FAILURE"+e.getMessage());
+			responseDto.setMessage("FAILURE" + e.getMessage());
 			responseDto.setStatus("ERROR");
 			return responseDto;
 		} catch (IOException e) {
 			responseDto.setCode("01");
-			responseDto.setMessage("FAILURE"+e.getMessage());
+			responseDto.setMessage("FAILURE" + e.getMessage());
 			responseDto.setStatus("ERROR");
 			return responseDto;
 		}
@@ -187,14 +199,16 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 	}
 
 	public ResponseDto requestAction(String taskInstanceId, String reqStatus) {
-		String responseData="";
+		String responseData = "";
 		List<String> cookies = null;
 		String csrfToken = "";
 		String payloadData;
-		ResponseDto responseDto=new ResponseDto();
+		ResponseDto responseDto = new ResponseDto();
 
+		String responseCode = "";
 		payloadData = buildPayload(reqStatus);
 		LOGGER.error(payloadData);
+
 		try {
 
 			URL getUrl = new URL(EReturnsWorkflowConstants.APPROVAL_XCSRF_TOKEN);
@@ -235,13 +249,15 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			postUrlConnection.setRequestMethod(EReturnsWorkflowConstants.PATCH);
 
 			postUrlConnection.setRequestProperty(EReturnConstants.CONTENT_TYPE, EReturnConstants.CONTENT_APPLICATION);
-			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.ACCEPT, EReturnConstants.CONTENT_APPLICATION);
+			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.ACCEPT,
+					EReturnConstants.CONTENT_APPLICATION);
 			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.DATA_SERVICE_VERSION, "2.0");
 			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.X_REQUESTED_WITH,
 					EReturnsWorkflowConstants.X_REQUEST_WITH_TYPE);
 			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.ACCEPT_ENCODING,
 					EReturnsWorkflowConstants.ACCEPT_ENCODING_TYPE);
-			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.ACCEPT_CHARSET, EReturnsWorkflowConstants.UTF_8);
+			postUrlConnection.setRequestProperty(EReturnsWorkflowConstants.ACCEPT_CHARSET,
+					EReturnsWorkflowConstants.UTF_8);
 			postUrlConnection.setUseCaches(false);
 			for (String cookie : cookies) {
 				String tmp = cookie.split(";", 2)[0];
@@ -254,8 +270,10 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
 			postUrlConnection.connect();
 			responseData = getDataFromStream(postUrlConnection.getInputStream());
-			LOGGER.error("response data after complete workflow:"+responseData.toString());
+			responseCode = postUrlConnection.getResponseCode() + "";
+			LOGGER.error("response data after complete workflow:" + responseData.toString());
 			responseDto.setStatus(EReturnConstants.SUCCESS);
+			responseDto.setCode(responseCode);
 		} catch (MalformedURLException e) {
 			responseDto.setCode("01");
 			responseDto.setMessage(e.getMessage());
@@ -267,7 +285,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			responseDto.setStatus("ERROR");
 			return responseDto;
 		}
-		 return responseDto;
+		return responseDto;
 
 	}
 
@@ -325,5 +343,53 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 		inStream.close();
 
 		return dataBuffer.toString();
+	}
+
+	private ResponseDto updateOrderDetails(String taskInstanceId) {
+		ResponseDto responseDto = new ResponseDto();
+		String url = EReturnsWorkflowConstants.WORKFLOW_REST_API;
+		String username = EReturnsWorkflowConstants.WF_INITIATOR_USER_NAME;
+		String password = EReturnsWorkflowConstants.WF_INITIATOR_PASSWORD;
+
+		RestInvoker restInvoker = new RestInvoker(url, username, password);
+
+		String response = restInvoker.getData("v1/task-instances/" + taskInstanceId + "/context");
+		ReturnOrderDto returnOrderDto = new ReturnOrderDto();
+
+		JSONObject updateObject = new JSONObject(response);
+
+		JSONObject updateContent = new JSONObject();
+		updateContent = updateObject.getJSONObject("UpdateContent");
+
+		returnOrderDto.setOrderUpdatedBy(updateContent.getString("UpdatedBy").toString());
+		returnOrderDto.setOrderUpdatedDate(formatDateString(updateContent.getString("UpdatedOn").toString()));
+		returnOrderDto.setOrderPendingWith(updateContent.getString("PendingWith").toString());
+		returnOrderDto.setRequestId(updateContent.getString("RequestId").toString());
+		returnOrderDto.setItemCode(updateContent.getString("Itemcode").toString());
+		returnOrderDto.setOrderApprovedBy(updateContent.getString("ActionBy").toString());
+		returnOrderDto.setOrderApprovedDate(formatDateString(updateContent.getString("ActionDate").toString()));
+		returnOrderDto.setOrderStatus(updateContent.getString("Status").toString());
+
+		ResponseDto returnResponse = returnOrderService.updateReturnOrderDetails(returnOrderDto);
+		ResponseDto requestResponse = requestService.updateRequestDetails(returnOrderDto);
+
+		if (returnResponse.getStatus().equals("SUCCESS") && requestResponse.getStatus().equals("SUCCESS")) {
+			responseDto.setMessage("Tables updated successfully");
+			responseDto.setStatus("SUCCESS");
+		} else {
+			responseDto.setCode("01");
+			responseDto.setMessage("Error while updating");
+			responseDto.setStatus("ERROR");
+		}
+		return responseDto;
+
+	}
+	private String formatDateString(String date) {
+		String output = null;
+		String[] strArr = date.split("T");
+
+		output = (strArr[0] + " " + strArr[1].substring(0, strArr[1].length() - 1));
+
+		return output;
 	}
 }

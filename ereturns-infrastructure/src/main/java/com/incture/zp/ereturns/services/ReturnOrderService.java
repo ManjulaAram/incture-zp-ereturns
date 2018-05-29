@@ -19,4 +19,5 @@ public interface ReturnOrderService {
 	
 	public StatusPendingDto getRequestStatusByUserId(String userId);
 
+	ResponseDto updateReturnOrderDetails(ReturnOrderDto returnOrderDto);
 }

@@ -18,4 +18,6 @@ public interface ReturnOrderRepository {
 	public ResponseDto deleteReturnOrderByInvoiceNo(String invoiceNo);
 	
 	public StatusPendingDto getRequestStatusByUserId(String userId);
+	
+	public ResponseDto updateReturnOrderDetails(ReturnOrderDto returnOrderDto);
 }

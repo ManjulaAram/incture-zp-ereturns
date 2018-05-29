@@ -238,5 +238,11 @@ public class RequestServiceImpl implements RequestService {
 		duplicateMaterialDto.setDuplicate(duplicate);
 		return duplicateMaterialDto;
 	}
+	
+	@Override
+	public ResponseDto updateRequestDetails(ReturnOrderDto returnOrderDto) {
+		
+		return requestRepository.updateRequest(returnOrderDto);
+	}
 
 }

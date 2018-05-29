@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
+import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.StatusRequestDto;
 import com.incture.zp.ereturns.dto.StatusResponseDto;
 import com.incture.zp.ereturns.model.Request;
@@ -17,4 +18,6 @@ public interface RequestRepository {
 	public List<StatusResponseDto> getStatusDetails(StatusRequestDto requestDto);
 	
 	public List<RequestDto> getAllRequests();
+	
+	ResponseDto updateRequest(ReturnOrderDto returnOrderDto);
 }
