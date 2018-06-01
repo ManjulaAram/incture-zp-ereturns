@@ -262,6 +262,9 @@ public class ImportExportUtil {
 		request.setSetReturnOrder(returnOrderSet);
 		request.setRequestHeader(importHeaderDto(requestDto.getHeaderDto()));
 		request.setCustomerGroup(requestDto.getCustomerGroup());
+		request.setCustomer(requestDto.getCustomer());
+		request.setCustomerNo(requestDto.getCustomerNo());
+		request.setBusinessUnit(requestDto.getBusinessUnit());
 		return request;
 	}
 
@@ -302,7 +305,10 @@ public class ImportExportUtil {
 		requestDto.setSetReturnOrderDto(returnOrderSet);
 		requestDto.setHeaderDto(exportHeaderDto(request.getRequestHeader()));
 		requestDto.setCustomerGroup(request.getCustomerGroup());
-
+		requestDto.setCustomer(request.getCustomer());
+		requestDto.setCustomerNo(request.getCustomerNo());
+		requestDto.setBusinessUnit(request.getBusinessUnit());
+		
 		return requestDto;
 	}
 
@@ -363,6 +369,7 @@ public class ImportExportUtil {
 			returnOrderDto.setOrderUpdatedDate(convertDateToString(returnOrder.getOrderUpdatedDate()));
 		}
 		returnOrderDto.setPaymentType(returnOrder.getPaymentType());
+		returnOrderDto.setRequestId(returnOrder.getReturnOrderData().getRequestId());
 		return returnOrderDto;
 	}
 

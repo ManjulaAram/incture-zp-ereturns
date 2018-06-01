@@ -38,7 +38,6 @@ import com.incture.zp.ereturns.services.ReturnOrderService;
 import com.incture.zp.ereturns.services.WorkFlowService;
 import com.incture.zp.ereturns.services.WorkflowTriggerService;
 import com.incture.zp.ereturns.utils.RestInvoker;
-
 @Service
 public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
@@ -57,7 +56,23 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 	@Autowired
 	ReturnOrderService returnOrderService;
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkflowTriggerServiceImpl.class);
+	
+	String destination;
+	String user;
+	String pwd;
+	
+	public WorkflowTriggerServiceImpl() {
+//		DestinationConfiguration destConfiguration = ServiceUtil.getDest(EReturnsWorkflowConstants.WORKFLOW_DESTINATION);
+//		destination = destConfiguration.getProperty(EReturnsWorkflowConstants.WORKFLOW_DESTINATION_URL);
+//		user = destConfiguration.getProperty(EReturnsWorkflowConstants.WORKFLOW_DESTINATION_USER);
+//		pwd = destConfiguration.getProperty(EReturnsWorkflowConstants.WORKFLOW_DESTINATION_PWD);
+		
+		destination = EReturnsWorkflowConstants.WORKFLOW_DESTINATION_URL;
+		user = EReturnsWorkflowConstants.WORKFLOW_DESTINATION_USER;
+		pwd = EReturnsWorkflowConstants.WORKFLOW_DESTINATION_PWD;
 
+	}
+	
 	@Override
 	public String triggerWorkflow(String payloadData) {
 		String responseData = "";
@@ -65,13 +80,12 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 		String csrfToken = "";
 
 		try {
-			URL getUrl = new URL(EReturnsWorkflowConstants.GET_XCSRF_TOKEN_ENDPOINT);
-			URL postUrl = new URL(EReturnsWorkflowConstants.START_WF_ENDPOINT);
+			URL getUrl = new URL(destination+EReturnsWorkflowConstants.GET_XCSRF_TOKEN_ENDPOINT);
+			URL postUrl = new URL(destination+EReturnsWorkflowConstants.START_WF_ENDPOINT);
 
 			HttpURLConnection urlConnection = (HttpURLConnection) getUrl.openConnection();
 
-			String authString = EReturnsWorkflowConstants.WF_INITIATOR_USER_NAME + EReturnConstants.COLON
-					+ EReturnsWorkflowConstants.WF_INITIATOR_PASSWORD;
+			String authString = user + EReturnConstants.COLON + pwd;
 			String authStringEnc = new String(Base64.encodeBase64(authString.getBytes()));
 			urlConnection.setRequestProperty(EReturnConstants.AUTH, (EReturnConstants.BASIC + authStringEnc));
 			urlConnection.setRequestProperty(EReturnsWorkflowConstants.X_CSRF_TOKEN, EReturnsWorkflowConstants.FETCH);
@@ -144,12 +158,12 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
 		LOGGER.error("workflowInstanceId" + workFlowInstanceId);
 		try {
+
 			synchronized(this) {
-				URL getUrl = new URL(EReturnsWorkflowConstants.GET_WORK_FLOW_INSTANCE + workFlowInstanceId);
+				URL getUrl = new URL(destination+EReturnsWorkflowConstants.GET_WORK_FLOW_INSTANCE + workFlowInstanceId);
 				HttpURLConnection urlConnection = (HttpURLConnection) getUrl.openConnection();
 				
-				String authString = EReturnsWorkflowConstants.WF_INITIATOR_USER_NAME + EReturnConstants.COLON
-						+ EReturnsWorkflowConstants.WF_INITIATOR_PASSWORD;
+				String authString = user + EReturnConstants.COLON + pwd;
 				String authStringEnc = new String(Base64.encodeBase64(authString.getBytes()));
 				urlConnection.setRequestProperty(EReturnConstants.AUTH, (EReturnConstants.BASIC + authStringEnc));
 				urlConnection.setRequestMethod(EReturnConstants.GET);
@@ -217,13 +231,12 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
 		try {
 
-			URL getUrl = new URL(EReturnsWorkflowConstants.APPROVAL_XCSRF_TOKEN);
-			URL postUrl = new URL(EReturnsWorkflowConstants.APPROVAL_URL + taskInstanceId);
+			URL getUrl = new URL(destination+EReturnsWorkflowConstants.APPROVAL_XCSRF_TOKEN);
+			URL postUrl = new URL(destination+EReturnsWorkflowConstants.APPROVAL_URL + taskInstanceId);
 
 			HttpURLConnection urlConnection = (HttpURLConnection) getUrl.openConnection();
 
-			String authString = EReturnsWorkflowConstants.WF_INITIATOR_USER_NAME + EReturnConstants.COLON
-					+ EReturnsWorkflowConstants.WF_INITIATOR_PASSWORD;
+			String authString = user + EReturnConstants.COLON + pwd;
 			String authStringEnc = new String(Base64.encodeBase64(authString.getBytes()));
 			urlConnection.setRequestProperty(EReturnConstants.AUTH, (EReturnConstants.BASIC + authStringEnc));
 			urlConnection.setRequestProperty(EReturnsWorkflowConstants.X_CSRF_TOKEN, EReturnsWorkflowConstants.FETCH);
@@ -352,19 +365,15 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 	}
 
 	private String updateOrderDetails(String taskInstanceId) {
-		String url = EReturnsWorkflowConstants.WORKFLOW_REST_API;
-		String username = EReturnsWorkflowConstants.WF_INITIATOR_USER_NAME;
-		String password = EReturnsWorkflowConstants.WF_INITIATOR_PASSWORD;
+		String url = destination+EReturnsWorkflowConstants.WORKFLOW_REST_API;
 
-		RestInvoker restInvoker = new RestInvoker(url, username, password);
-
+		RestInvoker restInvoker = new RestInvoker(url, user, pwd);
 		String response = restInvoker.getData("v1/task-instances/" + taskInstanceId + "/context");
-
 		JSONObject updateObject = new JSONObject(response);
 
 		JSONObject updateContent = new JSONObject();
-		updateContent = updateObject.getJSONObject("UpdateContent");
-		String status = updateContent.getString("Status").toString();
+		updateContent = updateObject.getJSONObject(EReturnsWorkflowConstants.UPDATE_CONTENT);
+		String status = updateContent.getString(EReturnsWorkflowConstants.STATUS).toString();
 		LOGGER.error("Status from context:"+status);
 		return status;
 

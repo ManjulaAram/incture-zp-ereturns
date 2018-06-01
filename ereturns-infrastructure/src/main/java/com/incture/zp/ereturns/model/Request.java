@@ -55,9 +55,18 @@ public class Request {
 	@Column(name = "SHIP_TO", length = 100)
 	private String shipTo;
 	
+	@Column(name = "CUSTOMER", length = 255)
+	private String customer;
+
+	@Column(name = "CUSTOMER_NUMBER", length = 255)
+	private String customerNo;
+
 	@Column(name = "CUSTOMER_GROUP", length = 255)
 	private String customerGroup;
-	
+
+	@Column(name = "BUSINESS_UNIT", length = 255)
+	private String businessUnit;
+
 	@OneToOne(cascade = CascadeType.ALL)
 	private Header requestHeader; 
 	
@@ -176,4 +185,28 @@ public class Request {
 		this.customerGroup = customerGroup;
 	}
 
+	public String getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(String customer) {
+		this.customer = customer;
+	}
+
+	public String getCustomerNo() {
+		return customerNo;
+	}
+
+	public void setCustomerNo(String customerNo) {
+		this.customerNo = customerNo;
+	}
+
+	public String getBusinessUnit() {
+		return businessUnit;
+	}
+
+	public void setBusinessUnit(String businessUnit) {
+		this.businessUnit = businessUnit;
+	}
+	
 }

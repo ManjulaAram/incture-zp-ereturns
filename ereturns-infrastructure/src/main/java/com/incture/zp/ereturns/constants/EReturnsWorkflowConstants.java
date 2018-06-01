@@ -2,10 +2,8 @@ package com.incture.zp.ereturns.constants;
 
 public class EReturnsWorkflowConstants {
 
-	public static final String GET_XCSRF_TOKEN_ENDPOINT =  "https://bpmworkflowruntimecbbe88bff-ce7231891.ap1.hana.ondemand.com/workflow-service/rest/v1/xsrf-token";
-	public static final String START_WF_ENDPOINT = "https://bpmworkflowruntimecbbe88bff-ce7231891.ap1.hana.ondemand.com/workflow-service/rest/v1/workflow-instances";
-	public static final String WF_INITIATOR_USER_NAME="S0019321680";
-	public static final String WF_INITIATOR_PASSWORD="0WV1]2{Q";
+	public static final String GET_XCSRF_TOKEN_ENDPOINT =  "/rest/v1/xsrf-token";
+	public static final String START_WF_ENDPOINT = "/rest/v1/workflow-instances";
 	public static final String X_CSRF_TOKEN="X-CSRF-Token";
 	public static final String ACCEPT="Accept";
 	public static final String DATA_SERVICE_VERSION="DataServiceVersion";
@@ -18,10 +16,18 @@ public class EReturnsWorkflowConstants {
 	public static final String COOKIE="Cookie";
 	public static final String FETCH="Fetch";
 	public static final String SET_COOKIE = "Set-Cookie";
+	public static final String WORKFLOW_DESTINATION = "ZP_ERETURNS_WORKFLOW";
+//	public static final String WORKFLOW_DESTINATION_URL = "URL";
+	public static final String WORKFLOW_DESTINATION_URL = "https://bpmworkflowruntimecbbe88bff-ce7231891.ap1.hana.ondemand.com/workflow-service";
+//	public static final String WORKFLOW_DESTINATION_USER = "User";
+//	public static final String WORKFLOW_DESTINATION_PWD = "Password";
 	
-	public static final String APPROVAL_XCSRF_TOKEN="https://bpmworkflowruntimecbbe88bff-ce7231891.ap1.hana.ondemand.com/workflow-service/rest/v1/xsrf-token";
-	public static final String APPROVAL_URL="https://bpmworkflowruntimecbbe88bff-ce7231891.ap1.hana.ondemand.com/workflow-service/rest/v1/task-instances/";
-	public static final String GET_WORK_FLOW_INSTANCE="https://bpmworkflowruntimecbbe88bff-ce7231891.ap1.hana.ondemand.com/workflow-service/rest/v1/task-instances?workflowInstanceId=";
+	public static final String WORKFLOW_DESTINATION_USER = "S0019321680";
+	public static final String WORKFLOW_DESTINATION_PWD = "0WV1]2{Q";
+	
+	public static final String APPROVAL_XCSRF_TOKEN="/rest/v1/xsrf-token";
+	public static final String APPROVAL_URL="/rest/v1/task-instances/";
+	public static final String GET_WORK_FLOW_INSTANCE="/rest/v1/task-instances?workflowInstanceId=";
 	public static final String PATCH="PATCH";
 	
 	public static final String REQUEST_ID = "requestId";
@@ -32,8 +38,21 @@ public class EReturnsWorkflowConstants {
 	public static final String INITIATOR ="Initiator";
 	
 	public static final String WORKFLOW_INSTANCE_ID = "id";
-	public static final String WORKFLOW_REST_API="https://bpmworkflowruntimecbbe88bff-ce7231891.ap1.hana.ondemand.com/workflow-service/rest/";
+	public static final String WORKFLOW_REST_API="/rest/";
 	public static final String COMPLETED="COMPLETED";
 	public static final String IN_PROGRESS="INPROGRESS";
+	
+	public static final String UPDATE_CONTENT = "UpdateContent";
+	public static final String STATUS = "Status";
 
+	public static final String STATUS_APPROVED = "Approved";
+	public static final String STATUS_REJECTED = "Rejected";
+	
+	public static final String ACTION = "Action";
+	public static final String TIMESTAMP = "timestamp";
+	public static final String TYPE = "type";
+	public static final String TASK_ID = "taskId";
+	public static final String USER_ID = "userId";
+	
+	
 }

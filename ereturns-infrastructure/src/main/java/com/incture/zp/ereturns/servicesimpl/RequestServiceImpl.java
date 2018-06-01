@@ -153,29 +153,31 @@ public class RequestServiceImpl implements RequestService {
 				workFlowDto.setTaskInstanceId("");
 				workFlowService.addWorkflowInstance(workFlowDto);
 				
-				//sending notification
-				if(getRequestById(requestId).getRequestPendingWith()!="")
-				{
-				notificationService.sendNotification(importExportUtil.exportRequestDto(requestRepository.getRequestById(requestId)));
-				}
+				
 				LOGGER.error("Process triggered successfully :" + output);
 			}
 			
-//			try {
-//				Thread.sleep(5000);
-//				List<ReturnOrderDto> returnList = returnOrderRepository.getReturnOrderByRequestId(requestId);
-//				for(ReturnOrderDto returnOrderDto : returnList) {
-//					if(returnOrderDto.getRequestId().equalsIgnoreCase(requestId)) {
-//						if(returnOrderDto.getOrderStatus().equalsIgnoreCase(EReturnConstants.COMPLETE)) {
-//							responseDto = hciMappingService.pushDataToEcc(getRequestById(requestId));
-//							LOGGER.error("Data pushed to HCI successfully :" + responseDto.getMessage());
-//							break;
-//						}
-//					}
-//				}
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
+			try {
+				RequestDto requestDto2 = getRequestById(requestId);
+				notificationService.sendNotification(requestDto2);
+				Thread.sleep(5000);
+				List<ReturnOrderDto> returnList = returnOrderRepository.getReturnOrderByRequestId(requestId);
+				LOGGER.error("Data for pushing ECC :" + returnList.size());
+				if(returnList.size() > 0) {
+					for(ReturnOrderDto returnOrderDto : returnList) {
+						if(returnOrderDto.getRequestId().equalsIgnoreCase(requestId)) {
+							LOGGER.error(returnOrderDto.getOrderStatus()+":checking request id:" + returnOrderDto.getRequestId());
+							if(returnOrderDto.getOrderStatus().equalsIgnoreCase(EReturnConstants.COMPLETE)) {
+								responseDto = hciMappingService.pushDataToEcc(requestDto2);
+								LOGGER.error("Data pushed to HCI successfully :" + responseDto.getMessage());
+								break;
+							}
+						}
+					}
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		return responseDto;
 	}
@@ -193,7 +195,7 @@ public class RequestServiceImpl implements RequestService {
 	@Override
 	public List<StatusResponseDto> getStatusDetails(StatusRequestDto requestDto) {
 		List<StatusResponseDto> rList = requestRepository.getStatusDetails(requestDto);
-		
+		LOGGER.error("For status size of the requests: " + rList.size());
 		List<StatusResponseDto> modifiedList = new ArrayList<StatusResponseDto>();
 		for(Iterator<StatusResponseDto> itr = rList.iterator(); itr.hasNext();) {
 			StatusResponseDto statusResponseDto = itr.next();
@@ -203,7 +205,7 @@ public class RequestServiceImpl implements RequestService {
 			LOGGER.error("Adding attachment: " + statusResponseDto.getRequestId());
 		}
 		rList.addAll(modifiedList);
-		return rList;
+		return modifiedList;
 	}
 
 	

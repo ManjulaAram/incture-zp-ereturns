@@ -36,13 +36,27 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 	@Autowired
 	ReturnOrderService returnOrderService;
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkflowTrackerService.class);
-
+	
+	String destination;
+	String user;
+	String pwd;
+	
+	public WorkflowTrackerServiceImpl() {
+//		DestinationConfiguration destConfiguration = ServiceUtil.getDest(EReturnsWorkflowConstants.WORKFLOW_DESTINATION);
+//		destination = destConfiguration.getProperty(EReturnsWorkflowConstants.WORKFLOW_DESTINATION_URL);
+//		user = destConfiguration.getProperty(EReturnsWorkflowConstants.WORKFLOW_DESTINATION_USER);
+//		pwd = destConfiguration.getProperty(EReturnsWorkflowConstants.WORKFLOW_DESTINATION_PWD);
+		
+		destination = EReturnsWorkflowConstants.WORKFLOW_DESTINATION_URL;
+		user = EReturnsWorkflowConstants.WORKFLOW_DESTINATION_USER;
+		pwd = EReturnsWorkflowConstants.WORKFLOW_DESTINATION_PWD;
+	}
+	
 	// Tracking
 	@Override
 	public WorkflowInstanceDto getTaskDetails(CompleteTaskRequestDto completeTaskRequestDto) {
-		String url = EReturnsWorkflowConstants.WORKFLOW_REST_API;
-		String username = EReturnsWorkflowConstants.WF_INITIATOR_USER_NAME;
-		String password = EReturnsWorkflowConstants.WF_INITIATOR_PASSWORD;
+		
+		String url = destination+EReturnsWorkflowConstants.WORKFLOW_REST_API;
 
 		WorkflowInstanceDto instanceDto = new WorkflowInstanceDto();
 		String taskInstanceId = "";
@@ -50,7 +64,7 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 		workflowDto = workflowService.getWorkFLowInstance(completeTaskRequestDto.getRequestId(),
 				completeTaskRequestDto.getItemCode());
 		String workflowInstanceId = workflowDto.getWorkFlowInstanceId();
-		RestInvoker restInvoker = new RestInvoker(url, username, password);
+		RestInvoker restInvoker = new RestInvoker(url, user, pwd);
 
 		String response = restInvoker.getData("v1/workflow-instances/" + workflowInstanceId + "/execution-logs");
 
@@ -61,33 +75,33 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 		JSONArray receipents = new JSONArray();
 		for (int i = 0; i < executionLogs.length(); i++) {
 			JSONObject logObject = executionLogs.getJSONObject(i);
-			if (logObject.get("type").equals("WORKFLOW_STARTED")) {
-				instanceDto.setCreatedBy(userService.getUserById(logObject.get("userId").toString()).getUserName());
-				instanceDto.setCreatedAt(formatDateString(logObject.get("timestamp").toString()));
+			if (logObject.get(EReturnsWorkflowConstants.TYPE).equals("WORKFLOW_STARTED")) {
+				instanceDto.setCreatedBy(userService.getUserById(logObject.get(EReturnsWorkflowConstants.USER_ID).toString()).getUserName());
+				instanceDto.setCreatedAt(formatDateString(logObject.get(EReturnsWorkflowConstants.TIMESTAMP).toString()));
 			}
-			if (logObject.get("type").equals("USERTASK_CREATED")) {
-				taskInstanceId = logObject.get("taskId").toString();
+			if (logObject.get(EReturnsWorkflowConstants.TYPE).equals("USERTASK_CREATED")) {
+				taskInstanceId = logObject.get(EReturnsWorkflowConstants.TASK_ID).toString();
 				receipents = logObject.getJSONArray("recipientUsers");
 			}
 
-			if (logObject.get("type").equals("USERTASK_COMPLETED")
-					&& logObject.get("taskId").toString().equals(taskInstanceId)) {
+			if (logObject.get(EReturnsWorkflowConstants.TYPE).equals("USERTASK_COMPLETED")
+					&& logObject.get(EReturnsWorkflowConstants.TASK_ID).toString().equals(taskInstanceId)) {
 				ApproverDto approverDto = new ApproverDto();
 
-				approverDto.setApproverName(userService.getUserById(logObject.get("userId").toString()).getUserName());
-				approverDto.setApprovalDate(formatDateString(logObject.get("timestamp").toString()));
-				approverDto.setStatus(getTaskStatus(logObject.get("taskId").toString()));
+				approverDto.setApproverName(userService.getUserById(logObject.get(EReturnsWorkflowConstants.USER_ID).toString()).getUserName());
+				approverDto.setApprovalDate(formatDateString(logObject.get(EReturnsWorkflowConstants.TIMESTAMP).toString()));
+				approverDto.setStatus(getTaskStatus(logObject.get(EReturnsWorkflowConstants.TASK_ID).toString()));
 				approverList.add(approverDto);
 			}
-			if (logObject.get("type").equals("WORKFLOW_COMPLETED")) {
-				instanceDto.setCompletedAt(formatDateString(logObject.get("timestamp").toString()));
+			if (logObject.get(EReturnsWorkflowConstants.TYPE).equals("WORKFLOW_COMPLETED")) {
+				instanceDto.setCompletedAt(formatDateString(logObject.get("").toString()));
 				instanceDto.setStatus(EReturnsWorkflowConstants.COMPLETED);
 			} else {
 				instanceDto.setStatus(EReturnsWorkflowConstants.IN_PROGRESS);
 			}
 
 		}
-		if (instanceDto.getStatus().equals("COMPLETED")) {
+		if (instanceDto.getStatus().equals(EReturnsWorkflowConstants.COMPLETED)) {
 			recipientList.clear();
 		} else {
 			for (int j = 0; j < receipents.length(); j++) {
@@ -106,23 +120,21 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 	
 	private String getTaskStatus(String taskId)
 	{
-		String url = EReturnsWorkflowConstants.WORKFLOW_REST_API;
-		String username = EReturnsWorkflowConstants.WF_INITIATOR_USER_NAME;
-		String password = EReturnsWorkflowConstants.WF_INITIATOR_PASSWORD;
+		String url = destination+EReturnsWorkflowConstants.WORKFLOW_REST_API;
 		String status="";
-		RestInvoker restInvoker = new RestInvoker(url, username, password);
+		RestInvoker restInvoker = new RestInvoker(url, user, pwd);
 		String response = restInvoker.getData("v1/task-instances/" + taskId + "/context");
 		
 		JSONObject responseObject=new JSONObject(response);
 		
-		if(responseObject.get("Action").equals("A"))
+		if(responseObject.get(EReturnsWorkflowConstants.ACTION).equals("A"))
 		{
-			status= "Approved";
+			status = EReturnsWorkflowConstants.STATUS_APPROVED;
 			
 		}
-		else if(responseObject.get("Action").equals("R"))
+		else if(responseObject.get(EReturnsWorkflowConstants.ACTION).equals("R"))
 		{
-			status="Rejected";
+			status = EReturnsWorkflowConstants.STATUS_REJECTED;
 		}
 return status;
 	}

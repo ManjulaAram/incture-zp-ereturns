@@ -17,7 +17,6 @@ import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.StatusRequestDto;
 import com.incture.zp.ereturns.dto.StatusResponseDto;
-import com.incture.zp.ereturns.model.Header;
 import com.incture.zp.ereturns.model.Item;
 import com.incture.zp.ereturns.model.Request;
 import com.incture.zp.ereturns.model.ReturnOrder;
@@ -60,7 +59,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 		StringBuilder queryString = new StringBuilder();
 		queryString
 				.append("SELECT r, o, h, i FROM Request r, ReturnOrder o, Header h, Item i WHERE r.requestId = o.returnOrderData.requestId "
-						+ "AND r.requestHeader.headerId = h.headerId AND h.headerId = i.itemData.headerId");
+						+ "AND r.requestHeader.headerId = h.headerId AND h.headerId = i.itemData.headerId AND o.itemCode = i.itemCode");
 
 		if (requestDto.getRequestId() != null && !(requestDto.getRequestId().equals(""))) {
 			queryString.append(" AND r.requestId=:requestId");
@@ -108,54 +107,50 @@ public class RequestRepositoryImpl implements RequestRepository {
 
 		List<StatusResponseDto> reqList = new ArrayList<>();
 		Request request = null;
-		ReturnOrder returnOrder = null;
-		Header header = null;
-		Item item = null;
-		StatusResponseDto statusResponseDto = null;
 		@SuppressWarnings("unchecked")
 		List<Object[]> objectsList = query.list();
+		StatusResponseDto statusResponseDto = null;
 		LOGGER.error("Results for Request:" + objectsList.size());
 		for (Object[] objects : objectsList) {
 			request = (Request) objects[0];
-			returnOrder = (ReturnOrder) objects[1];
-			header = (Header) objects[2];
-			item = (Item) objects[3];
-
-			if (request.getRequestId().equalsIgnoreCase(returnOrder.getReturnOrderData().getRequestId())
-					&& request.getRequestHeader().getHeaderId().equals(header.getHeaderId())) {
-				if (returnOrder.getItemCode().equalsIgnoreCase(item.getItemCode())) {
-					statusResponseDto = new StatusResponseDto();
-					statusResponseDto.setItemCode(item.getItemCode());
-					statusResponseDto.setCreatedBy(returnOrder.getOrderCreatedBy());
-					if (returnOrder.getOrderCreatedDate() != null && !(returnOrder.getOrderCreatedDate().equals(""))) {
-						DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-						String output = dateFormat.format(returnOrder.getOrderCreatedDate());
-						statusResponseDto.setCreatedOn(output);
+			
+			for(ReturnOrder returnOrder2 : request.getSetReturnOrder()) {
+				for(Item item2 : request.getRequestHeader().getSetItem()) {
+					if(returnOrder2.getItemCode().equalsIgnoreCase(item2.getItemCode())) {
+						LOGGER.error("Results Repeating3:" + request.getRequestHeader().getSetItem().size());
+							statusResponseDto = new StatusResponseDto();
+							statusResponseDto.setItemCode(item2.getItemCode());
+							statusResponseDto.setCreatedBy(returnOrder2.getOrderCreatedBy());
+							if (returnOrder2.getOrderCreatedDate() != null && !(returnOrder2.getOrderCreatedDate().equals(""))) {
+								DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+								String output = dateFormat.format(returnOrder2.getOrderCreatedDate());
+								statusResponseDto.setCreatedOn(output);
+							}
+							statusResponseDto.setMaterialCode(item2.getMaterial());
+							statusResponseDto.setMaterialDescription(item2.getMaterialDesc());
+							statusResponseDto.setRequestStatus(returnOrder2.getOrderStatus());
+							statusResponseDto.setNetQuantity(item2.getAvailableQty());
+							statusResponseDto.setNetValue(item2.getNetValue());
+							statusResponseDto.setReturnQuantity(returnOrder2.getReturnQty());
+							statusResponseDto.setReturnReason(returnOrder2.getReason());
+							statusResponseDto.setRemark(returnOrder2.getRemark());
+							statusResponseDto.setReturnType(returnOrder2.getPaymentType());
+							statusResponseDto.setReturnValue(returnOrder2.getReturnValue());
+							statusResponseDto.setSalesPerson("");
+	
+							// Request Level
+							statusResponseDto.setRequestId(request.getRequestId());
+							statusResponseDto.setShipTo(request.getShipTo());
+							statusResponseDto.setSoldTo(request.getSoldTo());
+							statusResponseDto.setInvoiceNo(request.getRequestHeader().getInvoiceNo());
+	
+							statusResponseDto.setMessage("Successfully Retrieved.");
+							statusResponseDto.setStatus("SUCCESS");
+							reqList.add(statusResponseDto);
+							LOGGER.error("List adding:"+reqList.size());
 					}
-					statusResponseDto.setMaterialCode(item.getMaterial());
-					statusResponseDto.setMaterialDescription(item.getMaterialDesc());
-					statusResponseDto.setRequestStatus(returnOrder.getOrderStatus());
-					statusResponseDto.setNetQuantity(item.getAvailableQty());
-					statusResponseDto.setNetValue(item.getNetValue());
-					statusResponseDto.setReturnQuantity(returnOrder.getReturnQty());
-					statusResponseDto.setReturnReason(returnOrder.getReason());
-					statusResponseDto.setRemark(returnOrder.getRemark());
-					statusResponseDto.setReturnType(returnOrder.getPaymentType());
-					statusResponseDto.setReturnValue(returnOrder.getReturnValue());
-					statusResponseDto.setSalesPerson("");
-
-					// Request Level
-					statusResponseDto.setRequestId(request.getRequestId());
-					statusResponseDto.setShipTo(request.getShipTo());
-					statusResponseDto.setSoldTo(request.getSoldTo());
-					statusResponseDto.setInvoiceNo(request.getRequestHeader().getInvoiceNo());
-
-					statusResponseDto.setMessage("Successfully Retrieved.");
-					statusResponseDto.setStatus("SUCCESS");
-					reqList.add(statusResponseDto);
 				}
 			}
-
 		}
 		return reqList;
 	}

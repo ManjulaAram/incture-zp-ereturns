@@ -37,6 +37,12 @@ public class RequestDto {
 	
 	private String customerGroup;
 	
+	private String customer;
+
+	private String customerNo;
+
+	private String businessUnit;
+	
 	public String getRequestId() {
 		return requestId;
 	}
@@ -155,6 +161,30 @@ public class RequestDto {
 
 	public void setCustomerGroup(String customerGroup) {
 		this.customerGroup = customerGroup;
+	}
+
+	public String getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(String customer) {
+		this.customer = customer;
+	}
+
+	public String getCustomerNo() {
+		return customerNo;
+	}
+
+	public void setCustomerNo(String customerNo) {
+		this.customerNo = customerNo;
+	}
+
+	public String getBusinessUnit() {
+		return businessUnit;
+	}
+
+	public void setBusinessUnit(String businessUnit) {
+		this.businessUnit = businessUnit;
 	}
 
 }

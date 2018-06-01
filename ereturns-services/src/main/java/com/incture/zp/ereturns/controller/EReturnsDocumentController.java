@@ -46,12 +46,12 @@ public class EReturnsDocumentController {
 	            .body(resource);
 	}
 	
-	@RequestMapping(path = "/downloadLink/{id}", method = RequestMethod.GET)
-	public String downloadLink(@PathVariable String id) throws IOException {
-		Document document = ecmDocumentService.getAttachmentById(id);
-		String link = document.getContentUrl();
-		return link;
-	}
+//	@RequestMapping(path = "/downloadLink/{id}", method = RequestMethod.GET)
+//	public String downloadLink(@PathVariable String id) throws IOException {
+//		Document document = ecmDocumentService.getAttachmentById(id);
+//		String link = document.getContentUrl();
+//		return link;
+//	}
 
 
 }

@@ -55,5 +55,10 @@
 			<url-pattern>/*</url-pattern>
 		</web-resource-collection>
 	</security-constraint>
+	
+	<resource-ref>
+		<res-ref-name>connectivityConfiguration</res-ref-name>
+		<res-type>com.sap.core.connectivity.api.configuration.ConnectivityConfiguration</res-type>
+	</resource-ref>
 
 </web-app>

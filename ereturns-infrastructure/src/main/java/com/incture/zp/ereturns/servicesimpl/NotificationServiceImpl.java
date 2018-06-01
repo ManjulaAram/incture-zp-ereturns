@@ -35,7 +35,7 @@ public class NotificationServiceImpl implements NotificationService {
 		UserDto userDto =new UserDto();
 		String token="";
 		PushNotificationUtil notifyUtil = new PushNotificationUtil();
-		if(!(requestDto.getRequestPendingWith().equals(null)) && !(requestDto.getRequestPendingWith().equals("")))
+		if(requestDto.getRequestPendingWith() != null && !(requestDto.getRequestPendingWith().equals("")))
 		{
 			userDto = userService.getUserById(requestDto.getRequestPendingWith());
 			token = userDto.getMobileToken();
