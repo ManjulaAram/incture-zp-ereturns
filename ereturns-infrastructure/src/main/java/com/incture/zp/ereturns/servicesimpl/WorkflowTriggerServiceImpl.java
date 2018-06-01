@@ -32,6 +32,7 @@ import com.incture.zp.ereturns.dto.CompleteTaskRequestDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.services.HciMappingEccService;
+import com.incture.zp.ereturns.services.NotificationService;
 import com.incture.zp.ereturns.services.RequestService;
 import com.incture.zp.ereturns.services.ReturnOrderService;
 import com.incture.zp.ereturns.services.WorkFlowService;
@@ -49,6 +50,9 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
 	@Autowired
 	RequestService requestService;
+	
+	@Autowired
+	NotificationService notificationService;
 
 	@Autowired
 	ReturnOrderService returnOrderService;
@@ -175,6 +179,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			if (requestActionResponse.getCode().equals("204")) {
 				Thread.sleep(5000);
 				String status = updateOrderDetails(instanceId);
+				notificationService.sendNotification(requestService.getRequestById(requestDto.getRequestId()));
 				if(status.equalsIgnoreCase(EReturnConstants.COMPLETE)) {
 					RequestDto res = requestService.getRequestById(requestDto.getRequestId());
 					LOGGER.error("taskInstance31 coming inside" + res.getRequestStatus());
