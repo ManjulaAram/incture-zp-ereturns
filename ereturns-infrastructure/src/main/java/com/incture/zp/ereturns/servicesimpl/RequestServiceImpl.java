@@ -31,6 +31,7 @@ import com.incture.zp.ereturns.repositories.RequestRepository;
 import com.incture.zp.ereturns.repositories.ReturnOrderRepository;
 import com.incture.zp.ereturns.services.EcmDocumentService;
 import com.incture.zp.ereturns.services.HciMappingEccService;
+import com.incture.zp.ereturns.services.NotificationService;
 import com.incture.zp.ereturns.services.RequestService;
 import com.incture.zp.ereturns.services.WorkFlowService;
 import com.incture.zp.ereturns.services.WorkflowTriggerService;
@@ -70,6 +71,9 @@ public class RequestServiceImpl implements RequestService {
 
 	@Autowired
 	ServiceUtil serviceUtil;
+	
+	@Autowired
+	NotificationService notificationService;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequestServiceImpl.class);
 
@@ -149,7 +153,11 @@ public class RequestServiceImpl implements RequestService {
 				workFlowDto.setTaskInstanceId("");
 				workFlowService.addWorkflowInstance(workFlowDto);
 				
-				
+				//sending notification
+				if(getRequestById(requestId).getRequestPendingWith()!="")
+				{
+				notificationService.sendNotification(importExportUtil.exportRequestDto(requestRepository.getRequestById(requestId)));
+				}
 				LOGGER.error("Process triggered successfully :" + output);
 			}
 			

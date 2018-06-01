@@ -1,6 +1,10 @@
 package com.incture.zp.ereturns.services;
 
+import com.incture.zp.ereturns.dto.RequestDto;
+import com.incture.zp.ereturns.dto.ResponseDto;
+
 public interface NotificationService {
 
-	public String sendNotification(String userId);
+
+	public ResponseDto sendNotification(RequestDto requestDto);
 }
