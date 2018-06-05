@@ -67,6 +67,12 @@ public class Request {
 	@Column(name = "BUSINESS_UNIT", length = 255)
 	private String businessUnit;
 
+	@Column(name = "ECC_STATUS", length = 255)
+	private String eccStatus;
+
+	@Column(name = "ECC_RETURN_ORDER_NO", length = 255)
+	private String eccReturnOrderNo;
+
 	@OneToOne(cascade = CascadeType.ALL)
 	private Header requestHeader; 
 	
@@ -207,6 +213,22 @@ public class Request {
 
 	public void setBusinessUnit(String businessUnit) {
 		this.businessUnit = businessUnit;
+	}
+
+	public String getEccStatus() {
+		return eccStatus;
+	}
+
+	public void setEccStatus(String eccStatus) {
+		this.eccStatus = eccStatus;
+	}
+
+	public String getEccReturnOrderNo() {
+		return eccReturnOrderNo;
+	}
+
+	public void setEccReturnOrderNo(String eccReturnOrderNo) {
+		this.eccReturnOrderNo = eccReturnOrderNo;
 	}
 	
 }

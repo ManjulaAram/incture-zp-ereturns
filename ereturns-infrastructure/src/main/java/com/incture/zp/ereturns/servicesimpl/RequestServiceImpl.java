@@ -175,7 +175,18 @@ public class RequestServiceImpl implements RequestService {
 						}
 					}
 				}
+				if(responseDto.getStatus().equalsIgnoreCase("SUCCESS")) {
+					requestRepository.updateEccReturnOrder(EReturnConstants.COMPLETE, responseDto.getMessage(), requestId);
+				} else {
+					requestRepository.updateEccReturnOrder(EReturnConstants.TECHNICAL_ERROR, responseDto.getMessage(), requestId);
+					responseDto.setMessage(EReturnConstants.TECHNICAL_ERROR);
+				}
 			} catch (InterruptedException e) {
+				if(responseDto != null) {
+					responseDto.setCode("01");
+					responseDto.setStatus("ERROR");
+					responseDto.setMessage(e.getMessage());
+				}
 				e.printStackTrace();
 			}
 		}
@@ -204,7 +215,6 @@ public class RequestServiceImpl implements RequestService {
 			modifiedList.add(statusResponseDto);
 			LOGGER.error("Adding attachment: " + statusResponseDto.getRequestId());
 		}
-		rList.addAll(modifiedList);
 		return modifiedList;
 	}
 

@@ -43,6 +43,10 @@ public class RequestDto {
 
 	private String businessUnit;
 	
+	private String eccStatus;
+
+	private String eccReturnOrderNo;
+
 	public String getRequestId() {
 		return requestId;
 	}
@@ -185,6 +189,22 @@ public class RequestDto {
 
 	public void setBusinessUnit(String businessUnit) {
 		this.businessUnit = businessUnit;
+	}
+
+	public String getEccStatus() {
+		return eccStatus;
+	}
+
+	public void setEccStatus(String eccStatus) {
+		this.eccStatus = eccStatus;
+	}
+
+	public String getEccReturnOrderNo() {
+		return eccReturnOrderNo;
+	}
+
+	public void setEccReturnOrderNo(String eccReturnOrderNo) {
+		this.eccReturnOrderNo = eccReturnOrderNo;
 	}
 
 }

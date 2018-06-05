@@ -212,7 +212,9 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			responseDto.setStatus("ERROR");
 			return responseDto;
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			responseDto.setCode("01");
+			responseDto.setMessage("FAILURE" + e.getMessage());
+			responseDto.setStatus("ERROR");
 		}
 
 		return responseDto;

@@ -20,4 +20,6 @@ public interface RequestRepository {
 	public List<RequestDto> getAllRequests();
 	
 	ResponseDto updateRequest(ReturnOrderDto returnOrderDto);
+	
+	public int updateEccReturnOrder(String eccStatus, String eccNo, String requestId);
 }

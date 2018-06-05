@@ -28,7 +28,7 @@
 
 
 	<login-config>
-		<auth-method>FORM</auth-method>
+		<auth-method>BASIC</auth-method>
 	</login-config>
 	<security-constraint>
 		<web-resource-collection>

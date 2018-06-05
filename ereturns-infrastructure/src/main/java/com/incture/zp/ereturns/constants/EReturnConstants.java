@@ -30,4 +30,6 @@ public interface EReturnConstants {
 	public static final String REJECT = "REJECTED";
 	public static final String DUPLICATE = "DUPLICATE";
 	public static final String SUCCESS = "SUCCESS";
+	
+	public static final String TECHNICAL_ERROR = "Technical Error from ECC";
 }

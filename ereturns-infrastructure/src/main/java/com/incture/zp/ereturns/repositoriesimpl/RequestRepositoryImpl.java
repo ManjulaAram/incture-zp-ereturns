@@ -62,15 +62,15 @@ public class RequestRepositoryImpl implements RequestRepository {
 						+ "AND r.requestHeader.headerId = h.headerId AND h.headerId = i.itemData.headerId AND o.itemCode = i.itemCode");
 
 		if (requestDto.getRequestId() != null && !(requestDto.getRequestId().equals(""))) {
-			queryString.append(" AND r.requestId=:requestId");
+			queryString.append(" AND r.requestId like :requestId");
 		}
 
 		if (requestDto.getCreatedBy() != null && !(requestDto.getCreatedBy().equals(""))) {
-			queryString.append(" AND r.requestCreatedBy=:requestCreatedBy");
+			queryString.append(" AND r.requestCreatedBy like :requestCreatedBy");
 		}
 
 		if (requestDto.getCustomerCode() != null && !(requestDto.getCustomerCode().equals(""))) {
-			queryString.append(" AND o.soldTo=:soldTo");
+			queryString.append(" AND o.soldTo like :soldTo");
 		}
 
 		if ((requestDto.getStartDate() != null && !(requestDto.getStartDate().equals("")))
@@ -79,25 +79,25 @@ public class RequestRepositoryImpl implements RequestRepository {
 		}
 
 		if (requestDto.getPendingWith() != null && !(requestDto.getPendingWith().equals(""))) {
-			queryString.append(" AND o.orderPendingWith=:orderPendingWith");
+			queryString.append(" AND o.orderPendingWith like :orderPendingWith");
 		}
 
 		LOGGER.error("Query for Status details:" + queryString.toString());
 		Query query = sessionFactory.getCurrentSession().createQuery(queryString.toString());
 		if (requestDto.getRequestId() != null && !(requestDto.getRequestId().equals(""))) {
-			query.setParameter("requestId", requestDto.getRequestId());
+			query.setParameter("requestId", requestDto.getRequestId()+"%");
 		}
 
 		if (requestDto.getCreatedBy() != null && !(requestDto.getCreatedBy().equals(""))) {
-			query.setParameter("requestCreatedBy", requestDto.getCreatedBy());
+			query.setParameter("requestCreatedBy", requestDto.getCreatedBy()+"%");
 		}
 
 		if (requestDto.getCustomerCode() != null && !(requestDto.getCustomerCode().equals(""))) {
-			query.setParameter("soldTo", requestDto.getCustomerCode());
+			query.setParameter("soldTo", requestDto.getCustomerCode()+"%");
 		}
 
 		if (requestDto.getPendingWith() != null && !(requestDto.getPendingWith().equals(""))) {
-			query.setParameter("orderPendingWith", requestDto.getPendingWith());
+			query.setParameter("orderPendingWith", requestDto.getPendingWith()+"%");
 		}
 		if ((requestDto.getStartDate() != null && !(requestDto.getStartDate().equals("")))
 				&& (requestDto.getEndDate() != null) && !(requestDto.getEndDate().equals(""))) {
@@ -105,20 +105,19 @@ public class RequestRepositoryImpl implements RequestRepository {
 			query.setParameter("endDate", requestDto.getEndDate());
 		}
 
-		List<StatusResponseDto> reqList = new ArrayList<>();
 		Request request = null;
 		@SuppressWarnings("unchecked")
 		List<Object[]> objectsList = query.list();
+		List<StatusResponseDto> reqList = new ArrayList<>();
 		StatusResponseDto statusResponseDto = null;
 		LOGGER.error("Results for Request:" + objectsList.size());
 		for (Object[] objects : objectsList) {
 			request = (Request) objects[0];
 			
 			for(ReturnOrder returnOrder2 : request.getSetReturnOrder()) {
+				statusResponseDto = new StatusResponseDto();
 				for(Item item2 : request.getRequestHeader().getSetItem()) {
 					if(returnOrder2.getItemCode().equalsIgnoreCase(item2.getItemCode())) {
-						LOGGER.error("Results Repeating3:" + request.getRequestHeader().getSetItem().size());
-							statusResponseDto = new StatusResponseDto();
 							statusResponseDto.setItemCode(item2.getItemCode());
 							statusResponseDto.setCreatedBy(returnOrder2.getOrderCreatedBy());
 							if (returnOrder2.getOrderCreatedDate() != null && !(returnOrder2.getOrderCreatedDate().equals(""))) {
@@ -136,7 +135,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 							statusResponseDto.setRemark(returnOrder2.getRemark());
 							statusResponseDto.setReturnType(returnOrder2.getPaymentType());
 							statusResponseDto.setReturnValue(returnOrder2.getReturnValue());
-							statusResponseDto.setSalesPerson("");
+							statusResponseDto.setSalesPerson("BOM");
 	
 							// Request Level
 							statusResponseDto.setRequestId(request.getRequestId());
@@ -148,8 +147,10 @@ public class RequestRepositoryImpl implements RequestRepository {
 							statusResponseDto.setStatus("SUCCESS");
 							reqList.add(statusResponseDto);
 							LOGGER.error("List adding:"+reqList.size());
+							break;
 					}
 				}
+				break;
 			}
 		}
 		return reqList;
@@ -217,6 +218,19 @@ public class RequestRepositoryImpl implements RequestRepository {
 			responseDto.setStatus("ERROR");
 		}
 		return responseDto;
+	}
+
+	public int updateEccReturnOrder(String eccStatus, String eccNo, String requestId) {
+		String queryStr = "UPDATE Request SET eccStatus=:eccStatus, eccReturnOrderNo=:eccReturnOrderNo "
+				+ "WHERE requestId=:requestId";
+		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
+		query.setParameter("eccStatus", eccStatus);
+		query.setParameter("eccReturnOrderNo", eccNo);
+		query.setParameter("requestId", requestId);
+
+		int result = query.executeUpdate();
+		return result;
+
 	}
 
 }

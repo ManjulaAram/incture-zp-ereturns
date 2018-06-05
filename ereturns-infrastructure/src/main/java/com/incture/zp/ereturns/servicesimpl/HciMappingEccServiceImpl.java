@@ -110,12 +110,18 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		String response = restInvoker.postDataToServer("/http/ro", returnOrder.toString());
 		LOGGER.error("Response coming from ECC:"+response);
 		if(response != null && !(response.equals(""))) {
-			JSONObject returnObj = new JSONObject(response);
-			JSONObject bapiObj = new JSONObject();
-			bapiObj = returnObj.getJSONObject("rfc:BAPI_CUSTOMERRETURN_CREATE.Response");
-			responseDto.setCode(String.valueOf(HttpStatus.SC_OK));
-			responseDto.setMessage(bapiObj.getString("SALESDOCUMENT"));
-			responseDto.setStatus("SUCCESS");
+			if(response.contains("rfc:BAPI_CUSTOMERRETURN_CREATE.Response")) {
+				JSONObject returnObj = new JSONObject(response);
+				JSONObject bapiObj = new JSONObject();
+				bapiObj = returnObj.getJSONObject("rfc:BAPI_CUSTOMERRETURN_CREATE.Response");
+				responseDto.setCode(String.valueOf(HttpStatus.SC_OK));
+				responseDto.setMessage(bapiObj.getString("SALESDOCUMENT"));
+				responseDto.setStatus("SUCCESS");
+			} else if(response.contains("rfc:BAPI_CUSTOMERRETURN_CREATE.Exception")) {
+				responseDto.setCode(String.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR));
+				responseDto.setMessage(response);
+				responseDto.setStatus("ERROR");
+			}
 		} else {
 			responseDto.setCode(String.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR));
 			responseDto.setMessage("FAILURE");

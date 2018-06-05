@@ -94,7 +94,7 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 				approverList.add(approverDto);
 			}
 			if (logObject.get(EReturnsWorkflowConstants.TYPE).equals("WORKFLOW_COMPLETED")) {
-				instanceDto.setCompletedAt(formatDateString(logObject.get("").toString()));
+				instanceDto.setCompletedAt(formatDateString(logObject.get(EReturnsWorkflowConstants.TIMESTAMP).toString()));
 				instanceDto.setStatus(EReturnsWorkflowConstants.COMPLETED);
 			} else {
 				instanceDto.setStatus(EReturnsWorkflowConstants.IN_PROGRESS);

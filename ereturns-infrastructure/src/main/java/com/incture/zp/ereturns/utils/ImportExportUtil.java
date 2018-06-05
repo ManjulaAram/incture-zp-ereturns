@@ -171,7 +171,7 @@ public class ImportExportUtil {
 		Item item = new Item();
 		item.setAvailableQty(itemDto.getAvailableQty());
 		if (itemDto.getExpiryDate() != null && !(itemDto.getExpiryDate().equals(""))) {
-			item.setExpiryDate(convertStringToDate(itemDto.getExpiryDate()));
+			item.setExpiryDate(convertStringToDate(expiryDateFormat(itemDto.getExpiryDate())));
 		}
 		item.setItemCode(itemDto.getItemCode());
 		item.setItemData(header);
@@ -265,6 +265,9 @@ public class ImportExportUtil {
 		request.setCustomer(requestDto.getCustomer());
 		request.setCustomerNo(requestDto.getCustomerNo());
 		request.setBusinessUnit(requestDto.getBusinessUnit());
+		request.setEccReturnOrderNo(requestDto.getEccReturnOrderNo());
+		request.setEccStatus(requestDto.getEccStatus());
+
 		return request;
 	}
 
@@ -308,6 +311,8 @@ public class ImportExportUtil {
 		requestDto.setCustomer(request.getCustomer());
 		requestDto.setCustomerNo(request.getCustomerNo());
 		requestDto.setBusinessUnit(request.getBusinessUnit());
+		requestDto.setEccReturnOrderNo(request.getEccReturnOrderNo());
+		requestDto.setEccStatus(request.getEccStatus());
 		
 		return requestDto;
 	}
@@ -468,6 +473,18 @@ public class ImportExportUtil {
 		Date output = null;
 		try {
 			output = dateFormat.parse(input);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return output;
+	}
+	
+	private String expiryDateFormat(String input) {
+		String output = "";
+		try {
+		 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		 SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
+		 output = sdf2.format(sdf.parse(input));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

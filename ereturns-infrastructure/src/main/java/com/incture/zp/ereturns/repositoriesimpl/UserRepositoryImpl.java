@@ -84,10 +84,11 @@ public class UserRepositoryImpl implements UserRepository {
 			query.setParameter("mobileToken", user.getMobileToken());
 			query.setParameter("sapAccessToken", user.getSapAccessToken());
 			query.setParameter("sapRefreshToken", user.getSapRefreshToken());
-
+			query.setParameter("userId", user.getUserId());
+			
 			int result = query.executeUpdate();
 			if (result > 0) {
-				responseDto.setCode("01");
+				responseDto.setCode("00");
 				responseDto.setMessage("Updated Successfully");
 				responseDto.setStatus("OK");
 			} else {
