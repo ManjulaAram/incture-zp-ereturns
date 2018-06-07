@@ -9,4 +9,5 @@ public interface WorkflowRepository {
 
 	public WorkFlow getWorkFlowInstance(String requestId,String matCode);
 
+	public ResponseDto deleteWorkflow(String requestId);
 }

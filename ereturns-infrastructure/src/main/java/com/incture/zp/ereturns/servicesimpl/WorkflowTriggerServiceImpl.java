@@ -29,8 +29,11 @@ import org.springframework.stereotype.Service;
 import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.constants.EReturnsWorkflowConstants;
 import com.incture.zp.ereturns.dto.CompleteTaskRequestDto;
+import com.incture.zp.ereturns.dto.ItemDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
+import com.incture.zp.ereturns.dto.WorkFlowDto;
+import com.incture.zp.ereturns.repositories.RequestRepository;
 import com.incture.zp.ereturns.services.HciMappingEccService;
 import com.incture.zp.ereturns.services.NotificationService;
 import com.incture.zp.ereturns.services.RequestService;
@@ -52,6 +55,9 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 	
 	@Autowired
 	NotificationService notificationService;
+	
+	@Autowired
+	RequestRepository requestRepository;
 
 	@Autowired
 	ReturnOrderService returnOrderService;
@@ -151,9 +157,10 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 	@Override
 	public ResponseDto completeTask(CompleteTaskRequestDto requestDto) {
 		ResponseDto responseDto = new ResponseDto();
+		String requestId = requestDto.getRequestId();
 		ResponseDto requestActionResponse = new ResponseDto();
 		String workFlowInstanceId = workFlowService
-				.getWorkFLowInstance(requestDto.getRequestId(), requestDto.getItemCode()).getWorkFlowInstanceId();
+				.getWorkFLowInstance(requestId, requestDto.getItemCode()).getWorkFlowInstanceId();
 		String responseData = "";
 
 		LOGGER.error("workflowInstanceId" + workFlowInstanceId);
@@ -190,31 +197,72 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			requestActionResponse = requestAction(instanceId, requestDto.getFlag());
 			}
 			LOGGER.error(requestActionResponse.getCode()+"taskInstance1" + requestActionResponse.getStatus());
+			RequestDto res = requestService.getRequestById(requestDto.getRequestId());
 			if (requestActionResponse.getCode().equals("204")) {
 				Thread.sleep(5000);
 				String status = updateOrderDetails(instanceId);
-				notificationService.sendNotification(requestService.getRequestById(requestDto.getRequestId()));
+//				notificationService.sendNotification(res);
 				if(status.equalsIgnoreCase(EReturnConstants.COMPLETE)) {
-					RequestDto res = requestService.getRequestById(requestDto.getRequestId());
 					LOGGER.error("taskInstance31 coming inside" + res.getRequestStatus());
 					responseDto = hciMappingService.pushDataToEcc(res);
 					LOGGER.error("taskInstance5 coming inside" + responseDto.getMessage());
 				}
 			}
+			if(responseDto != null) {
+				if(responseDto.getStatus().equalsIgnoreCase("ECC_SUCCESS")) {
+					requestRepository.updateEccReturnOrder(EReturnConstants.COMPLETE, responseDto.getMessage(), requestId);
+				} else if(responseDto.getStatus().equalsIgnoreCase("ECC_ERROR")) {
+//					requestRepository.updateEccReturnOrder(EReturnConstants.TECHNICAL_ERROR, responseDto.getMessage(), requestId);
+					responseDto.setMessage(responseDto.getMessage());
+					
+					//Re-triggering the process
+					workFlowService.deleteWorkflow(requestId);
+					LOGGER.error("Re-Triggering workflow:" + responseDto.getMessage());
+					for (ItemDto itemDto : res.getHeaderDto().getItemSet()) {
+						String workflowInstanceId = "";
+						WorkFlowDto workFlowDto = new WorkFlowDto();
+
+						// start process
+						JSONObject jsonObj = new JSONObject();
+						jsonObj.put(EReturnsWorkflowConstants.REQUEST_ID, requestId);
+						jsonObj.put(EReturnsWorkflowConstants.ITEM_CODE, itemDto.getItemCode());
+						jsonObj.put(EReturnsWorkflowConstants.INITIATOR, res.getRequestCreatedBy());
+
+						JSONObject obj = new JSONObject();
+						obj.put(EReturnsWorkflowConstants.CONTEXT, jsonObj);
+						obj.put(EReturnsWorkflowConstants.DEFINITION_ID, EReturnsWorkflowConstants.DEFINITION_VALUE);
+
+						String payload = obj.toString();
+						String output = triggerWorkflow(payload);
+						JSONObject resultJsonObject = new JSONObject(output);
+						workflowInstanceId = resultJsonObject.getString(EReturnsWorkflowConstants.WORKFLOW_INSTANCE_ID);
+
+						workFlowDto.setRequestId(requestId);
+						workFlowDto.setWorkFlowInstanceId(workflowInstanceId);
+
+						workFlowDto.setMaterialCode(itemDto.getItemCode());
+						workFlowDto.setPrincipal(itemDto.getPrincipalCode());
+						workFlowDto.setTaskInstanceId("");
+						workFlowService.addWorkflowInstance(workFlowDto);
+						
+						LOGGER.error("Process triggered successfully :" + output);
+					}
+				}
+			}
 		} catch (MalformedURLException e) {
-			responseDto.setCode("01");
+			responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
 			responseDto.setMessage("FAILURE" + e.getMessage());
-			responseDto.setStatus("ERROR");
+			responseDto.setStatus(EReturnConstants.ERROR_STATUS);
 			return responseDto;
 		} catch (IOException e) {
-			responseDto.setCode("01");
+			responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
 			responseDto.setMessage("FAILURE" + e.getMessage());
-			responseDto.setStatus("ERROR");
+			responseDto.setStatus(EReturnConstants.ERROR_STATUS);
 			return responseDto;
 		} catch (InterruptedException e) {
-			responseDto.setCode("01");
+			responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
 			responseDto.setMessage("FAILURE" + e.getMessage());
-			responseDto.setStatus("ERROR");
+			responseDto.setStatus(EReturnConstants.ERROR_STATUS);
 		}
 
 		return responseDto;
@@ -293,17 +341,17 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			responseData = getDataFromStream(postUrlConnection.getInputStream());
 			responseCode = postUrlConnection.getResponseCode() + "";
 			LOGGER.error(responseCode+":response data after complete workflow:" + responseData.toString());
-			responseDto.setStatus(EReturnConstants.SUCCESS);
+			responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
 			responseDto.setCode(responseCode);
 		} catch (MalformedURLException e) {
-			responseDto.setCode("01");
+			responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
 			responseDto.setMessage(e.getMessage());
-			responseDto.setStatus("ERROR");
+			responseDto.setStatus(EReturnConstants.ERROR_STATUS);
 			return responseDto;
 		} catch (IOException e) {
-			responseDto.setCode("01");
+			responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
 			responseDto.setMessage(e.getMessage());
-			responseDto.setStatus("ERROR");
+			responseDto.setStatus(EReturnConstants.ERROR_STATUS);
 			return responseDto;
 		}
 		return responseDto;

@@ -5,6 +5,7 @@ import java.util.List;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.RoleDto;
 import com.incture.zp.ereturns.dto.UserDto;
+import com.incture.zp.ereturns.dto.UserMailDto;
 
 public interface UserService {
 
@@ -15,4 +16,6 @@ public interface UserService {
 	public List<RoleDto> getUserRole(String userId);
 	
 	public ResponseDto updateMobileToken(UserDto userDto);
+	
+	public UserMailDto GetMailIdByRole(String role);
 }

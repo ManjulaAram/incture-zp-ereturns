@@ -31,6 +31,7 @@ public class WorkFlowRepositoryImpl implements WorkflowRepository {
 
 		responseDto.setMessage("WorkFlow Instance added " + workFlow.getWorkFlowInstanceId() + "Successfully");
 		responseDto.setStatus("OK");
+		responseDto.setCode("00");
 		return responseDto;
 	}
 
@@ -51,6 +52,26 @@ public class WorkFlowRepositoryImpl implements WorkflowRepository {
 		}
 		return workflow;
 
+	}
+
+	@Override
+	public ResponseDto deleteWorkflow(String requestId) {
+		ResponseDto responseDto = new ResponseDto();
+		String queryStr = "DELETE WorkFlow w WHERE w.requestId=:requestId";
+			Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
+			query.setParameter("requestId", requestId);
+			
+			int result = query.executeUpdate();
+			if (result > 0) {
+				responseDto.setMessage("Deleted Successfully");
+				responseDto.setStatus("OK");
+				responseDto.setCode("00");
+			} else {
+				responseDto.setMessage("Delete Unsuccessfully");
+				responseDto.setStatus("ERROR");
+				responseDto.setCode("01");
+			}
+		return responseDto;
 	}
 
 }

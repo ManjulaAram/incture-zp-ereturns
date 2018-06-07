@@ -29,7 +29,26 @@ public interface EReturnConstants {
 	public static final String COMPLETE = "COMPLETED";
 	public static final String REJECT = "REJECTED";
 	public static final String DUPLICATE = "DUPLICATE";
-	public static final String SUCCESS = "SUCCESS";
 	
 	public static final String TECHNICAL_ERROR = "Technical Error from ECC";
+	
+	public static final String SUCCESS_STATUS_CODE = "00";
+	public static final String ERROR_STATUS_CODE = "01";
+	public static final String SUCCESS_STATUS = "SUCCESS";
+	public static final String ERROR_STATUS = "ERROR";
+	
+	public static final String ECC_SUCCESS_STATUS = "ECC_SUCCESS";
+	public static final String ECC_ERROR_STATUS = "ECC_ERROR";
+
+	public static final String ECC_NO_DATA_STATUS = "No Data from ECC";
+	public static final String ECC_500_ERROR = "Server returned HTTP response code: 500";
+	public static final String ECC_RESPONSE = "rfc:BAPI_CUSTOMERRETURN_CREATE.Response";
+	public static final String ECC_EXCEPTION = "rfc:BAPI_CUSTOMERRETURN_CREATE.Exception";
+	public static final String ECC_HCI_URL = "/http/ro";
+	public static final String ECC_DATE_FORMAT = "yyyyMMdd";
+	public static final String ECC_SCHEDULE_LINE = "0001";
+	
+	public static final String DUPLICATE_CODE = "02";
+	public static final String SALES_PERSON = "BOM";
+
 }

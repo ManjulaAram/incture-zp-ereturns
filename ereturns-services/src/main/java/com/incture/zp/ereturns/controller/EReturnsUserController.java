@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.RoleDto;
 import com.incture.zp.ereturns.dto.UserDto;
+import com.incture.zp.ereturns.dto.UserMailDto;
 import com.incture.zp.ereturns.services.UserService;
 
 @RestController
@@ -45,4 +46,11 @@ public class EReturnsUserController {
 	{
 		return userService.updateMobileToken(userDto);
 	}
+	
+	@RequestMapping("/getMail/{role}")
+	public UserMailDto getMailIds(@PathVariable String role)
+	{
+		return userService.GetMailIdByRole(role);
+	}
+
 }

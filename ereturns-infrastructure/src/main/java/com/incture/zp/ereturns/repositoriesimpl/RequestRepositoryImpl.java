@@ -3,7 +3,10 @@ package com.incture.zp.ereturns.repositoriesimpl;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -12,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
@@ -47,7 +51,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 			responseDto.setMessage("Request " + requestId + " Saved Successfully");
 		}
 		sessionFactory.getCurrentSession().saveOrUpdate(request);
-		responseDto.setMessage("Request " + request.getRequestId() + " Updated Successfully");
+		responseDto.setMessage("Request " + request.getRequestId() + " Created Successfully");
 		responseDto.setStatus("SUCCESS");
 		responseDto.setCode("00");
 		return responseDto;
@@ -135,7 +139,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 							statusResponseDto.setRemark(returnOrder2.getRemark());
 							statusResponseDto.setReturnType(returnOrder2.getPaymentType());
 							statusResponseDto.setReturnValue(returnOrder2.getReturnValue());
-							statusResponseDto.setSalesPerson("BOM");
+							statusResponseDto.setSalesPerson(EReturnConstants.SALES_PERSON);
 	
 							// Request Level
 							statusResponseDto.setRequestId(request.getRequestId());
@@ -143,17 +147,29 @@ public class RequestRepositoryImpl implements RequestRepository {
 							statusResponseDto.setSoldTo(request.getSoldTo());
 							statusResponseDto.setInvoiceNo(request.getRequestHeader().getInvoiceNo());
 	
-							statusResponseDto.setMessage("Successfully Retrieved.");
-							statusResponseDto.setStatus("SUCCESS");
+							statusResponseDto.setMessage(EReturnConstants.SUCCESS_STATUS);
+							statusResponseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
 							reqList.add(statusResponseDto);
 							LOGGER.error("List adding:"+reqList.size());
-							break;
 					}
 				}
-				break;
 			}
 		}
-		return reqList;
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		Set<StatusResponseDto> set = new TreeSet(new Comparator() {
+			@Override
+			public int compare(Object o1, Object o2) {
+				if(((StatusResponseDto) o1).getRequestId().equalsIgnoreCase(((StatusResponseDto) o2).getRequestId()) &&
+						((StatusResponseDto) o1).getItemCode().equalsIgnoreCase(((StatusResponseDto) o2).getItemCode())){
+	        		return 0;
+	        	}
+	        	return 1;
+			}
+		});
+		set.addAll(reqList);
+		List<StatusResponseDto> finalList = new ArrayList<>();
+		finalList.addAll(set);
+		return finalList;
 	}
 
 	@Override

@@ -7,13 +7,13 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.constants.EReturnsHciConstants;
 import com.incture.zp.ereturns.dto.ItemDto;
 import com.incture.zp.ereturns.dto.RequestDto;
@@ -83,8 +83,8 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 			
 			JSONObject schedules = new JSONObject();
 			schedules.put(EReturnsHciConstants.ITEM_NO, itemDto.getItemCode());
-			schedules.put(EReturnsHciConstants.SCHEDULE_LINE, "0001");
-			schedules.put(EReturnsHciConstants.REQ_DATE, new SimpleDateFormat("yyyyMMdd").format(new Date()));
+			schedules.put(EReturnsHciConstants.SCHEDULE_LINE, EReturnConstants.ECC_SCHEDULE_LINE);
+			schedules.put(EReturnsHciConstants.REQ_DATE, new SimpleDateFormat(EReturnConstants.ECC_DATE_FORMAT).format(new Date()));
 			schedules.put(EReturnsHciConstants.REQ_QTY, returnOrderList.get(i).getReturnQty());
 
 			scheduleArry.put(schedules);
@@ -107,25 +107,29 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 
 		RestInvoker restInvoker = new RestInvoker(url, username, password);
 		LOGGER.error("Response coming from ECC1:");
-		String response = restInvoker.postDataToServer("/http/ro", returnOrder.toString());
+		String response = restInvoker.postDataToServer(EReturnConstants.ECC_HCI_URL, returnOrder.toString());
 		LOGGER.error("Response coming from ECC:"+response);
 		if(response != null && !(response.equals(""))) {
-			if(response.contains("rfc:BAPI_CUSTOMERRETURN_CREATE.Response")) {
+			if(response.contains(EReturnConstants.ECC_RESPONSE)) {
 				JSONObject returnObj = new JSONObject(response);
 				JSONObject bapiObj = new JSONObject();
-				bapiObj = returnObj.getJSONObject("rfc:BAPI_CUSTOMERRETURN_CREATE.Response");
-				responseDto.setCode(String.valueOf(HttpStatus.SC_OK));
+				bapiObj = returnObj.getJSONObject(EReturnConstants.ECC_RESPONSE);
+				responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
 				responseDto.setMessage(bapiObj.getString("SALESDOCUMENT"));
-				responseDto.setStatus("SUCCESS");
-			} else if(response.contains("rfc:BAPI_CUSTOMERRETURN_CREATE.Exception")) {
-				responseDto.setCode(String.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR));
+				responseDto.setStatus(EReturnConstants.ECC_SUCCESS_STATUS);
+			} else if(response.contains(EReturnConstants.ECC_EXCEPTION)) {
+				responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
 				responseDto.setMessage(response);
-				responseDto.setStatus("ERROR");
+				responseDto.setStatus(EReturnConstants.ECC_ERROR_STATUS);
+			} else if(response.contains(EReturnConstants.ECC_500_ERROR)) {
+				responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
+				responseDto.setMessage(response);
+				responseDto.setStatus(EReturnConstants.ECC_ERROR_STATUS);
 			}
 		} else {
-			responseDto.setCode(String.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR));
-			responseDto.setMessage("FAILURE");
-			responseDto.setStatus("ERROR");
+			responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
+			responseDto.setMessage(EReturnConstants.ECC_NO_DATA_STATUS);
+			responseDto.setStatus(EReturnConstants.ERROR_STATUS);
 		}
 		return responseDto;
 	}

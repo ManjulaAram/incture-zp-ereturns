@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,8 @@ public class NotificationServiceImpl implements NotificationService {
 	@Autowired
 	RequestService requestService;
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(NotificationServiceImpl.class);
+	
 	@Override
 	public ResponseDto sendNotification(RequestDto requestDto) {
 
@@ -35,9 +39,12 @@ public class NotificationServiceImpl implements NotificationService {
 		UserDto userDto =new UserDto();
 		String token="";
 		PushNotificationUtil notifyUtil = new PushNotificationUtil();
+		LOGGER.error("Pending with for Mobile:" + requestDto.getRequestPendingWith());
 		if(requestDto.getRequestPendingWith() != null && !(requestDto.getRequestPendingWith().equals("")))
 		{
+			LOGGER.error("Pending with for Mobile121:");
 			userDto = userService.getUserById(requestDto.getRequestPendingWith());
+			LOGGER.error("Pending with for Mobile12:" + userDto.getMobileToken());
 			token = userDto.getMobileToken();
 			try {
 				
@@ -58,13 +65,15 @@ public class NotificationServiceImpl implements NotificationService {
 		}
 		else
 		{
+			LOGGER.error("Pending with for Mobile13:"+requestDto.getRequestCreatedBy());
 			userDto = userService.getUserById(requestDto.getRequestCreatedBy());
+			LOGGER.error("Pending with for Mobile13:"+userDto.getMobileToken());
 			token = userDto.getMobileToken();
 			try {
 
 				StatusRequestDto statusRequestDto=new StatusRequestDto();
 				Map<String, String> messageMap=new HashMap<String, String>();
-				statusRequestDto.setPendingWith(requestDto.getRequestPendingWith());
+//				statusRequestDto.setPendingWith(requestDto.getRequestPendingWith());
 				statusRequestDto.setRequestId(requestDto.getRequestId());
 				messageMap=BuildMessage(requestDto);
 				notifyUtil.sendNotification(messageMap.get("messageTitle"), token, messageMap.get("messageBody"),requestService.getStatusDetails(statusRequestDto));

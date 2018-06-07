@@ -239,5 +239,10 @@ public class StatusResponseDto implements Serializable {
 	public void setAttachments(Set<AttachmentDto> attachments) {
 		this.attachments = attachments;
 	}
+
+	public Object getId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

@@ -86,7 +86,7 @@ public class RequestServiceImpl implements RequestService {
 		DuplicateMaterialDto duplicateDto = findDuplicate(requestDto);
 		duplicateDto.setDuplicate(false);
 		if(duplicateDto.isDuplicate()) {
-			responseDto.setCode("02");
+			responseDto.setCode(EReturnConstants.DUPLICATE_CODE);
 			responseDto.setMessage(duplicateDto.getMaterials().toString());
 			responseDto.setStatus(EReturnConstants.DUPLICATE);
 		} else {
@@ -111,84 +111,21 @@ public class RequestServiceImpl implements RequestService {
 				}
 
 				if (responseDto != null) {
-					if (responseDto.getCode().equals("00")) {
+					if (responseDto.getCode().equals(EReturnConstants.SUCCESS_STATUS_CODE)) {
 						processStartFlag = true;
 					}
 				}
 			} catch (Exception e) {
 				if(responseDto != null) {
-					responseDto.setCode("01");
-					responseDto.setStatus("ERROR");
+					responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
+					responseDto.setStatus(EReturnConstants.ERROR_STATUS);
 					responseDto.setMessage(e.getMessage());
 				}
 			}
 		}
 		
 		if (processStartFlag) {
-
-			for (ItemDto itemDto : requestDto.getHeaderDto().getItemSet()) {
-				String workFlowInstanceId = "";
-				WorkFlowDto workFlowDto = new WorkFlowDto();
-	
-				// start process
-				JSONObject jsonObj = new JSONObject();
-				jsonObj.put(EReturnsWorkflowConstants.REQUEST_ID, requestId);
-				jsonObj.put(EReturnsWorkflowConstants.ITEM_CODE, itemDto.getItemCode());
-				jsonObj.put(EReturnsWorkflowConstants.INITIATOR, requestDto.getRequestCreatedBy());
-	
-				JSONObject obj = new JSONObject();
-				obj.put(EReturnsWorkflowConstants.CONTEXT, jsonObj);
-				obj.put(EReturnsWorkflowConstants.DEFINITION_ID, EReturnsWorkflowConstants.DEFINITION_VALUE);
-	
-				String payload = obj.toString();
-				String output = workflowTriggerService.triggerWorkflow(payload);
-				JSONObject resultJsonObject = new JSONObject(output);
-				workFlowInstanceId = resultJsonObject.getString(EReturnsWorkflowConstants.WORKFLOW_INSTANCE_ID);
-	
-				workFlowDto.setRequestId(requestId);
-				workFlowDto.setWorkFlowInstanceId(workFlowInstanceId);
-	
-				workFlowDto.setMaterialCode(itemDto.getItemCode());
-				workFlowDto.setPrincipal(itemDto.getPrincipalCode());
-				workFlowDto.setTaskInstanceId("");
-				workFlowService.addWorkflowInstance(workFlowDto);
-				
-				
-				LOGGER.error("Process triggered successfully :" + output);
-			}
-			
-			try {
-				RequestDto requestDto2 = getRequestById(requestId);
-				notificationService.sendNotification(requestDto2);
-				Thread.sleep(5000);
-				List<ReturnOrderDto> returnList = returnOrderRepository.getReturnOrderByRequestId(requestId);
-				LOGGER.error("Data for pushing ECC :" + returnList.size());
-				if(returnList.size() > 0) {
-					for(ReturnOrderDto returnOrderDto : returnList) {
-						if(returnOrderDto.getRequestId().equalsIgnoreCase(requestId)) {
-							LOGGER.error(returnOrderDto.getOrderStatus()+":checking request id:" + returnOrderDto.getRequestId());
-							if(returnOrderDto.getOrderStatus().equalsIgnoreCase(EReturnConstants.COMPLETE)) {
-								responseDto = hciMappingService.pushDataToEcc(requestDto2);
-								LOGGER.error("Data pushed to HCI successfully :" + responseDto.getMessage());
-								break;
-							}
-						}
-					}
-				}
-				if(responseDto.getStatus().equalsIgnoreCase("SUCCESS")) {
-					requestRepository.updateEccReturnOrder(EReturnConstants.COMPLETE, responseDto.getMessage(), requestId);
-				} else {
-					requestRepository.updateEccReturnOrder(EReturnConstants.TECHNICAL_ERROR, responseDto.getMessage(), requestId);
-					responseDto.setMessage(EReturnConstants.TECHNICAL_ERROR);
-				}
-			} catch (InterruptedException e) {
-				if(responseDto != null) {
-					responseDto.setCode("01");
-					responseDto.setStatus("ERROR");
-					responseDto.setMessage(e.getMessage());
-				}
-				e.printStackTrace();
-			}
+			responseDto = triggerWorkflow(requestDto, requestId, responseDto);
 		}
 		return responseDto;
 	}
@@ -226,8 +163,8 @@ public class RequestServiceImpl implements RequestService {
 			responseDto = requestRepository.addRequest(importExportUtil.importRequestDto(requestDto));
 		} catch (Exception e) {
 			if(responseDto != null) {
-				responseDto.setCode("01");
-				responseDto.setStatus("ERROR");
+				responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
+				responseDto.setStatus(EReturnConstants.ERROR_STATUS);
 				responseDto.setMessage(e.getMessage());
 			}
 		}
@@ -271,8 +208,81 @@ public class RequestServiceImpl implements RequestService {
 	
 	@Override
 	public ResponseDto updateRequestDetails(ReturnOrderDto returnOrderDto) {
-		
 		return requestRepository.updateRequest(returnOrderDto);
 	}
 
+	private ResponseDto triggerWorkflow(RequestDto requestDto, String requestId, ResponseDto responseDto) {
+		boolean eccFlag = false;
+		for (ItemDto itemDto : requestDto.getHeaderDto().getItemSet()) {
+			String workFlowInstanceId = "";
+			WorkFlowDto workFlowDto = new WorkFlowDto();
+
+			// start process
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put(EReturnsWorkflowConstants.REQUEST_ID, requestId);
+			jsonObj.put(EReturnsWorkflowConstants.ITEM_CODE, itemDto.getItemCode());
+			jsonObj.put(EReturnsWorkflowConstants.INITIATOR, requestDto.getRequestCreatedBy());
+
+			JSONObject obj = new JSONObject();
+			obj.put(EReturnsWorkflowConstants.CONTEXT, jsonObj);
+			obj.put(EReturnsWorkflowConstants.DEFINITION_ID, EReturnsWorkflowConstants.DEFINITION_VALUE);
+
+			String payload = obj.toString();
+			String output = workflowTriggerService.triggerWorkflow(payload);
+			JSONObject resultJsonObject = new JSONObject(output);
+			workFlowInstanceId = resultJsonObject.getString(EReturnsWorkflowConstants.WORKFLOW_INSTANCE_ID);
+
+			workFlowDto.setRequestId(requestId);
+			workFlowDto.setWorkFlowInstanceId(workFlowInstanceId);
+
+			workFlowDto.setMaterialCode(itemDto.getItemCode());
+			workFlowDto.setPrincipal(itemDto.getPrincipalCode());
+			workFlowDto.setTaskInstanceId("");
+			workFlowService.addWorkflowInstance(workFlowDto);
+			
+			LOGGER.error("Process triggered successfully :" + output);
+		}
+		
+		try {
+			RequestDto requestDto2 = getRequestById(requestId);
+			notificationService.sendNotification(requestDto2);
+			Thread.sleep(10000);
+			List<ReturnOrderDto> returnList = returnOrderRepository.getReturnOrderByRequestId(requestId);
+			LOGGER.error("Data for pushing ECC :" + returnList.size());
+			if(returnList.size() > 0) {
+				for(ReturnOrderDto returnOrderDto : returnList) {
+					if(returnOrderDto.getRequestId().equalsIgnoreCase(requestId)) {
+						LOGGER.error(returnOrderDto.getOrderStatus()+":checking request id:" + returnOrderDto.getRequestId());
+						if(returnOrderDto.getOrderStatus().equalsIgnoreCase(EReturnConstants.COMPLETE)) {
+							responseDto = hciMappingService.pushDataToEcc(requestDto2);
+							eccFlag = true;
+							LOGGER.error("Data pushed to HCI successfully :" + responseDto.getMessage());
+							break;
+						}
+					}
+				}
+			}
+			if(eccFlag) {
+				if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_SUCCESS_STATUS)) {
+					requestRepository.updateEccReturnOrder(EReturnConstants.COMPLETE, responseDto.getMessage(), requestId);
+				} else if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_ERROR_STATUS)) {
+					responseDto.setMessage(responseDto.getMessage());
+					
+					//Re-triggering the process
+					workFlowService.deleteWorkflow(requestId);
+					
+					LOGGER.error("Re-Triggering workflow:" + responseDto.getMessage());
+					triggerWorkflow(requestDto2, requestId, responseDto);
+				} 
+			}
+		} catch (InterruptedException e) {
+			if(responseDto != null) {
+				responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
+				responseDto.setStatus(EReturnConstants.ERROR_STATUS);
+				responseDto.setMessage(e.getMessage());
+			}
+			e.printStackTrace();
+		}
+		return responseDto;
+	}
 }

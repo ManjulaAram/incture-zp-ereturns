@@ -129,7 +129,6 @@ public class ImportExportUtil {
 		if (header.getExpiryDate() != null && !(header.getExpiryDate().equals(""))) {
 			headerDto.setExpiryDate(convertDateToString(header.getExpiryDate()));
 		}
-		LOGGER.error("Date coming from DB:" + header.getExpiryDate());
 		if (header.getInvoiceDate() != null && !(header.getInvoiceDate().equals(""))) {
 			headerDto.setInvoiceDate(convertDateToString(header.getInvoiceDate()));
 		}
@@ -171,7 +170,8 @@ public class ImportExportUtil {
 		Item item = new Item();
 		item.setAvailableQty(itemDto.getAvailableQty());
 		if (itemDto.getExpiryDate() != null && !(itemDto.getExpiryDate().equals(""))) {
-			item.setExpiryDate(convertStringToDate(expiryDateFormat(itemDto.getExpiryDate())));
+			LOGGER.error("Expiry date from UI"+itemDto.getExpiryDate());
+			item.setExpiryDate(convertStringToDate(itemDto.getExpiryDate()));
 		}
 		item.setItemCode(itemDto.getItemCode());
 		item.setItemData(header);
@@ -479,15 +479,4 @@ public class ImportExportUtil {
 		return output;
 	}
 	
-	private String expiryDateFormat(String input) {
-		String output = "";
-		try {
-		 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-		 SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
-		 output = sdf2.format(sdf.parse(input));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return output;
-	}
 }

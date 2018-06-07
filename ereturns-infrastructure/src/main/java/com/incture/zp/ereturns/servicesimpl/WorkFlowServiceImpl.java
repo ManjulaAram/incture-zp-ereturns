@@ -5,6 +5,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.WorkFlowDto;
 import com.incture.zp.ereturns.repositories.WorkflowRepository;
 import com.incture.zp.ereturns.services.WorkFlowService;
@@ -30,6 +31,11 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 	public void addWorkflowInstance(WorkFlowDto workFlowDto) {
 	
 		workflowRepository.addWorkflowInstance(importExportUtil.importWorkFlowDto(workFlowDto));
+	}
+
+	@Override
+	public ResponseDto deleteWorkflow(String requestId) {
+		return workflowRepository.deleteWorkflow(requestId);
 	}
 
 	
