@@ -17,7 +17,6 @@ import com.incture.zp.ereturns.dto.ItemDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.ReturnReasonDto;
-import com.incture.zp.ereturns.dto.RoleDto;
 import com.incture.zp.ereturns.dto.UserDto;
 import com.incture.zp.ereturns.dto.WorkFlowDto;
 import com.incture.zp.ereturns.model.Attachment;
@@ -26,7 +25,6 @@ import com.incture.zp.ereturns.model.Item;
 import com.incture.zp.ereturns.model.Request;
 import com.incture.zp.ereturns.model.ReturnOrder;
 import com.incture.zp.ereturns.model.ReturnReason;
-import com.incture.zp.ereturns.model.Role;
 import com.incture.zp.ereturns.model.User;
 import com.incture.zp.ereturns.model.WorkFlow;
 
@@ -38,32 +36,11 @@ public class ImportExportUtil {
 
 	public User importUserDto(UserDto userDto) {
 		User user = new User();
-		user.setEmail(userDto.getEmail());
-		user.setSciId(userDto.getSciId());
 		user.setUserId(userDto.getUserId());
-		user.setUserName(userDto.getUserName());
+		user.setSciUserId(userDto.getSciUserId());
+		user.setIdpUserId(userDto.getIdpUserId());
 		user.setMobileToken(userDto.getMobileToken());
-		user.setPhone(userDto.getPhone());
-		user.setWebToken(userDto.getWebToken());
-		user.setIosToken(userDto.getIosToken());
-		user.setSapAccessToken(userDto.getSapAccessToken());
-		user.setSapRefreshToken(userDto.getSapRefreshToken());
-
-		Set<Role> roleSet = null;
-		if (userDto.getSetRole() != null && userDto.getSetRole().size() > 0) {
-			roleSet = setRoleDetail(userDto.getSetRole());
-		}
-		user.setRoleDetails(roleSet);
 		return user;
-	}
-
-	private Set<Role> setRoleDetail(Set<RoleDto> roleSet) {
-		Set<Role> setRole = new HashSet<>();
-
-		for (RoleDto roleDto : roleSet) {
-			setRole.add(importRoleDto(roleDto));
-		}
-		return setRole;
 	}
 
 	private Set<ReturnOrder> setReturnOrderDetail(Set<ReturnOrderDto> returnOrderSet, Request request) {
@@ -77,26 +54,15 @@ public class ImportExportUtil {
 
 	public UserDto exportUserDto(User user) {
 		UserDto userDto = new UserDto();
-		userDto.setEmail(user.getEmail());
-		userDto.setSciId(user.getSciId());
 		userDto.setUserId(user.getUserId());
-		userDto.setUserName(user.getUserName());
+		userDto.setIdpUserId(user.getIdpUserId());
+		userDto.setSciUserId(user.getSciUserId());
 		userDto.setMobileToken(user.getMobileToken());
-		userDto.setWebToken(user.getWebToken());
-		
-		userDto.setIosToken(user.getIosToken());
-		userDto.setSapAccessToken(user.getSapAccessToken());
-		userDto.setSapRefreshToken(user.getSapRefreshToken());
-
 		return userDto;
 	}
 
 	public Header importHeaderDto(HeaderDto headerDto) {
 		Header header = new Header();
-		header.setAvailableQty(headerDto.getAvailableQty());
-		if (headerDto.getExpiryDate() != null && !(headerDto.getExpiryDate().equals(""))) {
-			header.setExpiryDate(convertStringToDate(headerDto.getExpiryDate()));
-		}
 		if (headerDto.getInvoiceDate() != null && !(headerDto.getInvoiceDate().equals(""))) {
 			header.setInvoiceDate(convertStringToDate(headerDto.getInvoiceDate()));
 		}
@@ -125,10 +91,6 @@ public class ImportExportUtil {
 
 	public HeaderDto exportHeaderDto(Header header) {
 		HeaderDto headerDto = new HeaderDto();
-		headerDto.setAvailableQty(header.getAvailableQty());
-		if (header.getExpiryDate() != null && !(header.getExpiryDate().equals(""))) {
-			headerDto.setExpiryDate(convertDateToString(header.getExpiryDate()));
-		}
 		if (header.getInvoiceDate() != null && !(header.getInvoiceDate().equals(""))) {
 			headerDto.setInvoiceDate(convertDateToString(header.getInvoiceDate()));
 		}
@@ -376,23 +338,6 @@ public class ImportExportUtil {
 		returnOrderDto.setPaymentType(returnOrder.getPaymentType());
 		returnOrderDto.setRequestId(returnOrder.getReturnOrderData().getRequestId());
 		return returnOrderDto;
-	}
-
-	public RoleDto exportRoleDto(Role role) {
-		RoleDto roleDto = new RoleDto();
-
-		roleDto.setRoleId(role.getRoleId());
-		roleDto.setRoleName(role.getRoleName());
-
-		return roleDto;
-	}
-
-	public Role importRoleDto(RoleDto roleDto) {
-		Role role = new Role();
-
-		role.setRoleId(roleDto.getRoleId());
-		role.setRoleName(roleDto.getRoleName());
-		return role;
 	}
 
 	public Attachment importAttachmentDto(AttachmentDto attachmentDto) {

@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.constants.EReturnsWorkflowConstants;
@@ -41,7 +42,9 @@ import com.incture.zp.ereturns.services.ReturnOrderService;
 import com.incture.zp.ereturns.services.WorkFlowService;
 import com.incture.zp.ereturns.services.WorkflowTriggerService;
 import com.incture.zp.ereturns.utils.RestInvoker;
+
 @Service
+@Transactional
 public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
 	@Autowired
@@ -61,6 +64,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
 	@Autowired
 	ReturnOrderService returnOrderService;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkflowTriggerServiceImpl.class);
 	
 	String destination;
@@ -157,8 +161,8 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 	@Override
 	public ResponseDto completeTask(CompleteTaskRequestDto requestDto) {
 		ResponseDto responseDto = new ResponseDto();
+		boolean eccFlag = false;
 		String requestId = requestDto.getRequestId();
-		ResponseDto requestActionResponse = new ResponseDto();
 		String workFlowInstanceId = workFlowService
 				.getWorkFLowInstance(requestId, requestDto.getItemCode()).getWorkFlowInstanceId();
 		String responseData = "";
@@ -179,7 +183,6 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 				urlConnection.connect();
 				responseData = getDataFromStream(urlConnection.getInputStream());
 			}
-			LOGGER.error("Response coming from data stream:"+responseData);
 			
 			String instanceId="";
 			JSONArray jsonArray = new JSONArray(responseData);
@@ -190,29 +193,27 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 					instanceId=instanceObject.get("id").toString();
 				}
 			}
-			/*JSONObject jsonObject = new JSONObject();
-			jsonObject = jsonArray.getJSONObject(0);*/
 			LOGGER.error("taskInstance" + instanceId);
 			if(instanceId!=null && instanceId!=""){
-			requestActionResponse = requestAction(instanceId, requestDto.getFlag());
+				responseDto = requestAction(instanceId, requestDto.getFlag());
 			}
-			LOGGER.error(requestActionResponse.getCode()+"taskInstance1" + requestActionResponse.getStatus());
+			LOGGER.error(responseDto.getCode()+"taskInstance1" + responseDto.getStatus());
 			RequestDto res = requestService.getRequestById(requestDto.getRequestId());
-			if (requestActionResponse.getCode().equals("204")) {
+			if (responseDto.getCode().equals("204")) {
 				Thread.sleep(5000);
 				String status = updateOrderDetails(instanceId);
 //				notificationService.sendNotification(res);
 				if(status.equalsIgnoreCase(EReturnConstants.COMPLETE)) {
 					LOGGER.error("taskInstance31 coming inside" + res.getRequestStatus());
 					responseDto = hciMappingService.pushDataToEcc(res);
+					eccFlag = true;
 					LOGGER.error("taskInstance5 coming inside" + responseDto.getMessage());
 				}
 			}
-			if(responseDto != null) {
+			if(responseDto != null && eccFlag) {
 				if(responseDto.getStatus().equalsIgnoreCase("ECC_SUCCESS")) {
 					requestRepository.updateEccReturnOrder(EReturnConstants.COMPLETE, responseDto.getMessage(), requestId);
 				} else if(responseDto.getStatus().equalsIgnoreCase("ECC_ERROR")) {
-//					requestRepository.updateEccReturnOrder(EReturnConstants.TECHNICAL_ERROR, responseDto.getMessage(), requestId);
 					responseDto.setMessage(responseDto.getMessage());
 					
 					//Re-triggering the process

@@ -7,6 +7,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.model.WorkFlow;
 import com.incture.zp.ereturns.repositories.WorkflowRepository;
@@ -30,8 +31,8 @@ public class WorkFlowRepositoryImpl implements WorkflowRepository {
 		}
 
 		responseDto.setMessage("WorkFlow Instance added " + workFlow.getWorkFlowInstanceId() + "Successfully");
-		responseDto.setStatus("OK");
-		responseDto.setCode("00");
+		responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
+		responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
 		return responseDto;
 	}
 
@@ -64,12 +65,12 @@ public class WorkFlowRepositoryImpl implements WorkflowRepository {
 			int result = query.executeUpdate();
 			if (result > 0) {
 				responseDto.setMessage("Deleted Successfully");
-				responseDto.setStatus("OK");
-				responseDto.setCode("00");
+				responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
+				responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
 			} else {
 				responseDto.setMessage("Delete Unsuccessfully");
-				responseDto.setStatus("ERROR");
-				responseDto.setCode("01");
+				responseDto.setStatus(EReturnConstants.ERROR_STATUS);
+				responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
 			}
 		return responseDto;
 	}

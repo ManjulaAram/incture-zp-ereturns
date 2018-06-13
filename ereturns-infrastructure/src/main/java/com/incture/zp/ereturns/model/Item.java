@@ -57,7 +57,6 @@ public class Item {
 	@Column(name = "STORE_LOC", length = 50)
 	private String storeLoc;
 	
-
 	@Column(name = "MATERIAL", length = 50)
 	private String material;
 	
@@ -73,10 +72,10 @@ public class Item {
 	@Column(name = "PRINCIPAL", length = 50)
 	private String principal;
 	
-	@Column(name = "PRICIPAL_CODE", length = 50)
+	@Column(name = "PRINCIPAL_CODE", length = 50)
 	private String principalCode;
 
-	@Column(name = "PRICIPAL_GROUP", length = 50)
+	@Column(name = "PRINCIPAL_GROUP", length = 50)
 	private String principalGroup;
 
 	@Column(name = "STORE_TYPE", length = 255)

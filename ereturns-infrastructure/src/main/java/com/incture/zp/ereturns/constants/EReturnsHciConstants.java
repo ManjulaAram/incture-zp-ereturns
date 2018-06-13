@@ -3,6 +3,16 @@ package com.incture.zp.ereturns.constants;
 public interface EReturnsHciConstants {
 
 	public static final String HCI_ECC_ENDPOINT = "https://l6088-iflmap.hcisbp.ap1.hana.ondemand.com";
+//	public static final String HCI_ECC_ENDPOINT = "ZP_ERETURNS_HCI";
+	public static final String USERNAME = "S0019321680";
+	public static final String PASSWORD = "0WV1]2{Q";
+	
+	public static final String HCI_DESTINATION_URL = "URL";
+	public static final String HCI_DESTINATION_USER = "User";
+	public static final String HCI_DESTINATION_PWD = "Password";
+	
+
+	
 	public static final String SOLD_TO_PARTY = "AG";
 	public static final String SHIP_TO_PARTY = "SH";
 	public static final String RETURN_ORDER_CREATION = "Return_Order_Creation";
@@ -29,10 +39,9 @@ public interface EReturnsHciConstants {
 	public static final String ITEM_NO = "itm_number";
 	public static final String TARGET_QTY = "target_qty";
 
-	public static final String USERNAME = "S0019321680";
-	public static final String PASSWORD = "0WV1]2{Q";
-
 	public static final String SCHEDULE_LINE = "sched_line";
 	public static final String REQ_DATE = "req_date";
 	public static final String REQ_QTY = "req_qty";
+	
+	public static final String REFERENCE_DOCUMENT_CATEGORY = "M";
 }

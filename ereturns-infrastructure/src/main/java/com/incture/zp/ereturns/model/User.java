@@ -1,14 +1,8 @@
 package com.incture.zp.ereturns.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -19,61 +13,32 @@ public class User {
 	@Column(name = "USER_ID", nullable = false)
 	private String userId;
 	
-	@Column(name = "USER_NAME", length = 100)
-	private String userName;
+	@Column(name = "SCI_USER_ID", nullable = false)
+	private String sciUserId;
 	
-	@Column(name = "EMAIL", length = 100)
-	private String email;
-
-	@Column(name = "PHONE", length = 100)
-	private String phone;
-
-	@Column(name = "SCI_ID", length = 50)
-	private String sciId;
+	@Column(name = "IDP_USER_ID", nullable = false)
+	private String idpUserId;
 	
 	@Column(name = "MOBILE_TOKEN", length = 255)
 	private String mobileToken;
 	
-	@Column(name = "WEB_TOKEN", length = 255)
-	private String webToken;
-
-	@Column(name = "IOS_TOKEN", length = 255)
-	private String iosToken;
-
-	@Column(name = "SAP_ACCESS_TOKEN", length = 255)
-	private String sapAccessToken;
-
-	@Column(name = "SAP_REFRESH_TOKEN", length = 255)
-	private String sapRefreshToken;
-
-	@ManyToMany
-	@JoinTable(name = "T_USER_ROLE", joinColumns = @JoinColumn(name = "USER_ID"), 
-	inverseJoinColumns = @JoinColumn(name = "ROLE_ID") )
-	private Set<Role> roleDetails = new HashSet<Role>(0);
-
 	public String getUserId() {
 		return userId;
 	}
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
-	public String getEmail() {
-		return email;
+	public String getSciUserId() {
+		return sciUserId;
 	}
-	public void setEmail(String email) {
-		this.email = email;
+	public void setSciUserId(String sciUserId) {
+		this.sciUserId = sciUserId;
 	}
-	public String getSciId() {
-		return sciId;
+	public String getIdpUserId() {
+		return idpUserId;
 	}
-	public void setSciId(String sciId) {
-		this.sciId = sciId;
-	}
-	public String getUserName() {
-		return userName;
-	}
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setIdpUserId(String idpUserId) {
+		this.idpUserId = idpUserId;
 	}
 	public String getMobileToken() {
 		return mobileToken;
@@ -81,41 +46,4 @@ public class User {
 	public void setMobileToken(String mobileToken) {
 		this.mobileToken = mobileToken;
 	}
-	public String getWebToken() {
-		return webToken;
-	}
-	public void setWebToken(String webToken) {
-		this.webToken = webToken;
-	}
-	public String getPhone() {
-		return phone;
-	}
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-	public Set<Role> getRoleDetails() {
-		return roleDetails;
-	}
-	public void setRoleDetails(Set<Role> roleDetails) {
-		this.roleDetails = roleDetails;
-	}
-	public String getIosToken() {
-		return iosToken;
-	}
-	public void setIosToken(String iosToken) {
-		this.iosToken = iosToken;
-	}
-	public String getSapAccessToken() {
-		return sapAccessToken;
-	}
-	public void setSapAccessToken(String sapAccessToken) {
-		this.sapAccessToken = sapAccessToken;
-	}
-	public String getSapRefreshToken() {
-		return sapRefreshToken;
-	}
-	public void setSapRefreshToken(String sapRefreshToken) {
-		this.sapRefreshToken = sapRefreshToken;
-	}
-	
 }

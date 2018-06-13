@@ -18,7 +18,6 @@ import org.springframework.stereotype.Repository;
 import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
-import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.StatusRequestDto;
 import com.incture.zp.ereturns.dto.StatusResponseDto;
 import com.incture.zp.ereturns.model.Item;
@@ -52,8 +51,8 @@ public class RequestRepositoryImpl implements RequestRepository {
 		}
 		sessionFactory.getCurrentSession().saveOrUpdate(request);
 		responseDto.setMessage("Request " + request.getRequestId() + " Created Successfully");
-		responseDto.setStatus("SUCCESS");
-		responseDto.setCode("00");
+		responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
+		responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
 		return responseDto;
 	}
 
@@ -74,9 +73,12 @@ public class RequestRepositoryImpl implements RequestRepository {
 		}
 
 		if (requestDto.getCustomerCode() != null && !(requestDto.getCustomerCode().equals(""))) {
-			queryString.append(" AND o.soldTo like :soldTo");
+			queryString.append(" AND r.soldTo like :soldTo");
 		}
 
+		if (requestDto.getCustomerName() != null && !(requestDto.getCustomerName().equals(""))) {
+			queryString.append(" AND r.customer like :customer");
+		}
 		if ((requestDto.getStartDate() != null && !(requestDto.getStartDate().equals("")))
 				&& (requestDto.getEndDate() != null) && !(requestDto.getEndDate().equals(""))) {
 			queryString.append(" AND r.requestCreatedDate BETWEEN :startDate AND :endDate");
@@ -99,7 +101,9 @@ public class RequestRepositoryImpl implements RequestRepository {
 		if (requestDto.getCustomerCode() != null && !(requestDto.getCustomerCode().equals(""))) {
 			query.setParameter("soldTo", requestDto.getCustomerCode()+"%");
 		}
-
+		if (requestDto.getCustomerName() != null && !(requestDto.getCustomerName().equals(""))) {
+			query.setParameter("customer", requestDto.getCustomerName()+"%");
+		}
 		if (requestDto.getPendingWith() != null && !(requestDto.getPendingWith().equals(""))) {
 			query.setParameter("orderPendingWith", requestDto.getPendingWith()+"%");
 		}
@@ -146,6 +150,8 @@ public class RequestRepositoryImpl implements RequestRepository {
 							statusResponseDto.setShipTo(request.getShipTo());
 							statusResponseDto.setSoldTo(request.getSoldTo());
 							statusResponseDto.setInvoiceNo(request.getRequestHeader().getInvoiceNo());
+							statusResponseDto.setCustomerName(request.getCustomer());
+							statusResponseDto.setCustomerCode(request.getCustomerNo());
 	
 							statusResponseDto.setMessage(EReturnConstants.SUCCESS_STATUS);
 							statusResponseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
@@ -190,50 +196,6 @@ public class RequestRepositoryImpl implements RequestRepository {
 			list.add(importExportUtil.exportRequestDto(request));
 		}
 		return list;
-	}
-
-	@Override
-	public ResponseDto updateRequest(ReturnOrderDto returnOrderDto) {
-		ResponseDto responseDto = new ResponseDto();
-
-		String queryString = ("update Request r set r.requestUpdatedBy=:requestUpdatedBy"
-				+ ", r.requestUpdatedDate=:requestUpdatedDate, r.requestApprovedBy=:requestApprovedBy"
-				+ ", r.requestApprovedDate=:requestApprovedDate, r.requestStatus=:requestStatus"
-				+ ", r.requestPendingWith=:requestPendingWith");
-		StringBuilder queryBuilder = new StringBuilder(queryString);
-		queryBuilder.append(" where requestId=:requestId");
-
-		String query = queryBuilder.toString();
-
-		Query updateQuery = sessionFactory.getCurrentSession().createQuery(query);
-
-		if (returnOrderDto.getItemCode() != null && !(returnOrderDto.getItemCode().equals("")))
-			updateQuery.setParameter("itemCode", returnOrderDto.getItemCode());
-		if (returnOrderDto.getRequestId() != null && !(returnOrderDto.getRequestId().equals("")))
-			updateQuery.setParameter("requestId", returnOrderDto.getRequestId());
-		if (returnOrderDto.getOrderUpdatedBy() != null && !(returnOrderDto.getOrderUpdatedBy().equals("")))
-			updateQuery.setParameter("requestUpdatedBy", returnOrderDto.getOrderUpdatedBy());
-		if (returnOrderDto.getOrderApprovedBy() != null && !(returnOrderDto.getOrderApprovedBy().equals("")))
-			updateQuery.setParameter("requestApprovedBy", returnOrderDto.getOrderApprovedBy());
-		if (returnOrderDto.getOrderApprovedDate() != null && !(returnOrderDto.getOrderApprovedDate().equals("")))
-			updateQuery.setParameter("requestApprovedDate", returnOrderDto.getOrderApprovedDate());
-		if (returnOrderDto.getOrderStatus() != null && !(returnOrderDto.getOrderStatus().equals("")))
-			updateQuery.setParameter("requestStatus", returnOrderDto.getOrderStatus());
-		if (returnOrderDto.getOrderPendingWith() != null && !(returnOrderDto.getOrderPendingWith().equals("")))
-			updateQuery.setParameter("requestPendingWith", returnOrderDto.getOrderPendingWith());
-		if (returnOrderDto.getOrderUpdatedDate() != null  && !(returnOrderDto.getOrderUpdatedDate().equals("")))
-			updateQuery.setParameter("requestUpdatedDate", returnOrderDto.getOrderUpdatedDate());
-
-		if (updateQuery.executeUpdate() > 0) {
-			responseDto.setMessage("Request updated successfully");
-			responseDto.setCode("00");
-			responseDto.setStatus("SUCCESS");
-		} else {
-			responseDto.setMessage("Request did not update successfully");
-			responseDto.setCode("01");
-			responseDto.setStatus("ERROR");
-		}
-		return responseDto;
 	}
 
 	public int updateEccReturnOrder(String eccStatus, String eccNo, String requestId) {

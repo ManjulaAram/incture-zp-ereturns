@@ -206,11 +206,6 @@ public class RequestServiceImpl implements RequestService {
 		return duplicateMaterialDto;
 	}
 	
-	@Override
-	public ResponseDto updateRequestDetails(ReturnOrderDto returnOrderDto) {
-		return requestRepository.updateRequest(returnOrderDto);
-	}
-
 	private ResponseDto triggerWorkflow(RequestDto requestDto, String requestId, ResponseDto responseDto) {
 		boolean eccFlag = false;
 		for (ItemDto itemDto : requestDto.getHeaderDto().getItemSet()) {
@@ -245,7 +240,7 @@ public class RequestServiceImpl implements RequestService {
 		
 		try {
 			RequestDto requestDto2 = getRequestById(requestId);
-			notificationService.sendNotification(requestDto2);
+//			notificationService.sendNotification(requestDto2);
 			Thread.sleep(10000);
 			List<ReturnOrderDto> returnList = returnOrderRepository.getReturnOrderByRequestId(requestId);
 			LOGGER.error("Data for pushing ECC :" + returnList.size());

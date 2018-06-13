@@ -43,7 +43,7 @@ public class ReturnOrder {
 	@Column(name = "PAYMENT_TYPE")
 	private String paymentType;
 	
-	@Column(name = "OORDER_CREATED_BY", length = 100)
+	@Column(name = "ORDER_CREATED_BY", length = 100)
 	private String orderCreatedBy;
 	
 	@Temporal(TemporalType.TIMESTAMP)

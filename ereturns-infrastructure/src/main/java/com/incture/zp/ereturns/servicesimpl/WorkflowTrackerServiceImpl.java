@@ -76,7 +76,7 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 		for (int i = 0; i < executionLogs.length(); i++) {
 			JSONObject logObject = executionLogs.getJSONObject(i);
 			if (logObject.get(EReturnsWorkflowConstants.TYPE).equals("WORKFLOW_STARTED")) {
-				instanceDto.setCreatedBy(userService.getUserById(logObject.get(EReturnsWorkflowConstants.USER_ID).toString()).getUserName());
+				instanceDto.setCreatedBy(userService.getUserNameById(logObject.get(EReturnsWorkflowConstants.USER_ID).toString()));
 				instanceDto.setCreatedAt(formatDateString(logObject.get(EReturnsWorkflowConstants.TIMESTAMP).toString()));
 			}
 			if (logObject.get(EReturnsWorkflowConstants.TYPE).equals("USERTASK_CREATED")) {
@@ -88,7 +88,7 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 					&& logObject.get(EReturnsWorkflowConstants.TASK_ID).toString().equals(taskInstanceId)) {
 				ApproverDto approverDto = new ApproverDto();
 
-				approverDto.setApproverName(userService.getUserById(logObject.get(EReturnsWorkflowConstants.USER_ID).toString()).getUserName());
+				approverDto.setApproverName(userService.getUserNameById(logObject.get(EReturnsWorkflowConstants.USER_ID).toString()));
 				approverDto.setApprovalDate(formatDateString(logObject.get(EReturnsWorkflowConstants.TIMESTAMP).toString()));
 				approverDto.setStatus(getTaskStatus(logObject.get(EReturnsWorkflowConstants.TASK_ID).toString()));
 				approverList.add(approverDto);

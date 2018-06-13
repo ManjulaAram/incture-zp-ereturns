@@ -19,5 +19,4 @@ public interface ReturnOrderRepository {
 	
 	public StatusPendingDto getRequestStatusByUserId(String userId);
 	
-	public ResponseDto updateReturnOrderDetails(ReturnOrderDto returnOrderDto);
 }

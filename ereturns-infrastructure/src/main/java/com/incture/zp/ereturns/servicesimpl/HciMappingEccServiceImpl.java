@@ -54,7 +54,7 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		header.put(EReturnsHciConstants.DOCUMENT_TYPE, requestDto.getHeaderDto().getDocumentType());
 		header.put(EReturnsHciConstants.REF_DOC, requestDto.getHeaderDto().getInvoiceNo());
 		header.put(EReturnsHciConstants.PURCHASE_CUSTOMER_NO, requestDto.getHeaderDto().getPurchNoCust());
-		header.put(EReturnsHciConstants.REF_DOC_CAT, requestDto.getHeaderDto().getRefDocCat());
+		header.put(EReturnsHciConstants.REF_DOC_CAT, EReturnsHciConstants.REFERENCE_DOCUMENT_CATEGORY);
 		header.put(EReturnsHciConstants.CURRENCY, requestDto.getHeaderDto().getCurrency());
 		header.put(EReturnsHciConstants.SALES_ORG, requestDto.getHeaderDto().getSalesOrg());
 		header.put(EReturnsHciConstants.DISTRIBUTION_CHANNEL, requestDto.getHeaderDto().getDistrChan());
@@ -100,10 +100,19 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		 
 		LOGGER.error("Json payload for ECC:"+returnOrder.toString());
 		
+		
 //		call rest invoker to push data
+		
+//		DestinationConfiguration destConfiguration = ServiceUtil.getDest(EReturnsHciConstants.HCI_ECC_ENDPOINT);
+//		String destination = destConfiguration.getProperty(EReturnsHciConstants.HCI_DESTINATION_URL);
+//		String username = destConfiguration.getProperty(EReturnsHciConstants.HCI_DESTINATION_USER);
+//		String password = destConfiguration.getProperty(EReturnsHciConstants.HCI_DESTINATION_PWD);
+
+		
 		String url = EReturnsHciConstants.HCI_ECC_ENDPOINT;
 		String username = EReturnsHciConstants.USERNAME;
 		String password = EReturnsHciConstants.PASSWORD;
+		
 
 		RestInvoker restInvoker = new RestInvoker(url, username, password);
 		LOGGER.error("Response coming from ECC1:");
@@ -115,6 +124,15 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 				JSONObject bapiObj = new JSONObject();
 				bapiObj = returnObj.getJSONObject(EReturnConstants.ECC_RESPONSE);
 				responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
+//				if(bapiObj.getString("SALESDOCUMENT").equals("")) {
+//					JSONObject msgReturnObj = new JSONObject();
+//					msgReturnObj = bapiObj.getJSONObject("RETURN");
+//					JSONArray itemAry = new JSONArray();
+//					msgReturnObj.getJSONArray("Item");
+//					JSONObject msgObject = new JSONObject();
+//					msgObject = (JSONObject) msgReturnObj.get("MESSAGE");
+//					
+//				}
 				responseDto.setMessage(bapiObj.getString("SALESDOCUMENT"));
 				responseDto.setStatus(EReturnConstants.ECC_SUCCESS_STATUS);
 			} else if(response.contains(EReturnConstants.ECC_EXCEPTION)) {

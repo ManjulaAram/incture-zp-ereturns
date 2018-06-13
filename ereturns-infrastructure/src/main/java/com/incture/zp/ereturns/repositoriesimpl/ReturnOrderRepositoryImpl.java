@@ -118,47 +118,4 @@ public class ReturnOrderRepositoryImpl implements ReturnOrderRepository {
 		return statusPendingDto;
 	}
 
-	@Override
-	public ResponseDto updateReturnOrderDetails(ReturnOrderDto returnOrderDto) {
-		ResponseDto responseDto = new ResponseDto();
-		String queryString = ("update ReturnOrder o set o.orderUpdatedBy=:orderUpdatedBy"
-				+ ", o.orderUpdatedDate=:orderApprovedDate, o.orderApprovedBy=:orderApprovedBy"
-				+ ", o.orderApprovedDate=:orderApprovedDate, o.orderStatus=:orderStatus"
-				+ ", o.orderPendingWith=:orderPendingWith");
-		StringBuilder queryBuilder = new StringBuilder(queryString);
-		queryBuilder.append(" where requestId=:requestId and itemCode=:itemCode");
-
-		String query = queryBuilder.toString();
-
-		Query updateQuery = sessionFactory.getCurrentSession().createQuery(query);
-
-		if (returnOrderDto.getItemCode() != null && !(returnOrderDto.getItemCode().equals("")))
-			updateQuery.setParameter("itemCode", returnOrderDto.getItemCode());
-		if (returnOrderDto.getRequestId() != null && !(returnOrderDto.getRequestId().equals("")))
-			updateQuery.setParameter("requestId", returnOrderDto.getRequestId());
-		if (returnOrderDto.getOrderUpdatedBy() != null && !(returnOrderDto.getOrderUpdatedBy().equals("")))
-			updateQuery.setParameter("orderUpdatedBy", returnOrderDto.getOrderUpdatedBy());
-		if (returnOrderDto.getOrderApprovedBy() != null && !(returnOrderDto.getOrderApprovedBy().equals("")))
-			updateQuery.setParameter("orderApprovedBy", returnOrderDto.getOrderApprovedBy());
-		if (returnOrderDto.getOrderApprovedDate() != null && !(returnOrderDto.getOrderApprovedDate().equals("")))
-			updateQuery.setParameter("orderApprovedDate", returnOrderDto.getOrderApprovedDate());
-		if (returnOrderDto.getOrderStatus() != null && !(returnOrderDto.getOrderStatus().equals("")))
-			updateQuery.setParameter("orderStatus", returnOrderDto.getOrderStatus());
-		if (returnOrderDto.getOrderPendingWith() != null && !(returnOrderDto.getOrderPendingWith().equals("")))
-			updateQuery.setParameter("orderPendingWith", returnOrderDto.getOrderPendingWith());
-		if (returnOrderDto.getOrderUpdatedDate() != null  && !(returnOrderDto.getOrderUpdatedDate().equals("")))
-			updateQuery.setParameter("orderUpdatedDate", returnOrderDto.getOrderUpdatedDate());
-
-		if (updateQuery.executeUpdate() > 0) {
-			responseDto.setMessage("Return Order updated successfully");
-			responseDto.setCode("00");
-			responseDto.setStatus("SUCCESS");
-		} else {
-			responseDto.setMessage("Return Order did not update successfully");
-			responseDto.setCode("01");
-			responseDto.setStatus("ERROR");
-		}
-		return responseDto;
-	}
-
 }

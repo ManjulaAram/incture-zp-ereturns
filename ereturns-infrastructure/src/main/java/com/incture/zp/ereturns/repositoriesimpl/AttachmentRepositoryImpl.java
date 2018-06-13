@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.dto.AttachmentDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.model.Attachment;
@@ -42,11 +43,11 @@ public class AttachmentRepositoryImpl implements AttachmentRepository {
 		String attachmentId = getReferenceData.getNextSeqNumber(getReferenceData.execute("A"), 6, sessionFactory);
 		if(attachment.getAttachmentId() == null || attachment.getAttachmentId().equals("")) {
 			attachment.setAttachmentId(attachmentId);
-			responseDto.setMessage("Attachment "+ attachmentId +" Saved Successfully");
 		}
 		sessionFactory.getCurrentSession().saveOrUpdate(attachment);
-		responseDto.setMessage("Attachment "+attachment.getAttachmentId()+" Updated Successfully");
-		responseDto.setStatus("OK");
+		responseDto.setMessage("Attachment "+attachment.getAttachmentId()+" Success");
+		responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
+		responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
 		return responseDto;
 	}
 
@@ -60,10 +61,12 @@ public class AttachmentRepositoryImpl implements AttachmentRepository {
 		int result = query.executeUpdate();
 		if(result > 0) {
 			responseDto.setMessage("Deleted Successfully");
-			responseDto.setStatus("OK");
+			responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
+			responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
 		} else {
 			responseDto.setMessage("Delete Unsuccessfully");
-			responseDto.setStatus("ERROR");
+			responseDto.setStatus(EReturnConstants.ERROR_STATUS);
+			responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
 		}
 		return responseDto;
 	}
@@ -78,10 +81,12 @@ public class AttachmentRepositoryImpl implements AttachmentRepository {
 		int result = query.executeUpdate();
 		if(result > 0) {
 			responseDto.setMessage("Deleted Successfully");
-			responseDto.setStatus("OK");
+			responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
+			responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
 		} else {
 			responseDto.setMessage("Delete Unsuccessfully");
-			responseDto.setStatus("ERROR");
+			responseDto.setStatus(EReturnConstants.ERROR_STATUS);
+			responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
 		}
 		return responseDto;
 	}
@@ -92,20 +97,21 @@ public class AttachmentRepositoryImpl implements AttachmentRepository {
 	    Attachment attachment = (Attachment)sessionFactory.getCurrentSession().load(Attachment.class,id);
 	    sessionFactory.getCurrentSession().delete(attachment);
 	    responseDto.setMessage("Attachment "+id+" Deleted Successfully");
-		responseDto.setStatus("OK");
+		responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
+		responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
 		return responseDto;
 	}
 
 	@Override
 	public Set<AttachmentDto> getAttachmentsById(String id) {
 		Set<AttachmentDto> attachmentDtos = new HashSet<>();
+		LOGGER.error("Find Attachment Id by RequestId:"+id);
 		StringBuilder queryString = new StringBuilder();
 		if(id.contains("R")) {
 			queryString.append("SELECT a FROM Attachment a WHERE a.requestId =:id");
 		} else {
 			queryString.append("SELECT a FROM Attachment a WHERE a.itemCode =:id");
 		}
-		LOGGER.error("Query for attachment: "+queryString.toString());
 		Query query = sessionFactory.getCurrentSession().createQuery(queryString.toString());
 		query.setParameter("id", id);
 		@SuppressWarnings("unchecked")

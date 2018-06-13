@@ -34,10 +34,6 @@ public class Header {
 	@Column(name = "INVOICE_DATE")
 	private Date invoiceDate;
 	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "EXPIRY_DATE")
-	private Date expiryDate;
-	
 	@Column(name = "DOCUMENT_TYPE", length = 50)
 	private String documentType;
 	
@@ -65,9 +61,6 @@ public class Header {
 	@Column(name = "PURCH_NO_C", length = 50)
 	private String purchNoCust;
 
-	@Column(name = "AVAILABLE_QTY", length = 50)
-	private String availableQty;
-
 	@Column(name = "NET_VALUE", length = 50)
 	private String netValue; // sum of all item level net value to be calculated
 
@@ -94,14 +87,6 @@ public class Header {
 		this.invoiceDate = invoiceDate;
 	}
 
-	public Date getExpiryDate() {
-		return expiryDate;
-	}
-
-	public void setExpiryDate(Date expiryDate) {
-		this.expiryDate = expiryDate;
-	}
-
 	public String getNetValue() {
 		return netValue;
 	}
@@ -116,14 +101,6 @@ public class Header {
 
 	public void setSetItem(Set<Item> setItem) {
 		this.setItem = setItem;
-	}
-
-	public String getAvailableQty() {
-		return availableQty;
-	}
-
-	public void setAvailableQty(String availableQty) {
-		this.availableQty = availableQty;
 	}
 
 	public String getInvoiceSeq() {

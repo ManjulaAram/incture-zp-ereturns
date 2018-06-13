@@ -12,10 +12,6 @@ public class HeaderDto {
 	
 	private String invoiceDate;
 	
-	private String expiryDate;
-	
-	private String availableQty;
-	
 	private String documentType;
 	
 	private String salesOrder;
@@ -62,14 +58,6 @@ public class HeaderDto {
 		this.invoiceDate = invoiceDate;
 	}
 
-	public String getExpiryDate() {
-		return expiryDate;
-	}
-
-	public void setExpiryDate(String expiryDate) {
-		this.expiryDate = expiryDate;
-	}
-
 	public String getNetValue() {
 		return netValue;
 	}
@@ -85,14 +73,6 @@ public class HeaderDto {
 
 	public void setItemSet(Set<ItemDto> itemSet) {
 		this.itemSet = itemSet;
-	}
-
-	public String getAvailableQty() {
-		return availableQty;
-	}
-
-	public void setAvailableQty(String availableQty) {
-		this.availableQty = availableQty;
 	}
 
 	public String getDocumentType() {
