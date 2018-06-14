@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.incture.zp.ereturns.dto.EmailDto;
+import com.incture.zp.ereturns.dto.IdpUserIdDto;
+import com.incture.zp.ereturns.dto.LoginDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.UserDto;
 import com.incture.zp.ereturns.services.UserService;
@@ -40,4 +42,15 @@ public class EReturnsUserController {
 		return userService.getEmailByRole(role);
 	}
 
+	@RequestMapping("/getUserIdByRole/{role}")
+	public IdpUserIdDto getUserIdByRole(@PathVariable String role)
+	{
+		return userService.getUserIdByRole(role);
+	}
+	
+	@RequestMapping(path="/loginUser",consumes="application/json",method=RequestMethod.POST)
+	public ResponseDto loginUser(@RequestBody LoginDto loginDto)
+	{
+		return userService.loginUser(loginDto);
+	}
 }

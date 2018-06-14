@@ -122,4 +122,10 @@ public class EReturnsRequestController {
 	public StatusPendingDto getRequestStatusByUserId(@PathVariable(value = "userId") String userId) {
 		return returnOrderService.getRequestStatusByUserId(userId);
 	}
+	
+	@RequestMapping(value = "/pushDataToECC/{requestId}", method = RequestMethod.GET)
+	@ResponseBody
+	public ResponseDto pushDataToECC(@PathVariable(value = "requestId") String requestId) {
+		return requestService.pushDataToEccForTest(requestId);
+	}
 }

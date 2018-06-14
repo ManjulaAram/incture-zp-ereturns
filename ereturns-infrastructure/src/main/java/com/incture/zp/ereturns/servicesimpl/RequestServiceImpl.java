@@ -280,4 +280,11 @@ public class RequestServiceImpl implements RequestService {
 		}
 		return responseDto;
 	}
+	
+	@Override
+	public ResponseDto pushDataToEccForTest(String requestId) {
+		RequestDto requestDto = getRequestById(requestId);
+		return hciMappingService.pushDataToEcc(requestDto);
+	}
+
 }

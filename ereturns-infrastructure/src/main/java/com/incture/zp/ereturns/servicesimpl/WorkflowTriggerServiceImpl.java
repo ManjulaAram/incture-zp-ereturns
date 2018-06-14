@@ -195,7 +195,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			}
 			LOGGER.error("taskInstance" + instanceId);
 			if(instanceId!=null && instanceId!=""){
-				responseDto = requestAction(instanceId, requestDto.getFlag());
+				responseDto = requestAction(instanceId, requestDto.getFlag(), requestDto.getLoginUser());
 			}
 			LOGGER.error(responseDto.getCode()+"taskInstance1" + responseDto.getStatus());
 			RequestDto res = requestService.getRequestById(requestDto.getRequestId());
@@ -269,7 +269,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 		return responseDto;
 	}
 
-	public synchronized ResponseDto requestAction(String taskInstanceId, String reqStatus) {
+	public synchronized ResponseDto requestAction(String taskInstanceId, String reqStatus, String loginUser) {
 		String responseData = "";
 		List<String> cookies = null;
 		String csrfToken = "";
@@ -277,7 +277,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 		ResponseDto responseDto = new ResponseDto();
 
 		String responseCode = "";
-		payloadData = buildPayload(reqStatus);
+		payloadData = buildPayload(reqStatus, loginUser);
 		LOGGER.error(payloadData);
 
 		try {
@@ -359,13 +359,14 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
 	}
 
-	public String buildPayload(String reqStatus) {
+	public String buildPayload(String reqStatus, String loginUser) {
 		String payloadData = "";
 		if (reqStatus.equals("Approved")) {
 			JSONObject jsonObj = new JSONObject();
 			jsonObj.put("status", "completed");
 			JSONObject obj = new JSONObject();
 			obj.put("Action", "A");
+			obj.put("loginUser", loginUser);
 			jsonObj.put("context", obj);
 
 			payloadData = jsonObj.toString();
@@ -374,6 +375,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			jsonObj.put("status", "completed");
 			JSONObject obj = new JSONObject();
 			obj.put("Action", "R");
+			obj.put("loginUser", loginUser);
 			jsonObj.put("context", obj);
 
 			payloadData = jsonObj.toString();

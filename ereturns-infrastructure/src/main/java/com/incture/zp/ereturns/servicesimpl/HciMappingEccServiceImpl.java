@@ -28,6 +28,7 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(HciMappingEccServiceImpl.class);
 	
+	@SuppressWarnings("unused")
 	@Override
 	public ResponseDto pushDataToEcc(RequestDto requestDto) {
 		ResponseDto responseDto = new ResponseDto();
@@ -124,17 +125,31 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 				JSONObject bapiObj = new JSONObject();
 				bapiObj = returnObj.getJSONObject(EReturnConstants.ECC_RESPONSE);
 				responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
-//				if(bapiObj.getString("SALESDOCUMENT").equals("")) {
-//					JSONObject msgReturnObj = new JSONObject();
-//					msgReturnObj = bapiObj.getJSONObject("RETURN");
-//					JSONArray itemAry = new JSONArray();
-//					msgReturnObj.getJSONArray("Item");
-//					JSONObject msgObject = new JSONObject();
-//					msgObject = (JSONObject) msgReturnObj.get("MESSAGE");
-//					
-//				}
-				responseDto.setMessage(bapiObj.getString("SALESDOCUMENT"));
 				responseDto.setStatus(EReturnConstants.ECC_SUCCESS_STATUS);
+				responseDto.setMessage(bapiObj.getString("SALESDOCUMENT"));
+				if(responseDto.getMessage().equals("")) {
+					LOGGER.error("Message coming inside for empty sales doc");
+					JSONObject msgReturnObj = new JSONObject();
+					msgReturnObj = bapiObj.getJSONObject("RETURN");
+					JSONArray itemAry = msgReturnObj.getJSONArray("item");
+					
+					for (int i = 0; i < itemAry.length(); i++) {
+						JSONObject msgObject = new JSONObject();
+						msgObject = (JSONObject) itemAry.get(i);
+						JSONObject typeObject = new JSONObject();
+						typeObject = (JSONObject) itemAry.get(i);
+						String type = typeObject.get("TYPE").toString();
+						LOGGER.error(msgObject.get("MESSAGE")+"...."+type);
+						if(type != null && !(type.equals("")) && type.equalsIgnoreCase("E")) {
+							responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
+							responseDto.setStatus(type);
+							responseDto.setMessage(msgObject.get("MESSAGE").toString());
+						}
+						break;
+					}
+				} else {
+					responseDto.setMessage(bapiObj.getString("SALESDOCUMENT"));
+				}
 			} else if(response.contains(EReturnConstants.ECC_EXCEPTION)) {
 				responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
 				responseDto.setMessage(response);
