@@ -10,24 +10,15 @@ import javax.persistence.Table;
 public class User {
 
 	@Id
-	@Column(name = "USER_ID", nullable = false)
-	private String userId;
-	
-	@Column(name = "SCI_USER_ID", nullable = false)
-	private String sciUserId;
-	
 	@Column(name = "IDP_USER_ID", nullable = false)
 	private String idpUserId;
 	
+	@Column(name = "SCI_USER_ID", nullable = false)
+	private String sciUserId;
+
 	@Column(name = "MOBILE_TOKEN", length = 255)
 	private String mobileToken;
 	
-	public String getUserId() {
-		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
 	public String getSciUserId() {
 		return sciUserId;
 	}

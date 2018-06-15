@@ -36,7 +36,6 @@ public class ImportExportUtil {
 
 	public User importUserDto(UserDto userDto) {
 		User user = new User();
-		user.setUserId(userDto.getUserId());
 		user.setSciUserId(userDto.getSciUserId());
 		user.setIdpUserId(userDto.getIdpUserId());
 		user.setMobileToken(userDto.getMobileToken());
@@ -54,7 +53,6 @@ public class ImportExportUtil {
 
 	public UserDto exportUserDto(User user) {
 		UserDto userDto = new UserDto();
-		userDto.setUserId(user.getUserId());
 		userDto.setIdpUserId(user.getIdpUserId());
 		userDto.setSciUserId(user.getSciUserId());
 		userDto.setMobileToken(user.getMobileToken());

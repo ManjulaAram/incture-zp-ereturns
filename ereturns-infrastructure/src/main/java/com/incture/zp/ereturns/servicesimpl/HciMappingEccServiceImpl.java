@@ -128,7 +128,6 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 				responseDto.setStatus(EReturnConstants.ECC_SUCCESS_STATUS);
 				responseDto.setMessage(bapiObj.getString("SALESDOCUMENT"));
 				if(responseDto.getMessage().equals("")) {
-					LOGGER.error("Message coming inside for empty sales doc");
 					JSONObject msgReturnObj = new JSONObject();
 					msgReturnObj = bapiObj.getJSONObject("RETURN");
 					JSONArray itemAry = msgReturnObj.getJSONArray("item");
@@ -142,14 +141,12 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 						LOGGER.error(msgObject.get("MESSAGE")+"...."+type);
 						if(type != null && !(type.equals("")) && type.equalsIgnoreCase("E")) {
 							responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
-							responseDto.setStatus(type);
+							responseDto.setStatus(EReturnConstants.ECC_ERROR_STATUS);
 							responseDto.setMessage(msgObject.get("MESSAGE").toString());
 						}
 						break;
 					}
-				} else {
-					responseDto.setMessage(bapiObj.getString("SALESDOCUMENT"));
-				}
+				} 
 			} else if(response.contains(EReturnConstants.ECC_EXCEPTION)) {
 				responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
 				responseDto.setMessage(response);

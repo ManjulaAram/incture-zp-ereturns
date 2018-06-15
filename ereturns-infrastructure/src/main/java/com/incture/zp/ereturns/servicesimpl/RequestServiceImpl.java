@@ -134,7 +134,6 @@ public class RequestServiceImpl implements RequestService {
 	public RequestDto getRequestById(String id) {
 		RequestDto requestDto = importExportUtil.exportRequestDto(requestRepository.getRequestById(id));
 
-		LOGGER.error("Request Id is: " + id);
 		Set<AttachmentDto> setAttachmentDto = attachmentRepository.getAttachmentsById(id);
 		requestDto.setSetAttachments(setAttachmentDto);
 		return requestDto;
@@ -143,14 +142,12 @@ public class RequestServiceImpl implements RequestService {
 	@Override
 	public List<StatusResponseDto> getStatusDetails(StatusRequestDto requestDto) {
 		List<StatusResponseDto> rList = requestRepository.getStatusDetails(requestDto);
-		LOGGER.error("For status size of the requests: " + rList.size());
 		List<StatusResponseDto> modifiedList = new ArrayList<StatusResponseDto>();
 		for(Iterator<StatusResponseDto> itr = rList.iterator(); itr.hasNext();) {
 			StatusResponseDto statusResponseDto = itr.next();
 			Set<AttachmentDto> setAttachmentDto = attachmentRepository.getAttachmentsById(statusResponseDto.getRequestId());
 			statusResponseDto.setAttachments(setAttachmentDto);
 			modifiedList.add(statusResponseDto);
-			LOGGER.error("Adding attachment: " + statusResponseDto.getRequestId());
 		}
 		return modifiedList;
 	}
@@ -243,11 +240,9 @@ public class RequestServiceImpl implements RequestService {
 //			notificationService.sendNotification(requestDto2);
 			Thread.sleep(10000);
 			List<ReturnOrderDto> returnList = returnOrderRepository.getReturnOrderByRequestId(requestId);
-			LOGGER.error("Data for pushing ECC :" + returnList.size());
 			if(returnList.size() > 0) {
 				for(ReturnOrderDto returnOrderDto : returnList) {
 					if(returnOrderDto.getRequestId().equalsIgnoreCase(requestId)) {
-						LOGGER.error(returnOrderDto.getOrderStatus()+":checking request id:" + returnOrderDto.getRequestId());
 						if(returnOrderDto.getOrderStatus().equalsIgnoreCase(EReturnConstants.COMPLETE)) {
 							responseDto = hciMappingService.pushDataToEcc(requestDto2);
 							eccFlag = true;

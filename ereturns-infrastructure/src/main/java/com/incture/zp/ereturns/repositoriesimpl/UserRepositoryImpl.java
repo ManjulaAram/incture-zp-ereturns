@@ -32,11 +32,11 @@ public class UserRepositoryImpl implements UserRepository {
 	public ResponseDto addUser(User user) {
 		ResponseDto responseDto = new ResponseDto();
 		String userId = getNextSeqNumber(new GetReferenceData().execute("U"), 6);
-		if (user.getUserId() == null || user.getUserId().equals("")) {
-			user.setUserId(userId);
+		if (user.getIdpUserId() == null || user.getIdpUserId().equals("")) {
+			user.setIdpUserId(userId);
 		}
 		sessionFactory.getCurrentSession().saveOrUpdate(user);
-		responseDto.setMessage(user.getUserId());
+		responseDto.setMessage(user.getIdpUserId());
 		responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
 		responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
 		return responseDto;
@@ -52,10 +52,10 @@ public class UserRepositoryImpl implements UserRepository {
 	@Override
 	public ResponseDto delete(User user) {
 		ResponseDto responseDto = new ResponseDto();
-		String queryStr = "DELETE User WHERE userId=:userId";
+		String queryStr = "DELETE User WHERE idpUserId=:idpUserId";
 		if (!ServiceUtil.isEmpty(user)) {
 			Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
-			query.setParameter("userId", user.getUserId());
+			query.setParameter("idpUserId", user.getIdpUserId());
 			
 
 			int result = query.executeUpdate();

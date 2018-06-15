@@ -156,7 +156,6 @@ public class RequestRepositoryImpl implements RequestRepository {
 							statusResponseDto.setMessage(EReturnConstants.SUCCESS_STATUS);
 							statusResponseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
 							reqList.add(statusResponseDto);
-							LOGGER.error("List adding:"+reqList.size());
 					}
 				}
 			}

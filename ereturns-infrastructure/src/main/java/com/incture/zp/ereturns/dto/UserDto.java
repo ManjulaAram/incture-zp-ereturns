@@ -5,22 +5,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class UserDto {
 
-	private String userId;
-	
 	private String sciUserId;
 	
 	private String idpUserId;
 
 	private String mobileToken;
 	
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
 	public String getMobileToken() {
 		return mobileToken;
 	}

@@ -84,6 +84,7 @@ public class UserServiceImpl implements UserService {
 				sb.append(",");
 			}
 		}
+		LOGGER.error("Idp Email by Role:"+sb.toString());
 		emailDto.setEmail(sb.toString());
 		return emailDto;
 	}
@@ -107,7 +108,6 @@ public class UserServiceImpl implements UserService {
 			resourceObject = (JSONObject) resourcesArray.get(counter);
 			String user = resourceObject.get("id").toString();
 			idList.add(user);
-			LOGGER.error("Id from IDP by Role:"+idList);
 		}
 		StringBuilder sb = new StringBuilder();
 		for(int i = 0 ; i < idList.size() ; i++) {
@@ -141,7 +141,6 @@ public class UserServiceImpl implements UserService {
 		userName.append(nameObject.get("givenName")).append(" ");
 		userName.append(nameObject.get("familyName"));
 		}
-		LOGGER.error("user id"+userId);
 		return userName.toString();
 	}
 
