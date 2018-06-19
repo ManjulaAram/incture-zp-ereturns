@@ -202,9 +202,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			if (responseDto.getCode().equals("204")) {
 				Thread.sleep(5000);
 				String status = updateOrderDetails(instanceId);
-//				notificationService.sendNotification(res);
 				if(status.equalsIgnoreCase(EReturnConstants.COMPLETE)) {
-					LOGGER.error("taskInstance31 coming inside" + res.getRequestStatus());
 					responseDto = hciMappingService.pushDataToEcc(res);
 					eccFlag = true;
 					LOGGER.error("taskInstance5 coming inside" + responseDto.getMessage());
@@ -212,6 +210,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			}
 			if(responseDto != null && eccFlag) {
 				if(responseDto.getStatus().equalsIgnoreCase("ECC_SUCCESS")) {
+					notificationService.sendNotification(res.getRequestId(), res.getRequestPendingWith(), res.getRequestCreatedBy());
 					requestRepository.updateEccReturnOrder(EReturnConstants.COMPLETE, responseDto.getMessage(), requestId);
 				} else if(responseDto.getStatus().equalsIgnoreCase("ECC_ERROR")) {
 					responseDto.setMessage(responseDto.getMessage());
@@ -228,6 +227,8 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 						jsonObj.put(EReturnsWorkflowConstants.REQUEST_ID, requestId);
 						jsonObj.put(EReturnsWorkflowConstants.ITEM_CODE, itemDto.getItemCode());
 						jsonObj.put(EReturnsWorkflowConstants.INITIATOR, res.getRequestCreatedBy());
+						jsonObj.put(EReturnsWorkflowConstants.INVOICE, res.getHeaderDto().getInvoiceNo());
+						jsonObj.put(EReturnsWorkflowConstants.MATERIAL, itemDto.getMaterialDesc());
 
 						JSONObject obj = new JSONObject();
 						obj.put(EReturnsWorkflowConstants.CONTEXT, jsonObj);
@@ -249,6 +250,8 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 						LOGGER.error("Process triggered successfully :" + output);
 					}
 				}
+			} else {
+				notificationService.sendNotification(res.getRequestId(), res.getRequestPendingWith(), res.getRequestCreatedBy());
 			}
 		} catch (MalformedURLException e) {
 			responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);

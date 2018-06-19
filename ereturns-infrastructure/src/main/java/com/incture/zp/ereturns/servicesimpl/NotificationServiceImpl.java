@@ -2,6 +2,7 @@ package com.incture.zp.ereturns.servicesimpl;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.transaction.Transactional;
@@ -11,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.incture.zp.ereturns.dto.RequestDto;
+import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.StatusRequestDto;
 import com.incture.zp.ereturns.dto.UserDto;
@@ -33,83 +34,76 @@ public class NotificationServiceImpl implements NotificationService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(NotificationServiceImpl.class);
 	
 	@Override
-	public ResponseDto sendNotification(RequestDto requestDto) {
+	public ResponseDto sendNotification(String requestId, String pendingWith, String createdBy) {
 
-		ResponseDto responseDto=new ResponseDto();
-		UserDto userDto =new UserDto();
+		ResponseDto responseDto = new ResponseDto();
+		UserDto userDto = new UserDto();
 		String token="";
 		PushNotificationUtil notifyUtil = new PushNotificationUtil();
-		LOGGER.error("Pending with for Mobile:" + requestDto.getRequestPendingWith());
-		if(requestDto.getRequestPendingWith() != null && !(requestDto.getRequestPendingWith().equals("")))
+		LOGGER.error("Pending with for Push Notification:"+pendingWith);
+		if(pendingWith != null && !(pendingWith.equalsIgnoreCase("")))
 		{
-			LOGGER.error("Pending with for Mobile121:");
-			userDto = userService.getUserById(requestDto.getRequestPendingWith());
-			LOGGER.error("Pending with for Mobile12:" + userDto.getMobileToken());
-			token = userDto.getMobileToken();
+			LOGGER.error("Created by Pending with for Push Notification2:"+pendingWith);
+			List<String> userList = userService.getUsersByRole(pendingWith);
 			try {
-				
 				StatusRequestDto statusRequestDto=new StatusRequestDto();
 				Map<String, String> messageMap=new HashMap<String, String>();
-				messageMap=BuildMessage(requestDto);
-				statusRequestDto.setPendingWith(requestDto.getRequestPendingWith());
-				statusRequestDto.setRequestId(requestDto.getRequestId());
-				notifyUtil.sendNotification(messageMap.get("messageTitle"), token, messageMap.get("messageBody"),requestService.getStatusDetails(statusRequestDto));
-				responseDto.setCode("200");
+				messageMap=BuildMessage(pendingWith, requestId);
+				statusRequestDto.setRequestId(requestId);
+				for(int i = 0 ; i < userList.size() ; i++) {
+					String userId = userList.get(i);
+					userDto = userService.getUserById(userId);
+					token = userDto.getMobileToken();
+					notifyUtil.sendNotification(messageMap.get("messageTitle"), token, messageMap.get("messageBody"),
+							requestService.getStatusDetails(statusRequestDto));
+				}
+				responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
 				responseDto.setMessage("Notification sent");
-				responseDto.setStatus("SUCCESS");
+				responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
 			} catch (IOException e) {
-				responseDto.setCode("01");
+				responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
 				responseDto.setMessage(e.getMessage());
-				responseDto.setStatus("ERROR");
+				responseDto.setStatus(EReturnConstants.ERROR_STATUS);
 			}
 		}
 		else
 		{
-			LOGGER.error("Pending with for Mobile13:"+requestDto.getRequestCreatedBy());
-			userDto = userService.getUserById(requestDto.getRequestCreatedBy());
-			LOGGER.error("Pending with for Mobile13:"+userDto.getMobileToken());
+			LOGGER.error("Created by Pending with for Push Notification:"+createdBy);
+			userDto = userService.getUserById(createdBy);
 			token = userDto.getMobileToken();
 			try {
-
 				StatusRequestDto statusRequestDto=new StatusRequestDto();
 				Map<String, String> messageMap=new HashMap<String, String>();
-//				statusRequestDto.setPendingWith(requestDto.getRequestPendingWith());
-				statusRequestDto.setRequestId(requestDto.getRequestId());
-				messageMap=BuildMessage(requestDto);
-				notifyUtil.sendNotification(messageMap.get("messageTitle"), token, messageMap.get("messageBody"),requestService.getStatusDetails(statusRequestDto));
-				responseDto.setCode("200");
+				statusRequestDto.setRequestId(requestId);
+				messageMap=BuildMessage(pendingWith, requestId);
+				notifyUtil.sendNotification(messageMap.get("messageTitle"), token, messageMap.get("messageBody"),
+						requestService.getStatusDetails(statusRequestDto));
+				responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
 				responseDto.setMessage("Notification sent");
-				responseDto.setStatus("SUCCESS");
+				responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
 			} catch (IOException e) {
-				responseDto.setCode("01");
+				responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
 				responseDto.setMessage(e.getMessage());
-				responseDto.setStatus("ERROR");
+				responseDto.setStatus(EReturnConstants.ERROR_STATUS);
 			}
 		}
-		
-		
-
-		
-		
-
 		return responseDto;
 	}
 	
 	
-	public Map<String,String> BuildMessage(RequestDto requestDto)
+	public Map<String,String> BuildMessage(String pendingWith, String requestId)
 	{
 		Map<String, String> message=new HashMap<String,String>();
-		if(!(requestDto.getRequestPendingWith().equals(null)) && !(requestDto.getRequestPendingWith().equals("")))
+		if(pendingWith != null && !(pendingWith.equals("")))
 		{
 			message.put("messageTitle","A new request for approval");
-			message.put("messageBody",("Request "+requestDto.getRequestId()+"is pending for approval" ));
+			message.put("messageBody",("Request "+requestId+"is pending for your approval" ));
 		}
 		else
 		{
 			message.put("messageTitle", "Request Approved");
-			message.put("messageBody",("Request "+requestDto.getRequestId()+"is approved"));
+			message.put("messageBody",("Your Request "+requestId+"is approved"));
 		}
-		
 		return message;
 	}
 }

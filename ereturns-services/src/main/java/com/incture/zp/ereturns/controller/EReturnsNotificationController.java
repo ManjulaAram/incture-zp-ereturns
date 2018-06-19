@@ -29,8 +29,7 @@ public class EReturnsNotificationController {
 	@ResponseBody
 	@RequestMapping(path = "/sendNotification", method = RequestMethod.POST)
 	public ResponseDto sendNotification(@RequestBody RequestDto requestDto) {
-		
-		return notifyService.sendNotification(requestDto);
+		return notifyService.sendNotification(requestDto.getRequestId(), requestDto.getRequestPendingWith(), requestDto.getRequestCreatedBy());
 
 	}
 }

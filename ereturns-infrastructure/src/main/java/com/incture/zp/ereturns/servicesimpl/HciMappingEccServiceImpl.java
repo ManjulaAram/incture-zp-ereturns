@@ -110,7 +110,7 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 //		String password = destConfiguration.getProperty(EReturnsHciConstants.HCI_DESTINATION_PWD);
 
 		
-		String url = EReturnsHciConstants.HCI_ECC_ENDPOINT;
+		String url = EReturnsHciConstants.HCI_ECC_ENDPOINT_URL;
 		String username = EReturnsHciConstants.USERNAME;
 		String password = EReturnsHciConstants.PASSWORD;
 		

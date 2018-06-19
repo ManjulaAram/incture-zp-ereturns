@@ -6,19 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.incture.zp.ereturns.dto.ReturnReasonDto;
-import com.incture.zp.ereturns.repositories.ReturnReasonRepository;
-import com.incture.zp.ereturns.services.ReturnReasonService;
+import com.incture.zp.ereturns.dto.ReasonDto;
+import com.incture.zp.ereturns.repositories.ReasonRepository;
+import com.incture.zp.ereturns.services.ReasonService;
 
 @Service
 @Transactional
-public class ReturnReasonServiceImpl implements ReturnReasonService{
+public class ReasonServiceImpl implements ReasonService{
 
 	@Autowired
-	ReturnReasonRepository returnReasonRepository;
+	ReasonRepository returnReasonRepository;
 	
 	@Override
-	public List<ReturnReasonDto> getAllReasons() {
+	public List<ReasonDto> getAllReasons() {
 		
 		return returnReasonRepository.getAllReasons();
 	}

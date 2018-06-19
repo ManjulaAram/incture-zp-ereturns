@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.incture.zp.ereturns.dto.ReturnReasonDto;
-import com.incture.zp.ereturns.services.ReturnReasonService;
+import com.incture.zp.ereturns.dto.ReasonDto;
+import com.incture.zp.ereturns.services.ReasonService;
 
 @RestController
 @CrossOrigin
@@ -19,7 +19,7 @@ import com.incture.zp.ereturns.services.ReturnReasonService;
 public class EReturnsReasonContoller {
 
 	@Autowired
-	ReturnReasonService reasonService;
+	ReasonService reasonService;
 
 	@RequestMapping("/hello")
 	public String hello() {
@@ -28,7 +28,7 @@ public class EReturnsReasonContoller {
 
 	@ResponseBody
 	@RequestMapping(value = "/getAllReasons")
-	public List<ReturnReasonDto> getAllReasons() {
+	public List<ReasonDto> getAllReasons() {
 		return reasonService.getAllReasons();
 	}
 }

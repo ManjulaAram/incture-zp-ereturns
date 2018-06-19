@@ -1,5 +1,7 @@
 package com.incture.zp.ereturns.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -9,11 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.incture.zp.ereturns.dto.CustomerDto;
 import com.incture.zp.ereturns.dto.EmailDto;
 import com.incture.zp.ereturns.dto.IdpUserIdDto;
 import com.incture.zp.ereturns.dto.LoginDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.UserDto;
+import com.incture.zp.ereturns.services.CustomerService;
 import com.incture.zp.ereturns.services.UserService;
 
 @RestController
@@ -24,6 +28,9 @@ public class EReturnsUserController {
 
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	CustomerService customerService;
 
 	@RequestMapping("/getUser/{userId}")
 	public UserDto getUser(@RequestBody @PathVariable String userId) {
@@ -52,5 +59,11 @@ public class EReturnsUserController {
 	public ResponseDto loginUser(@RequestBody LoginDto loginDto)
 	{
 		return userService.loginUser(loginDto);
+	}
+	
+	@RequestMapping("/getCustomerBySalesRep/{salesRep}")
+	public List<CustomerDto> getCustomerBySalesRep(@PathVariable String salesRep)
+	{
+		return customerService.getCustomersBySalesRep(salesRep);
 	}
 }

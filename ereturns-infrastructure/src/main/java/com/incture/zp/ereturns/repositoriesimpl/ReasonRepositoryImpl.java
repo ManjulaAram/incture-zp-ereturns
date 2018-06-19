@@ -8,13 +8,13 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.incture.zp.ereturns.dto.ReturnReasonDto;
-import com.incture.zp.ereturns.model.ReturnReason;
-import com.incture.zp.ereturns.repositories.ReturnReasonRepository;
+import com.incture.zp.ereturns.dto.ReasonDto;
+import com.incture.zp.ereturns.model.Reason;
+import com.incture.zp.ereturns.repositories.ReasonRepository;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
 
 @Repository
-public class ReturnReasonRepositoryImpl implements ReturnReasonRepository {
+public class ReasonRepositoryImpl implements ReasonRepository {
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -24,18 +24,18 @@ public class ReturnReasonRepositoryImpl implements ReturnReasonRepository {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ReturnReasonDto> getAllReasons() {
+	public List<ReasonDto> getAllReasons() {
 
-		List<ReturnReasonDto> reasonDtoList = new ArrayList<ReturnReasonDto>();
-		List<ReturnReason> reasonList = new ArrayList<ReturnReason>();
-		String queryStr = "select r from ReturnReason r";
+		List<ReasonDto> reasonDtoList = new ArrayList<ReasonDto>();
+		List<Reason> reasonList = new ArrayList<Reason>();
+		String queryStr = "select r from Reason r";
 
 		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
 
 		reasonList = query.list();
 
-		for (ReturnReason retRes : reasonList) {
-			reasonDtoList.add(importExportUtil.exportReasonCodeDto(retRes));
+		for (Reason retRes : reasonList) {
+			reasonDtoList.add(importExportUtil.exportReasonDto(retRes));
 		}
 
 		return reasonDtoList;

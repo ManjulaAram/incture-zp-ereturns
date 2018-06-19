@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "T_REASON")
-public class ReturnReason {
+public class Reason {
 
 	@Id
 	@Column(name = "REASON_CODE", length = 10,nullable=false)

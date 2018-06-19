@@ -12,19 +12,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.incture.zp.ereturns.dto.AttachmentDto;
+import com.incture.zp.ereturns.dto.CustomerDto;
 import com.incture.zp.ereturns.dto.HeaderDto;
 import com.incture.zp.ereturns.dto.ItemDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
-import com.incture.zp.ereturns.dto.ReturnReasonDto;
+import com.incture.zp.ereturns.dto.ReasonDto;
 import com.incture.zp.ereturns.dto.UserDto;
 import com.incture.zp.ereturns.dto.WorkFlowDto;
 import com.incture.zp.ereturns.model.Attachment;
+import com.incture.zp.ereturns.model.Customer;
 import com.incture.zp.ereturns.model.Header;
 import com.incture.zp.ereturns.model.Item;
 import com.incture.zp.ereturns.model.Request;
 import com.incture.zp.ereturns.model.ReturnOrder;
-import com.incture.zp.ereturns.model.ReturnReason;
+import com.incture.zp.ereturns.model.Reason;
 import com.incture.zp.ereturns.model.User;
 import com.incture.zp.ereturns.model.WorkFlow;
 
@@ -360,8 +362,8 @@ public class ImportExportUtil {
 		return attachmentDto;
 	}
 
-	public ReturnReasonDto exportReasonCodeDto(ReturnReason returnReason) {
-		ReturnReasonDto returnReasonDto = new ReturnReasonDto();
+	public ReasonDto exportReasonDto(Reason returnReason) {
+		ReasonDto returnReasonDto = new ReasonDto();
 		returnReasonDto.setBusinessUnit(returnReason.getBusinessUnit());
 		returnReasonDto.setReasonCode(returnReason.getReasonCode());
 		returnReasonDto.setReasonDesc(returnReason.getReasonDesc());
@@ -371,8 +373,8 @@ public class ImportExportUtil {
 
 	}
 
-	public ReturnReason importReasonCodeDto(ReturnReasonDto returnReasonDto) {
-		ReturnReason returnReason = new ReturnReason();
+	public Reason importReasonDto(ReasonDto returnReasonDto) {
+		Reason returnReason = new Reason();
 		returnReason.setBusinessUnit(returnReasonDto.getBusinessUnit());
 		returnReason.setReasonCode(returnReasonDto.getReasonCode());
 		returnReason.setReasonDesc(returnReasonDto.getReasonDesc());
@@ -380,7 +382,24 @@ public class ImportExportUtil {
 
 		return returnReason;
 	}
-	
+
+	public CustomerDto exportCustomerDto(Customer customer) {
+		CustomerDto customerDto = new CustomerDto();
+		customerDto.setCustomerCode(customer.getCustomerCode());
+		customerDto.setCustomerName(customer.getCustomerName());
+		customerDto.setSaleRep(customer.getSaleRep());
+		return customerDto;
+	}
+
+	public Customer importCustomerDto(CustomerDto customerDto) {
+		Customer customer = new Customer();
+		customer.setCustomerCode(customerDto.getCustomerCode());
+		customer.setCustomerName(customerDto.getCustomerName());
+		customer.setId(null);
+		customer.setSaleRep(customerDto.getSaleRep());
+		return customer;
+	}
+
 	public WorkFlowDto exportWorkFlowDto(WorkFlow workFlowInstance) {
 		WorkFlowDto workFlowDto = new WorkFlowDto();
 		workFlowDto.setRequestId(workFlowInstance.getRequestId());

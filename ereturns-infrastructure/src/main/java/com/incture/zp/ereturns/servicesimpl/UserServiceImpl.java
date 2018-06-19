@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.dto.EmailDto;
 import com.incture.zp.ereturns.dto.IdpUserIdDto;
 import com.incture.zp.ereturns.dto.LoginDto;
@@ -34,6 +35,23 @@ public class UserServiceImpl implements UserService {
 	ImportExportUtil importExportUtil;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+	
+	String destination;
+	String user;
+	String pwd;
+	
+	public UserServiceImpl() {
+//		DestinationConfiguration destConfiguration = ServiceUtil.getDest(EReturnConstants.SCIM_DESTINATION);
+//		destination = destConfiguration.getProperty(EReturnConstants.SCIM_DESTINATION_URL);
+//		user = destConfiguration.getProperty(EReturnConstants.SCIM_DESTINATION_USER);
+//		pwd = destConfiguration.getProperty(EReturnConstants.SCIM_DESTINATION_PWD);
+		
+		destination = EReturnConstants.SCIM_DESTINATION_URL;
+		user = EReturnConstants.SCIM_DESTINATION_USER;
+		pwd = EReturnConstants.SCIM_DESTINATION_PWD;
+
+	}
+	
 
 	@Override
 	public ResponseDto addUser(UserDto userDto) {
@@ -50,9 +68,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public EmailDto getEmailByRole(String role) {
 		EmailDto emailDto = new EmailDto();
-		String url = "https://auxes3rr8.accounts.ondemand.com/service/scim/Users";
-		String username = "T000002";
-		String password = "Incture@10";
+		String url = destination;
+		String username = user;
+		String password = pwd;
 		String path = "";
 		RestInvoker restInvoker = new RestInvoker(url, username, password);
 		path = "?filter=groups%20eq%20%27" + role + "%27";
@@ -92,9 +110,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public IdpUserIdDto getUserIdByRole(String role) {
 		IdpUserIdDto idpUserIdDto = new IdpUserIdDto();
-		String url = "https://auxes3rr8.accounts.ondemand.com/service/scim/Users";
-		String username = "T000002";
-		String password = "Incture@10";
+		String url = destination;
+		String username = user;
+		String password = pwd;
 		String path = "";
 		RestInvoker restInvoker = new RestInvoker(url, username, password);
 		path = "?filter=groups%20eq%20%27" + role + "%27";
@@ -123,11 +141,33 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public List<String> getUsersByRole(String role) {
+		String url = destination;
+		String username = user;
+		String password = pwd;
+		String path = "";
+		RestInvoker restInvoker = new RestInvoker(url, username, password);
+		path = "?filter=groups%20eq%20%27" + role + "%27";
+		String response = restInvoker.getData(path);
+		List<String> idList = new ArrayList<String>();
+		JSONObject responseObject = new JSONObject(response);
+		JSONArray resourcesArray = new JSONArray();
+		resourcesArray = responseObject.getJSONArray("Resources");
+		for (int counter = 0; counter < resourcesArray.length(); counter++) {
+			JSONObject resourceObject = new JSONObject();
+			resourceObject = (JSONObject) resourcesArray.get(counter);
+			String user = resourceObject.get("id").toString();
+			idList.add(user);
+		}
+		return idList;
+	}
+
+	@Override
 	public String getUserNameById(String userId) {
 		StringBuilder userName = new StringBuilder();
-		String url ="https://auxes3rr8.accounts.ondemand.com/service/scim/Users";
-		String username = "T000002";
-		String password = "Incture@10";
+		String url = destination;
+		String username = user;
+		String password = pwd;
 		String path="";
 		RestInvoker restInvoker = new RestInvoker(url, username, password);
 		path="/"+userId;

@@ -5,7 +5,7 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class ReturnReasonDto implements Serializable {
+public class ReasonDto implements Serializable {
 
 	/**
 	 * 

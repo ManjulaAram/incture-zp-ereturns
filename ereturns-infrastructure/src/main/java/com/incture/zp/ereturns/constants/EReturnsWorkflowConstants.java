@@ -36,6 +36,8 @@ public class EReturnsWorkflowConstants {
 	public static final String DEFINITION_VALUE = "Ereturns";
 	public static final String ITEM_CODE = "Itemcode";
 	public static final String INITIATOR ="Initiator";
+	public static final String INVOICE ="invoice";
+	public static final String MATERIAL ="material";
 	
 	public static final String WORKFLOW_INSTANCE_ID = "id";
 	public static final String WORKFLOW_REST_API="/rest/";

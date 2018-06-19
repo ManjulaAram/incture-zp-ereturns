@@ -1,5 +1,7 @@
 package com.incture.zp.ereturns.services;
 
+import java.util.List;
+
 import com.incture.zp.ereturns.dto.EmailDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.UserDto;
@@ -19,4 +21,6 @@ public interface UserService {
 	public IdpUserIdDto getUserIdByRole(String role);
 	
 	public ResponseDto loginUser(LoginDto loginDto);
+	
+	public List<String> getUsersByRole(String role);
 }

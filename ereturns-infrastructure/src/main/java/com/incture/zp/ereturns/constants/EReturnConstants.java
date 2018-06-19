@@ -50,5 +50,15 @@ public interface EReturnConstants {
 	
 	public static final String DUPLICATE_CODE = "02";
 	public static final String SALES_PERSON = "BOM";
+	
+	public static final String SCIM_DESTINATION = "ZP_ERETURNS_SCIM";
+//	public static final String SCIM_DESTINATION_URL = "URL";
+	public static final String SCIM_DESTINATION_URL = "https://auxes3rr8.accounts.ondemand.com/service/scim/Users";
+//	public static final String SCIM_DESTINATION_USER = "User";
+//	public static final String SCIM_DESTINATION_PWD = "Password";
+	
+	public static final String SCIM_DESTINATION_USER = "T000004";
+	public static final String SCIM_DESTINATION_PWD = "Incture@123";
+
 
 }

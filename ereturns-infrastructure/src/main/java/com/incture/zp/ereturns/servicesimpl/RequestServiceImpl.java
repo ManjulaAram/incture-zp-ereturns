@@ -103,7 +103,6 @@ public class RequestServiceImpl implements RequestService {
 					byte[] decodedString = Base64.decodeBase64(attachmentDto.getContent());
 					String attachmentName = ecmDocumentService.uploadAttachment(decodedString,
 							attachmentDto.getAttachmentName(), attachmentDto.getAttachmentType());
-					LOGGER.error("Attachment URL:" + attachmentName);
 					attachmentDto.setAttachmentName(attachmentName);
 					attachmentDto.setRequestId(requestId);
 					Attachment attachment = importExportUtil.importAttachmentDto(attachmentDto);
@@ -214,6 +213,9 @@ public class RequestServiceImpl implements RequestService {
 			jsonObj.put(EReturnsWorkflowConstants.REQUEST_ID, requestId);
 			jsonObj.put(EReturnsWorkflowConstants.ITEM_CODE, itemDto.getItemCode());
 			jsonObj.put(EReturnsWorkflowConstants.INITIATOR, requestDto.getRequestCreatedBy());
+			jsonObj.put(EReturnsWorkflowConstants.INVOICE, requestDto.getHeaderDto().getInvoiceNo());
+			jsonObj.put(EReturnsWorkflowConstants.MATERIAL, itemDto.getMaterialDesc());
+
 
 			JSONObject obj = new JSONObject();
 			obj.put(EReturnsWorkflowConstants.CONTEXT, jsonObj);
@@ -237,7 +239,6 @@ public class RequestServiceImpl implements RequestService {
 		
 		try {
 			RequestDto requestDto2 = getRequestById(requestId);
-//			notificationService.sendNotification(requestDto2);
 			Thread.sleep(10000);
 			List<ReturnOrderDto> returnList = returnOrderRepository.getReturnOrderByRequestId(requestId);
 			if(returnList.size() > 0) {
@@ -254,6 +255,7 @@ public class RequestServiceImpl implements RequestService {
 			}
 			if(eccFlag) {
 				if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_SUCCESS_STATUS)) {
+					notificationService.sendNotification(requestDto2.getRequestId(), requestDto2.getRequestPendingWith(), requestDto2.getRequestCreatedBy());
 					requestRepository.updateEccReturnOrder(EReturnConstants.COMPLETE, responseDto.getMessage(), requestId);
 				} else if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_ERROR_STATUS)) {
 					responseDto.setMessage(responseDto.getMessage());
@@ -264,7 +266,10 @@ public class RequestServiceImpl implements RequestService {
 					LOGGER.error("Re-Triggering workflow:" + responseDto.getMessage());
 					triggerWorkflow(requestDto2, requestId, responseDto);
 				} 
+			} else {
+				notificationService.sendNotification(requestDto2.getRequestId(), requestDto2.getRequestPendingWith(), requestDto2.getRequestCreatedBy());
 			}
+
 		} catch (InterruptedException e) {
 			if(responseDto != null) {
 				responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
