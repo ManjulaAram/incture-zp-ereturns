@@ -61,7 +61,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDto getUserById(String id) {
 		User user = userRepository.getUserById(id);
-		UserDto userDto = importExportUtil.exportUserDto(user);
+		UserDto userDto = new UserDto();
+		if(user != null) {
+			userDto = importExportUtil.exportUserDto(user);
+		}
 		return userDto;
 	}
 
@@ -79,18 +82,18 @@ public class UserServiceImpl implements UserService {
 		JSONObject responseObject = new JSONObject(response);
 		StringBuilder sb = new StringBuilder();
 		JSONArray resourcesArray = new JSONArray();
-		resourcesArray = responseObject.getJSONArray("Resources");
+		resourcesArray = responseObject.getJSONArray(EReturnConstants.IDP_RESOURCES);
 		List<String> emailList = new ArrayList<String>();
 		for (int counter = 0; counter < resourcesArray.length(); counter++) {
 			JSONObject resourceObject = new JSONObject();
 			resourceObject = (JSONObject) resourcesArray.get(counter);
 			JSONArray mailArray = new JSONArray();
-			mailArray = (JSONArray) resourceObject.get("emails");
+			mailArray = (JSONArray) resourceObject.get(EReturnConstants.IDP_EMAILS);
 			for (int mailCounter = 0; mailCounter < mailArray.length(); mailCounter++) {
 				JSONObject mailObject = new JSONObject();
 				mailObject=(JSONObject)mailArray.get(mailCounter);
 				String email = "";
-				email = mailObject.get("value").toString();
+				email = mailObject.get(EReturnConstants.IDP_VALUE).toString();
 				emailList.add(email.toString());
 			}
 		}
@@ -120,11 +123,11 @@ public class UserServiceImpl implements UserService {
 		List<String> idList = new ArrayList<String>();
 		JSONObject responseObject = new JSONObject(response);
 		JSONArray resourcesArray = new JSONArray();
-		resourcesArray = responseObject.getJSONArray("Resources");
+		resourcesArray = responseObject.getJSONArray(EReturnConstants.IDP_RESOURCES);
 		for (int counter = 0; counter < resourcesArray.length(); counter++) {
 			JSONObject resourceObject = new JSONObject();
 			resourceObject = (JSONObject) resourcesArray.get(counter);
-			String user = resourceObject.get("id").toString();
+			String user = resourceObject.get(EReturnConstants.IDP_ID).toString();
 			idList.add(user);
 		}
 		StringBuilder sb = new StringBuilder();
@@ -152,11 +155,11 @@ public class UserServiceImpl implements UserService {
 		List<String> idList = new ArrayList<String>();
 		JSONObject responseObject = new JSONObject(response);
 		JSONArray resourcesArray = new JSONArray();
-		resourcesArray = responseObject.getJSONArray("Resources");
+		resourcesArray = responseObject.getJSONArray(EReturnConstants.IDP_RESOURCES);
 		for (int counter = 0; counter < resourcesArray.length(); counter++) {
 			JSONObject resourceObject = new JSONObject();
 			resourceObject = (JSONObject) resourcesArray.get(counter);
-			String user = resourceObject.get("id").toString();
+			String user = resourceObject.get(EReturnConstants.IDP_ID).toString();
 			idList.add(user);
 		}
 		return idList;
@@ -174,12 +177,12 @@ public class UserServiceImpl implements UserService {
 		String response = restInvoker.getData(path);
 
 		JSONObject responseObject=new JSONObject(response);
-		if(responseObject.get("name").toString()!="" && responseObject.get("name").toString()!=null)
+		if(responseObject.get(EReturnConstants.IDP_NAME).toString()!="" && responseObject.get(EReturnConstants.IDP_NAME).toString()!=null)
 		{
 		JSONObject nameObject=new JSONObject();
-		nameObject=(JSONObject)responseObject.get("name");
-		userName.append(nameObject.get("givenName")).append(" ");
-		userName.append(nameObject.get("familyName"));
+		nameObject=(JSONObject)responseObject.get(EReturnConstants.IDP_NAME);
+		userName.append(nameObject.get(EReturnConstants.IDP_GIVEN_NAME)).append(" ");
+		userName.append(nameObject.get(EReturnConstants.IDP_FAMILY_NAME));
 		}
 		return userName.toString();
 	}

@@ -188,9 +188,9 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			JSONArray jsonArray = new JSONArray(responseData);
 			for (int counter = 0; counter < jsonArray.length(); counter++) {
 				JSONObject instanceObject = jsonArray.getJSONObject(counter);
-				if(instanceObject.get("status").equals("READY"))
+				if(instanceObject.get(EReturnsWorkflowConstants.WORKFLOW_STATUS).equals(EReturnsWorkflowConstants.READY))
 				{
-					instanceId=instanceObject.get("id").toString();
+					instanceId=instanceObject.get(EReturnConstants.IDP_ID).toString();
 				}
 			}
 			LOGGER.error("taskInstance" + instanceId);
@@ -199,7 +199,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			}
 			LOGGER.error(responseDto.getCode()+"taskInstance1" + responseDto.getStatus());
 			RequestDto res = requestService.getRequestById(requestDto.getRequestId());
-			if (responseDto.getCode().equals("204")) {
+			if (responseDto.getCode().equals(EReturnConstants.WORKFLOW_STATUS_CODE)) {
 				Thread.sleep(5000);
 				String status = updateOrderDetails(instanceId);
 				if(status.equalsIgnoreCase(EReturnConstants.COMPLETE)) {
@@ -209,10 +209,10 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 				}
 			}
 			if(responseDto != null && eccFlag) {
-				if(responseDto.getStatus().equalsIgnoreCase("ECC_SUCCESS")) {
-					notificationService.sendNotification(res.getRequestId(), res.getRequestPendingWith(), res.getRequestCreatedBy());
+				if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_SUCCESS_STATUS)) {
+//					notificationService.sendNotification(res.getRequestId(), res.getRequestPendingWith(), res.getRequestCreatedBy());
 					requestRepository.updateEccReturnOrder(EReturnConstants.COMPLETE, responseDto.getMessage(), requestId);
-				} else if(responseDto.getStatus().equalsIgnoreCase("ECC_ERROR")) {
+				} else if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_ERROR_STATUS)) {
 					responseDto.setMessage(responseDto.getMessage());
 					
 					//Re-triggering the process
@@ -250,9 +250,10 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 						LOGGER.error("Process triggered successfully :" + output);
 					}
 				}
-			} else {
-				notificationService.sendNotification(res.getRequestId(), res.getRequestPendingWith(), res.getRequestCreatedBy());
-			}
+			} 
+//			else {
+//				notificationService.sendNotification(res.getRequestId(), res.getRequestPendingWith(), res.getRequestCreatedBy());
+//			}
 		} catch (MalformedURLException e) {
 			responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
 			responseDto.setMessage("FAILURE" + e.getMessage());
@@ -311,7 +312,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			LOGGER.error(csrfToken);
 			cookies = urlConnection.getHeaderFields().get(EReturnsWorkflowConstants.SET_COOKIE);
 
-			allowMethods("PATCH");
+			allowMethods(EReturnsWorkflowConstants.WORKFLOW_PATCH);
 			HttpURLConnection postUrlConnection = (HttpURLConnection) postUrl.openConnection();
 
 			postUrlConnection.setDoOutput(true);
@@ -364,22 +365,22 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
 	public String buildPayload(String reqStatus, String loginUser) {
 		String payloadData = "";
-		if (reqStatus.equals("Approved")) {
+		if (reqStatus.equals(EReturnsWorkflowConstants.STATUS_APPROVED)) {
 			JSONObject jsonObj = new JSONObject();
-			jsonObj.put("status", "completed");
+			jsonObj.put(EReturnsWorkflowConstants.WORKFLOW_STATUS, EReturnsWorkflowConstants.WORKFLOW_COMPLETED);
 			JSONObject obj = new JSONObject();
-			obj.put("Action", "A");
-			obj.put("loginUser", loginUser);
-			jsonObj.put("context", obj);
+			obj.put(EReturnsWorkflowConstants.ACTION, EReturnsWorkflowConstants.WORKFLOW_A);
+			obj.put(EReturnsWorkflowConstants.WORKFLOW_LOGIN_USER, loginUser);
+			jsonObj.put(EReturnsWorkflowConstants.CONTEXT, obj);
 
 			payloadData = jsonObj.toString();
-		} else if (reqStatus.equals("Rejected")) {
+		} else if (reqStatus.equals(EReturnsWorkflowConstants.STATUS_REJECTED)) {
 			JSONObject jsonObj = new JSONObject();
-			jsonObj.put("status", "completed");
+			jsonObj.put(EReturnsWorkflowConstants.WORKFLOW_STATUS, EReturnsWorkflowConstants.WORKFLOW_COMPLETED);
 			JSONObject obj = new JSONObject();
-			obj.put("Action", "R");
-			obj.put("loginUser", loginUser);
-			jsonObj.put("context", obj);
+			obj.put(EReturnsWorkflowConstants.ACTION, EReturnsWorkflowConstants.WORKFLOW_R);
+			obj.put(EReturnsWorkflowConstants.WORKFLOW_LOGIN_USER, loginUser);
+			jsonObj.put(EReturnsWorkflowConstants.CONTEXT, obj);
 
 			payloadData = jsonObj.toString();
 		}
@@ -388,9 +389,9 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
 	private static void allowMethods(String... methods) {
 		try {
-			Field methodsField = HttpURLConnection.class.getDeclaredField("methods");
+			Field methodsField = HttpURLConnection.class.getDeclaredField(EReturnsWorkflowConstants.WORKFLOW_METHODS);
 
-			Field modifiersField = Field.class.getDeclaredField("modifiers");
+			Field modifiersField = Field.class.getDeclaredField(EReturnsWorkflowConstants.WORKFLOW_MODIFIERS);
 			modifiersField.setAccessible(true);
 			modifiersField.setInt(methodsField, methodsField.getModifiers() & ~Modifier.FINAL);
 

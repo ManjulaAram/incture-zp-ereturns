@@ -36,6 +36,7 @@ public interface EReturnConstants {
 	public static final String ERROR_STATUS_CODE = "01";
 	public static final String SUCCESS_STATUS = "SUCCESS";
 	public static final String ERROR_STATUS = "ERROR";
+	public static final String WORKFLOW_STATUS_CODE = "204";
 	
 	public static final String ECC_SUCCESS_STATUS = "ECC_SUCCESS";
 	public static final String ECC_ERROR_STATUS = "ECC_ERROR";
@@ -61,4 +62,13 @@ public interface EReturnConstants {
 	public static final String SCIM_DESTINATION_PWD = "Incture@123";
 
 
+	//IDP standard service constants
+	
+	public static final String IDP_FAMILY_NAME = "familyName";
+	public static final String IDP_GIVEN_NAME = "givenName";
+	public static final String IDP_NAME = "name";
+	public static final String IDP_RESOURCES = "Resources";
+	public static final String IDP_EMAILS = "emails";
+	public static final String IDP_ID = "id";
+	public static final String IDP_VALUE = "value";
 }

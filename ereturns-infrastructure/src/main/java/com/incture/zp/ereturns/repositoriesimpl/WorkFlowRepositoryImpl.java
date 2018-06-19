@@ -4,11 +4,14 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.dto.ResponseDto;
+import com.incture.zp.ereturns.dto.WorkFlowDto;
 import com.incture.zp.ereturns.model.WorkFlow;
 import com.incture.zp.ereturns.repositories.WorkflowRepository;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
@@ -21,6 +24,8 @@ public class WorkFlowRepositoryImpl implements WorkflowRepository {
 
 	@Autowired
 	ImportExportUtil importExportUtil;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(WorkFlowRepositoryImpl.class);
 
 	@Override
 	public ResponseDto addWorkflowInstance(WorkFlow workFlow) {
@@ -37,21 +42,19 @@ public class WorkFlowRepositoryImpl implements WorkflowRepository {
 	}
 
 	@Override
-	public WorkFlow getWorkFlowInstance(String requestId,String matCode) {
-		
-		String queryStr = "select w from WorkFlow w where w.requestId=:requestId and w.materialCode=:materialCode";
-		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
+	public WorkFlowDto getWorkFlowInstance(String requestId,String matCode) {
+		WorkFlowDto workFlowDto = new WorkFlowDto();
+		String queryStr = "SELECT w FROM WorkFlow w where w.requestId=:requestId and w.materialCode=:materialCode";
+		Query query = sessionFactory.getCurrentSession().createQuery(queryStr.toString());
 		query.setParameter("requestId", requestId);
-		query.setParameter("materialCode",matCode );
-		WorkFlow workflow = null;
+		query.setParameter("materialCode", matCode);
 		@SuppressWarnings("unchecked")
 		List<WorkFlow> workflowList = (List<WorkFlow>) query.list();
-		if(workflowList != null && workflowList.size() > 0) {
-			for(int i = 0; i < workflowList.size(); i++) {
-				workflow = workflowList.get(i);
-			}
+		LOGGER.error("Results for Workflow:"+workflowList.size());
+		for(WorkFlow workFlow : workflowList) {
+			workFlowDto = importExportUtil.exportWorkFlowDto(workFlow);
 		}
-		return workflow;
+		return workFlowDto;
 
 	}
 

@@ -39,7 +39,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 	@Autowired
 	GetReferenceData getReferenceData;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ImportExportUtil.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RequestRepositoryImpl.class);
 
 	@Override
 	public ResponseDto addRequest(Request request) {

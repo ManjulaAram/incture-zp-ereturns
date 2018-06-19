@@ -2,6 +2,8 @@ package com.incture.zp.ereturns.servicesimpl;
 
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +23,12 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 	@Autowired
 	WorkflowRepository workflowRepository;
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(WorkFlowServiceImpl.class);
+	
 	@Override
 	public WorkFlowDto getWorkFLowInstance(String requestId,String matCode) {
-		
-		return importExportUtil.exportWorkFlowDto(workflowRepository.getWorkFlowInstance(requestId,matCode));
+		LOGGER.error("RequestID:"+requestId+"..."+matCode);
+		return workflowRepository.getWorkFlowInstance(requestId, matCode);
 	}
 
 	@Override

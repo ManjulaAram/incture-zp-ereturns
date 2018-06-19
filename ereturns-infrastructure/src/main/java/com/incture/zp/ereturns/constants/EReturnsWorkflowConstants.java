@@ -46,6 +46,8 @@ public class EReturnsWorkflowConstants {
 	
 	public static final String UPDATE_CONTENT = "UpdateContent";
 	public static final String STATUS = "Status";
+	public static final String READY = "READY";
+	public static final String WORKFLOW_STATUS = "status";
 
 	public static final String STATUS_APPROVED = "Approved";
 	public static final String STATUS_REJECTED = "Rejected";
@@ -56,5 +58,14 @@ public class EReturnsWorkflowConstants {
 	public static final String TASK_ID = "taskId";
 	public static final String USER_ID = "userId";
 	
+
+	public static final String WORKFLOW_MODIFIERS = "modifiers";
+	public static final String WORKFLOW_METHODS = "methods";
 	
+	public static final String WORKFLOW_COMPLETED = "completed";
+	public static final String WORKFLOW_LOGIN_USER = "loginUser";
+	public static final String WORKFLOW_A = "A";
+	public static final String WORKFLOW_R = "R";
+	public static final String WORKFLOW_PATCH = "PATCH";
+
 }

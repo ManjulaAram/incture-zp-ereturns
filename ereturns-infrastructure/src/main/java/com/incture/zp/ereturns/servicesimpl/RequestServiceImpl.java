@@ -266,9 +266,10 @@ public class RequestServiceImpl implements RequestService {
 					LOGGER.error("Re-Triggering workflow:" + responseDto.getMessage());
 					triggerWorkflow(requestDto2, requestId, responseDto);
 				} 
-			} else {
-				notificationService.sendNotification(requestDto2.getRequestId(), requestDto2.getRequestPendingWith(), requestDto2.getRequestCreatedBy());
-			}
+			} 
+//			else {
+//				notificationService.sendNotification(requestDto2.getRequestId(), requestDto2.getRequestPendingWith(), requestDto2.getRequestCreatedBy());
+//			}
 
 		} catch (InterruptedException e) {
 			if(responseDto != null) {

@@ -97,12 +97,12 @@ public class NotificationServiceImpl implements NotificationService {
 		if(pendingWith != null && !(pendingWith.equals("")))
 		{
 			message.put("messageTitle","A new request for approval");
-			message.put("messageBody",("Request "+requestId+"is pending for your approval" ));
+			message.put("messageBody",("Request "+requestId+" is pending for your approval" ));
 		}
 		else
 		{
 			message.put("messageTitle", "Request Approved");
-			message.put("messageBody",("Your Request "+requestId+"is approved"));
+			message.put("messageBody",("Your Request "+requestId+" is approved"));
 		}
 		return message;
 	}

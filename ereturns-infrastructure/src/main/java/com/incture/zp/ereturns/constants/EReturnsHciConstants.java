@@ -11,9 +11,6 @@ public interface EReturnsHciConstants {
 	public static final String HCI_DESTINATION_USER = "User";
 	public static final String HCI_DESTINATION_PWD = "Password";
 	
-	public static final String WORKFLOW_DESTINATION_USER = "S0019321680";
-	public static final String WORKFLOW_DESTINATION_PWD = "0WV1]2{Q";
-
 	
 	public static final String SOLD_TO_PARTY = "AG";
 	public static final String SHIP_TO_PARTY = "SH";
