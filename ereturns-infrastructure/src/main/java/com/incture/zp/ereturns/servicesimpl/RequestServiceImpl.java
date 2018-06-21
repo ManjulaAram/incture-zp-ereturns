@@ -84,7 +84,7 @@ public class RequestServiceImpl implements RequestService {
 
 		String requestId = null;
 		DuplicateMaterialDto duplicateDto = findDuplicate(requestDto);
-		duplicateDto.setDuplicate(false);
+//		duplicateDto.setDuplicate(false);
 		if(duplicateDto.isDuplicate()) {
 			responseDto.setCode(EReturnConstants.DUPLICATE_CODE);
 			responseDto.setMessage(duplicateDto.getMaterials().toString());
@@ -204,6 +204,7 @@ public class RequestServiceImpl implements RequestService {
 	
 	private ResponseDto triggerWorkflow(RequestDto requestDto, String requestId, ResponseDto responseDto) {
 		boolean eccFlag = false;
+		boolean pushFlag = false;
 		for (ItemDto itemDto : requestDto.getHeaderDto().getItemSet()) {
 			String workFlowInstanceId = "";
 			WorkFlowDto workFlowDto = new WorkFlowDto();
@@ -249,13 +250,16 @@ public class RequestServiceImpl implements RequestService {
 							eccFlag = true;
 							LOGGER.error("Data pushed to HCI successfully :" + responseDto.getMessage());
 							break;
+						} 
+						if(returnOrderDto.getOrderStatus().equalsIgnoreCase(EReturnConstants.INPROGRESS)) {
+							pushFlag = true;
 						}
 					}
 				}
 			}
 			if(eccFlag) {
 				if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_SUCCESS_STATUS)) {
-					notificationService.sendNotification(requestDto2.getRequestId(), requestDto2.getRequestPendingWith(), requestDto2.getRequestCreatedBy());
+					notificationService.sendNotificationForRequestor(requestDto2.getRequestId(), requestDto2.getRequestCreatedBy());
 					requestRepository.updateEccReturnOrder(EReturnConstants.COMPLETE, responseDto.getMessage(), requestId);
 				} else if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_ERROR_STATUS)) {
 					responseDto.setMessage(responseDto.getMessage());
@@ -267,9 +271,9 @@ public class RequestServiceImpl implements RequestService {
 					triggerWorkflow(requestDto2, requestId, responseDto);
 				} 
 			} 
-//			else {
-//				notificationService.sendNotification(requestDto2.getRequestId(), requestDto2.getRequestPendingWith(), requestDto2.getRequestCreatedBy());
-//			}
+			if(pushFlag) {
+				notificationService.sendNotificationForApprover(requestDto2.getRequestId(), requestDto2.getRequestPendingWith());
+			}
 
 		} catch (InterruptedException e) {
 			if(responseDto != null) {

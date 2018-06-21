@@ -193,11 +193,9 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 					instanceId=instanceObject.get(EReturnConstants.IDP_ID).toString();
 				}
 			}
-			LOGGER.error("taskInstance" + instanceId);
-			if(instanceId!=null && instanceId!=""){
+			if(instanceId != null && !(instanceId.equals(""))){
 				responseDto = requestAction(instanceId, requestDto.getFlag(), requestDto.getLoginUser());
 			}
-			LOGGER.error(responseDto.getCode()+"taskInstance1" + responseDto.getStatus());
 			RequestDto res = requestService.getRequestById(requestDto.getRequestId());
 			if (responseDto.getCode().equals(EReturnConstants.WORKFLOW_STATUS_CODE)) {
 				Thread.sleep(5000);
@@ -205,12 +203,11 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 				if(status.equalsIgnoreCase(EReturnConstants.COMPLETE)) {
 					responseDto = hciMappingService.pushDataToEcc(res);
 					eccFlag = true;
-					LOGGER.error("taskInstance5 coming inside" + responseDto.getMessage());
 				}
 			}
 			if(responseDto != null && eccFlag) {
 				if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_SUCCESS_STATUS)) {
-//					notificationService.sendNotification(res.getRequestId(), res.getRequestPendingWith(), res.getRequestCreatedBy());
+					notificationService.sendNotificationForRequestor(res.getRequestId(), res.getRequestCreatedBy());
 					requestRepository.updateEccReturnOrder(EReturnConstants.COMPLETE, responseDto.getMessage(), requestId);
 				} else if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_ERROR_STATUS)) {
 					responseDto.setMessage(responseDto.getMessage());
@@ -251,22 +248,24 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 					}
 				}
 			} 
-//			else {
-//				notificationService.sendNotification(res.getRequestId(), res.getRequestPendingWith(), res.getRequestCreatedBy());
-//			}
+			if(responseDto.getCode().equals(EReturnConstants.WORKFLOW_STATUS_CODE)) {
+				if(res.getRequestPendingWith() != null && !(res.getRequestPendingWith().equals(""))) {
+					notificationService.sendNotificationForApprover(res.getRequestId(), res.getRequestPendingWith());
+				}
+			}
 		} catch (MalformedURLException e) {
 			responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
-			responseDto.setMessage("FAILURE" + e.getMessage());
+			responseDto.setMessage("FAILURE ON MALFORMED:" + e.getMessage());
 			responseDto.setStatus(EReturnConstants.ERROR_STATUS);
 			return responseDto;
 		} catch (IOException e) {
 			responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
-			responseDto.setMessage("FAILURE" + e.getMessage());
+			responseDto.setMessage("FAILURE ON IO EXCEPTION:" + e.getMessage());
 			responseDto.setStatus(EReturnConstants.ERROR_STATUS);
 			return responseDto;
 		} catch (InterruptedException e) {
 			responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
-			responseDto.setMessage("FAILURE" + e.getMessage());
+			responseDto.setMessage("FAILURE ON INTERRUPTED:" + e.getMessage());
 			responseDto.setStatus(EReturnConstants.ERROR_STATUS);
 		}
 

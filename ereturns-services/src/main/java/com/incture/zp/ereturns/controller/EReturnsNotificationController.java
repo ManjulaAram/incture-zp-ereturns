@@ -27,9 +27,16 @@ public class EReturnsNotificationController {
 	}
 
 	@ResponseBody
-	@RequestMapping(path = "/sendNotification", method = RequestMethod.POST)
-	public ResponseDto sendNotification(@RequestBody RequestDto requestDto) {
-		return notifyService.sendNotification(requestDto.getRequestId(), requestDto.getRequestPendingWith(), requestDto.getRequestCreatedBy());
+	@RequestMapping(path = "/sendNotificationForApprover", method = RequestMethod.POST)
+	public ResponseDto sendNotificationForApprover(@RequestBody RequestDto requestDto) {
+		return notifyService.sendNotificationForApprover(requestDto.getRequestId(), requestDto.getRequestPendingWith());
+
+	}
+	
+	@ResponseBody
+	@RequestMapping(path = "/sendNotificationForRequestor", method = RequestMethod.POST)
+	public ResponseDto sendNotificationForRequestor(@RequestBody RequestDto requestDto) {
+		return notifyService.sendNotificationForRequestor(requestDto.getRequestId(), requestDto.getRequestCreatedBy());
 
 	}
 }

@@ -14,9 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.incture.zp.ereturns.constants.EReturnsWorkflowConstants;
 import com.incture.zp.ereturns.dto.ApproverDto;
 import com.incture.zp.ereturns.dto.CompleteTaskRequestDto;
+import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.WorkFlowDto;
 import com.incture.zp.ereturns.dto.WorkflowInstanceDto;
-import com.incture.zp.ereturns.services.ReturnOrderService;
+import com.incture.zp.ereturns.services.RequestService;
 import com.incture.zp.ereturns.services.UserService;
 import com.incture.zp.ereturns.services.WorkFlowService;
 import com.incture.zp.ereturns.services.WorkflowTrackerService;
@@ -34,7 +35,8 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 	UserService userService;
 
 	@Autowired
-	ReturnOrderService returnOrderService;
+	RequestService requestService;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkflowTrackerService.class);
 	
 	String destination;
@@ -58,6 +60,8 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 		
 		String url = destination+EReturnsWorkflowConstants.WORKFLOW_REST_API;
 
+		RequestDto requestDto = requestService.getRequestById(completeTaskRequestDto.getRequestId());
+		
 		WorkflowInstanceDto instanceDto = new WorkflowInstanceDto();
 		String taskInstanceId = "";
 		LOGGER.error("Request id and Item coming from ui:"+completeTaskRequestDto.getRequestId()+"..."+completeTaskRequestDto.getItemCode());
@@ -67,7 +71,7 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 		RestInvoker restInvoker = new RestInvoker(url, user, pwd);
 
 		String response = restInvoker.getData("v1/workflow-instances/" + workflowInstanceId + "/execution-logs");
-
+		LOGGER.error("From Work instances execution - logs:"+response);
 		List<String> recipientList = new ArrayList<>();
 		List<ApproverDto> approverList = new ArrayList<>();
 		JSONArray executionLogs = new JSONArray(response);
@@ -76,7 +80,7 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 		for (int i = 0; i < executionLogs.length(); i++) {
 			JSONObject logObject = executionLogs.getJSONObject(i);
 			if (logObject.get(EReturnsWorkflowConstants.TYPE).equals("WORKFLOW_STARTED")) {
-				instanceDto.setCreatedBy(userService.getUserNameById(logObject.get(EReturnsWorkflowConstants.USER_ID).toString()));
+				instanceDto.setCreatedBy(userService.getUserNameById(requestDto.getRequestCreatedBy()));
 				instanceDto.setCreatedAt(formatDateString(logObject.get(EReturnsWorkflowConstants.TIMESTAMP).toString()));
 			}
 			if (logObject.get(EReturnsWorkflowConstants.TYPE).equals("USERTASK_CREATED")) {

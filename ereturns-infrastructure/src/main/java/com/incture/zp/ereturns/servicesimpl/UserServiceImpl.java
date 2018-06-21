@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.dto.EmailDto;
 import com.incture.zp.ereturns.dto.IdpUserIdDto;
-import com.incture.zp.ereturns.dto.LoginDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.UserDto;
 import com.incture.zp.ereturns.model.User;
@@ -187,10 +186,9 @@ public class UserServiceImpl implements UserService {
 		return userName.toString();
 	}
 
-	public ResponseDto loginUser(LoginDto loginDto) {
+	public ResponseDto loginUser() {
 		ResponseDto responseDto = new ResponseDto();
 		responseDto.setCode(String.valueOf(HttpStatus.SC_OK));
-		responseDto.setMessage("Success login with "+loginDto.getUsername());
 		responseDto.setStatus(String.valueOf(HttpStatus.SC_OK));
 		return responseDto;
 	}

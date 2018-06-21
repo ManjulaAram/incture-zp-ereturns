@@ -18,12 +18,12 @@ public class EReturnsWorkflowConstants {
 	public static final String SET_COOKIE = "Set-Cookie";
 	public static final String WORKFLOW_DESTINATION = "ZP_ERETURNS_WORKFLOW";
 //	public static final String WORKFLOW_DESTINATION_URL = "URL";
-	public static final String WORKFLOW_DESTINATION_URL = "https://bpmworkflowruntimecbbe88bff-ce7231891.ap1.hana.ondemand.com/workflow-service";
+	public static final String WORKFLOW_DESTINATION_URL = "https://bpmworkflowruntimecbbe88bff-c8e00d73c.ap1.hana.ondemand.com/workflow-service";
 //	public static final String WORKFLOW_DESTINATION_USER = "User";
 //	public static final String WORKFLOW_DESTINATION_PWD = "Password";
 	
-	public static final String WORKFLOW_DESTINATION_USER = "S0019321680";
-	public static final String WORKFLOW_DESTINATION_PWD = "0WV1]2{Q";
+	public static final String WORKFLOW_DESTINATION_USER = "P000003";
+	public static final String WORKFLOW_DESTINATION_PWD = "Incture@16";
 	
 	public static final String APPROVAL_XCSRF_TOKEN="/rest/v1/xsrf-token";
 	public static final String APPROVAL_URL="/rest/v1/task-instances/";

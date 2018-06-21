@@ -4,5 +4,8 @@ import com.incture.zp.ereturns.dto.ResponseDto;
 
 public interface NotificationService {
 
-	public ResponseDto sendNotification(String requestId, String pendingWith, String createdBy);
+	public ResponseDto sendNotificationForApprover(String requestId, String pendingWith);
+	
+	public ResponseDto sendNotificationForRequestor(String requestId, String createdBy);
+	
 }
