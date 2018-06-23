@@ -7,9 +7,9 @@ public interface EReturnsHciConstants {
 	public static final String USERNAME = "S0019321680";
 	public static final String PASSWORD = "0WV1]2{Q";
 	
-	public static final String HCI_DESTINATION_URL = "URL";
-	public static final String HCI_DESTINATION_USER = "User";
-	public static final String HCI_DESTINATION_PWD = "Password";
+//	public static final String HCI_DESTINATION_URL = "URL";
+//	public static final String HCI_DESTINATION_USER = "User";
+//	public static final String HCI_DESTINATION_PWD = "Password";
 	
 	
 	public static final String SOLD_TO_PARTY = "AG";

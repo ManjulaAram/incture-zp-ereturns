@@ -54,6 +54,8 @@ public class StatusResponseDto implements Serializable {
 
 	private String returnReason;
 	
+	private String orderComments;
+	
 	private Set<AttachmentDto> attachments;
 	
 	public String getMessage() {
@@ -241,8 +243,15 @@ public class StatusResponseDto implements Serializable {
 	}
 
 	public Object getId() {
-		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public String getOrderComments() {
+		return orderComments;
+	}
+
+	public void setOrderComments(String orderComments) {
+		this.orderComments = orderComments;
 	}
 	
 }

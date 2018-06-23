@@ -13,6 +13,7 @@ public class CompleteTaskRequestDto implements Serializable {
 	private String requestId;
 	private String itemCode;
 	private String flag;
+	private String orderComments;
 
 	public String getRequestId() {
 		return requestId;
@@ -37,6 +38,12 @@ public class CompleteTaskRequestDto implements Serializable {
 	}
 	public void setLoginUser(String loginUser) {
 		this.loginUser = loginUser;
+	}
+	public String getOrderComments() {
+		return orderComments;
+	}
+	public void setOrderComments(String orderComments) {
+		this.orderComments = orderComments;
 	}
 	
 }

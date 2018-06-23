@@ -40,6 +40,8 @@ public class ReturnOrderDto implements Serializable {
 
 	private String requestId;
 	
+	private String orderComments;
+	
 	public Long getReturnOrderId() {
 		return returnOrderId;
 	}
@@ -174,6 +176,14 @@ public class ReturnOrderDto implements Serializable {
 
 	public void setRequestId(String requestId) {
 		this.requestId = requestId;
+	}
+
+	public String getOrderComments() {
+		return orderComments;
+	}
+
+	public void setOrderComments(String orderComments) {
+		this.orderComments = orderComments;
 	}
 
 }

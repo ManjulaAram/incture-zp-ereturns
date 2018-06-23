@@ -194,7 +194,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 				}
 			}
 			if(instanceId != null && !(instanceId.equals(""))){
-				responseDto = requestAction(instanceId, requestDto.getFlag(), requestDto.getLoginUser());
+				responseDto = requestAction(instanceId, requestDto.getFlag(), requestDto.getLoginUser(), requestDto.getOrderComments());
 			}
 			RequestDto res = requestService.getRequestById(requestDto.getRequestId());
 			if (responseDto.getCode().equals(EReturnConstants.WORKFLOW_STATUS_CODE)) {
@@ -272,7 +272,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 		return responseDto;
 	}
 
-	public synchronized ResponseDto requestAction(String taskInstanceId, String reqStatus, String loginUser) {
+	public synchronized ResponseDto requestAction(String taskInstanceId, String reqStatus, String loginUser, String comments) {
 		String responseData = "";
 		List<String> cookies = null;
 		String csrfToken = "";
@@ -280,7 +280,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 		ResponseDto responseDto = new ResponseDto();
 
 		String responseCode = "";
-		payloadData = buildPayload(reqStatus, loginUser);
+		payloadData = buildPayload(reqStatus, loginUser, comments);
 		LOGGER.error(payloadData);
 
 		try {
@@ -362,7 +362,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
 	}
 
-	public String buildPayload(String reqStatus, String loginUser) {
+	public String buildPayload(String reqStatus, String loginUser, String comments) {
 		String payloadData = "";
 		if (reqStatus.equals(EReturnsWorkflowConstants.STATUS_APPROVED)) {
 			JSONObject jsonObj = new JSONObject();
@@ -370,6 +370,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			JSONObject obj = new JSONObject();
 			obj.put(EReturnsWorkflowConstants.ACTION, EReturnsWorkflowConstants.WORKFLOW_A);
 			obj.put(EReturnsWorkflowConstants.WORKFLOW_LOGIN_USER, loginUser);
+			obj.put(EReturnsWorkflowConstants.WORKFLOW_COMMENTS, comments);
 			jsonObj.put(EReturnsWorkflowConstants.CONTEXT, obj);
 
 			payloadData = jsonObj.toString();
@@ -379,6 +380,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			JSONObject obj = new JSONObject();
 			obj.put(EReturnsWorkflowConstants.ACTION, EReturnsWorkflowConstants.WORKFLOW_R);
 			obj.put(EReturnsWorkflowConstants.WORKFLOW_LOGIN_USER, loginUser);
+			obj.put(EReturnsWorkflowConstants.WORKFLOW_COMMENTS, comments);
 			jsonObj.put(EReturnsWorkflowConstants.CONTEXT, obj);
 
 			payloadData = jsonObj.toString();

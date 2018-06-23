@@ -84,7 +84,7 @@ public class RequestServiceImpl implements RequestService {
 
 		String requestId = null;
 		DuplicateMaterialDto duplicateDto = findDuplicate(requestDto);
-//		duplicateDto.setDuplicate(false);
+		duplicateDto.setDuplicate(false);
 		if(duplicateDto.isDuplicate()) {
 			responseDto.setCode(EReturnConstants.DUPLICATE_CODE);
 			responseDto.setMessage(duplicateDto.getMaterials().toString());
@@ -216,6 +216,7 @@ public class RequestServiceImpl implements RequestService {
 			jsonObj.put(EReturnsWorkflowConstants.INITIATOR, requestDto.getRequestCreatedBy());
 			jsonObj.put(EReturnsWorkflowConstants.INVOICE, requestDto.getHeaderDto().getInvoiceNo());
 			jsonObj.put(EReturnsWorkflowConstants.MATERIAL, itemDto.getMaterialDesc());
+//			jsonObj.put(EReturnsWorkflowConstants.WORKFLOW_COMMENTS, "");
 
 
 			JSONObject obj = new JSONObject();

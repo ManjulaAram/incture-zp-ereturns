@@ -88,6 +88,10 @@ public class RequestRepositoryImpl implements RequestRepository {
 			queryString.append(" AND o.orderPendingWith like :orderPendingWith");
 		}
 
+		if (requestDto.getPrincipalCode() != null && !(requestDto.getPrincipalCode().equals(""))) {
+			queryString.append(" AND i.principalCode like :principalCode");
+		}
+		
 		LOGGER.error("Query for Status details:" + queryString.toString());
 		Query query = sessionFactory.getCurrentSession().createQuery(queryString.toString());
 		if (requestDto.getRequestId() != null && !(requestDto.getRequestId().equals(""))) {
@@ -112,7 +116,9 @@ public class RequestRepositoryImpl implements RequestRepository {
 			query.setParameter("startDate", requestDto.getStartDate());
 			query.setParameter("endDate", requestDto.getEndDate());
 		}
-
+		if (requestDto.getPrincipalCode() != null && !(requestDto.getPrincipalCode().equals(""))) {
+			queryString.append("principalCode"+requestDto.getPrincipalCode());
+		}
 		Request request = null;
 		@SuppressWarnings("unchecked")
 		List<Object[]> objectsList = query.list();
@@ -144,6 +150,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 							statusResponseDto.setReturnType(returnOrder2.getPaymentType());
 							statusResponseDto.setReturnValue(returnOrder2.getReturnValue());
 							statusResponseDto.setSalesPerson(EReturnConstants.SALES_PERSON);
+							statusResponseDto.setSalesPerson(returnOrder2.getOrderComments());
 	
 							// Request Level
 							statusResponseDto.setRequestId(request.getRequestId());

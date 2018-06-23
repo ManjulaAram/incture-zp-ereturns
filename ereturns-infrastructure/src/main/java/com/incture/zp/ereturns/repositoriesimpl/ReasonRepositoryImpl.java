@@ -42,5 +42,25 @@ public class ReasonRepositoryImpl implements ReasonRepository {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ReasonDto> getReasonByCountry(String country) {
+
+		List<ReasonDto> reasonDtoList = new ArrayList<ReasonDto>();
+		String queryStr = "select r from Reason r where r.businessUnit=:businessUnit";
+
+		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
+		query.setParameter("businessUnit", country);
+
+		List<Reason> reasonList = query.list();
+
+		for (Reason retRes : reasonList) {
+			reasonDtoList.add(importExportUtil.exportReasonDto(retRes));
+		}
+
+		return reasonDtoList;
+
+	}
+
 	
 }

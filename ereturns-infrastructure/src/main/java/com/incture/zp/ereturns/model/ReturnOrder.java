@@ -71,6 +71,9 @@ public class ReturnOrder {
 	private String orderPendingWith;
 
 
+	@Column(name = "ORDER_COMMENTS", length = 100)
+	private String orderComments;
+
 	@ManyToOne
 	@JoinColumn(name = "REQUEST_ID", nullable = false, updatable = false)
 	private Request returnOrderData;
@@ -209,6 +212,14 @@ public class ReturnOrder {
 
 	public void setOrderPendingWith(String orderPendingWith) {
 		this.orderPendingWith = orderPendingWith;
+	}
+
+	public String getOrderComments() {
+		return orderComments;
+	}
+
+	public void setOrderComments(String orderComments) {
+		this.orderComments = orderComments;
 	}
 
 }

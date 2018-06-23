@@ -23,4 +23,9 @@ public class ReasonServiceImpl implements ReasonService{
 		return returnReasonRepository.getAllReasons();
 	}
 
+	@Override
+	public List<ReasonDto> getReasonByCountry(String country) {
+		return returnReasonRepository.getReasonByCountry(country);
+	}
+
 }

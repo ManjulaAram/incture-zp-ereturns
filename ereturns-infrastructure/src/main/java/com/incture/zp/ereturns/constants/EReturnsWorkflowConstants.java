@@ -16,7 +16,7 @@ public class EReturnsWorkflowConstants {
 	public static final String COOKIE="Cookie";
 	public static final String FETCH="Fetch";
 	public static final String SET_COOKIE = "Set-Cookie";
-	public static final String WORKFLOW_DESTINATION = "ZP_ERETURNS_WORKFLOW";
+//	public static final String WORKFLOW_DESTINATION = "ZP_ERETURNS_WORKFLOW";
 //	public static final String WORKFLOW_DESTINATION_URL = "URL";
 	public static final String WORKFLOW_DESTINATION_URL = "https://bpmworkflowruntimecbbe88bff-c8e00d73c.ap1.hana.ondemand.com/workflow-service";
 //	public static final String WORKFLOW_DESTINATION_USER = "User";
@@ -62,6 +62,7 @@ public class EReturnsWorkflowConstants {
 	public static final String WORKFLOW_MODIFIERS = "modifiers";
 	public static final String WORKFLOW_METHODS = "methods";
 	
+	public static final String WORKFLOW_COMMENTS = "orderComments";
 	public static final String WORKFLOW_COMPLETED = "completed";
 	public static final String WORKFLOW_LOGIN_USER = "loginUser";
 	public static final String WORKFLOW_A = "A";

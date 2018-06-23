@@ -8,4 +8,5 @@ public interface ReasonService {
 	
 	public List<ReasonDto> getAllReasons();
 
+	public List<ReasonDto> getReasonByCountry(String country);
 }
