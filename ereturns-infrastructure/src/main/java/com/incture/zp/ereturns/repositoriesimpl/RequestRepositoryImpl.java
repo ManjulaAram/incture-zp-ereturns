@@ -1,6 +1,7 @@
 package com.incture.zp.ereturns.repositoriesimpl;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -113,8 +114,14 @@ public class RequestRepositoryImpl implements RequestRepository {
 		}
 		if ((requestDto.getStartDate() != null && !(requestDto.getStartDate().equals("")))
 				&& (requestDto.getEndDate() != null) && !(requestDto.getEndDate().equals(""))) {
-			query.setParameter("startDate", requestDto.getStartDate());
-			query.setParameter("endDate", requestDto.getEndDate());
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			try {
+				query.setParameter("startDate", sdf.parse(requestDto.getStartDate()));
+				query.setParameter("endDate", sdf.parse(requestDto.getEndDate()));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+
 		}
 		if (requestDto.getPrincipalCode() != null && !(requestDto.getPrincipalCode().equals(""))) {
 			queryString.append("principalCode"+requestDto.getPrincipalCode());
