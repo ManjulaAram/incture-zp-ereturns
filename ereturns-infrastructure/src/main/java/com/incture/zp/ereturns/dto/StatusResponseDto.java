@@ -56,6 +56,8 @@ public class StatusResponseDto implements Serializable {
 	
 	private String orderComments;
 	
+	private String reason;
+	
 	private Set<AttachmentDto> attachments;
 	
 	public String getMessage() {
@@ -252,6 +254,14 @@ public class StatusResponseDto implements Serializable {
 
 	public void setOrderComments(String orderComments) {
 		this.orderComments = orderComments;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
 	}
 	
 }

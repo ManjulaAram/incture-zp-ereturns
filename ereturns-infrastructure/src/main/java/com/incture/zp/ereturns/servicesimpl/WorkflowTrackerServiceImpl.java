@@ -15,8 +15,10 @@ import com.incture.zp.ereturns.constants.EReturnsWorkflowConstants;
 import com.incture.zp.ereturns.dto.ApproverDto;
 import com.incture.zp.ereturns.dto.CompleteTaskRequestDto;
 import com.incture.zp.ereturns.dto.RequestDto;
+import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.WorkFlowDto;
 import com.incture.zp.ereturns.dto.WorkflowInstanceDto;
+import com.incture.zp.ereturns.repositories.ReturnOrderRepository;
 import com.incture.zp.ereturns.services.RequestService;
 import com.incture.zp.ereturns.services.UserService;
 import com.incture.zp.ereturns.services.WorkFlowService;
@@ -36,6 +38,9 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 
 	@Autowired
 	RequestService requestService;
+	
+	@Autowired
+	ReturnOrderRepository returnOrderRepository;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkflowTrackerService.class);
 	
@@ -77,6 +82,7 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 		JSONArray executionLogs = new JSONArray(response);
 
 		JSONArray receipents = new JSONArray();
+		ApproverDto approverDto = null;
 		for (int i = 0; i < executionLogs.length(); i++) {
 			JSONObject logObject = executionLogs.getJSONObject(i);
 			if (logObject.get(EReturnsWorkflowConstants.TYPE).equals("WORKFLOW_STARTED")) {
@@ -90,7 +96,7 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 
 			if (logObject.get(EReturnsWorkflowConstants.TYPE).equals("USERTASK_COMPLETED")
 					&& logObject.get(EReturnsWorkflowConstants.TASK_ID).toString().equals(taskInstanceId)) {
-				ApproverDto approverDto = new ApproverDto();
+				approverDto = new ApproverDto();
 
 				approverDto.setApproverName(userService.getUserNameById(logObject.get(EReturnsWorkflowConstants.USER_ID).toString()));
 				approverDto.setApprovalDate(formatDateString(logObject.get(EReturnsWorkflowConstants.TIMESTAMP).toString()));
@@ -116,9 +122,15 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 		instanceDto.setMaterialCode(workflowDto.getMaterialCode());
 		instanceDto.setApproverList(approverList);
 		instanceDto.setReceipents(recipientList);
-		System.out.println(instanceDto.getCreatedBy());
-		System.out.println(instanceDto.getCreatedAt());
-
+		instanceDto.setEccResponse(requestDto.getEccReturnOrderNo());
+		List<String> comments = new ArrayList<>();
+		List<ReturnOrderDto> returnList = returnOrderRepository.getReturnOrderByRequestId(requestDto.getRequestId());
+		if(returnList.size() > 0) {
+			for(ReturnOrderDto returnOrderDto : returnList) {
+				comments.add(returnOrderDto.getOrderComments());
+			}
+		}
+		instanceDto.setCommentsByApprover(comments);
 		return instanceDto;
 	}
 	

@@ -437,7 +437,7 @@ public class ImportExportUtil {
 		try {
 			output = dateFormat.parse(input);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			LOGGER.error("Date format Exception:"+e.getMessage());
 		}
 		return output;
 	}

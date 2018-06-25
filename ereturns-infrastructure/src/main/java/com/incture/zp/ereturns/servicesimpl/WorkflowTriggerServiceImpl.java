@@ -148,10 +148,10 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			responseData = getDataFromStream(postUrlConnection.getInputStream());
 
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			LOGGER.error("MalformedError:" + e.getMessage());
 			return e.getMessage();
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error("IOError:" + e.getMessage());
 			return e.getMessage();
 		}
 		return responseData;

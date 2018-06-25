@@ -61,6 +61,24 @@ public class ReasonRepositoryImpl implements ReasonRepository {
 		return reasonDtoList;
 
 	}
+	@Override
+	public String getReasonById(String id) {
+
+		String queryStr = "select r from Reason r where r.reasonCode=:reasonCode";
+
+		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
+		query.setParameter("reasonCode", id);
+
+		@SuppressWarnings("unchecked")
+		List<Reason> reasonList = (List<Reason>) query.list();
+		String reasonDesc = "";
+		for (Reason retRes : reasonList) {
+			reasonDesc = retRes.getReasonDesc();
+		}
+
+		return reasonDesc;
+
+	}
 
 	
 }

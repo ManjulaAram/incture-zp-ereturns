@@ -24,6 +24,7 @@ import com.incture.zp.ereturns.dto.StatusResponseDto;
 import com.incture.zp.ereturns.model.Item;
 import com.incture.zp.ereturns.model.Request;
 import com.incture.zp.ereturns.model.ReturnOrder;
+import com.incture.zp.ereturns.repositories.ReasonRepository;
 import com.incture.zp.ereturns.repositories.RequestRepository;
 import com.incture.zp.ereturns.utils.GetReferenceData;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
@@ -39,6 +40,9 @@ public class RequestRepositoryImpl implements RequestRepository {
 
 	@Autowired
 	GetReferenceData getReferenceData;
+	
+	@Autowired
+	ReasonRepository reasonRepository;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequestRepositoryImpl.class);
 
@@ -119,12 +123,12 @@ public class RequestRepositoryImpl implements RequestRepository {
 				query.setParameter("startDate", sdf.parse(requestDto.getStartDate()));
 				query.setParameter("endDate", sdf.parse(requestDto.getEndDate()));
 			} catch (ParseException e) {
-				e.printStackTrace();
+				LOGGER.error("Exception On Date format:" + e.getMessage());
 			}
 
 		}
 		if (requestDto.getPrincipalCode() != null && !(requestDto.getPrincipalCode().equals(""))) {
-			queryString.append("principalCode"+requestDto.getPrincipalCode());
+			query.setParameter("principalCode", requestDto.getPrincipalCode());
 		}
 		Request request = null;
 		@SuppressWarnings("unchecked")
@@ -158,6 +162,10 @@ public class RequestRepositoryImpl implements RequestRepository {
 							statusResponseDto.setReturnValue(returnOrder2.getReturnValue());
 							statusResponseDto.setSalesPerson(EReturnConstants.SALES_PERSON);
 							statusResponseDto.setSalesPerson(returnOrder2.getOrderComments());
+							if(returnOrder2.getReason() != null && !(returnOrder2.getReason().equals("")))
+								statusResponseDto.setReason(reasonRepository.getReasonById(returnOrder2.getReason()));
+							else
+								statusResponseDto.setReason("");
 	
 							// Request Level
 							statusResponseDto.setRequestId(request.getRequestId());

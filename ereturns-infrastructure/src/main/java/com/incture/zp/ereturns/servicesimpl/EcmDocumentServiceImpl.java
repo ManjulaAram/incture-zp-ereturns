@@ -53,7 +53,7 @@ public class EcmDocumentServiceImpl implements EcmDocumentService {
 			connectToEcm();
 			return createFolderAndDocument(file,fileName,fileType);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error("Upload Error:"+e.getMessage());
 			return null;
 		}
 	}

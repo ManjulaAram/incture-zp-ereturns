@@ -31,7 +31,7 @@ public class PushNotificationUtil {
 					.collapseKey("type_a").build();
 			sender.send(message, token, 4);
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("Execption:"+e.getMessage());
 		}
 	}
 }

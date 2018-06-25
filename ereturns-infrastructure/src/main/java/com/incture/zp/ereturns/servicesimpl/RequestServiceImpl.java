@@ -216,7 +216,6 @@ public class RequestServiceImpl implements RequestService {
 			jsonObj.put(EReturnsWorkflowConstants.INITIATOR, requestDto.getRequestCreatedBy());
 			jsonObj.put(EReturnsWorkflowConstants.INVOICE, requestDto.getHeaderDto().getInvoiceNo());
 			jsonObj.put(EReturnsWorkflowConstants.MATERIAL, itemDto.getMaterialDesc());
-//			jsonObj.put(EReturnsWorkflowConstants.WORKFLOW_COMMENTS, "");
 
 
 			JSONObject obj = new JSONObject();
@@ -282,7 +281,7 @@ public class RequestServiceImpl implements RequestService {
 				responseDto.setStatus(EReturnConstants.ERROR_STATUS);
 				responseDto.setMessage(e.getMessage());
 			}
-			e.printStackTrace();
+			LOGGER.error("Re-Triggering workflow Error:" + e.getMessage());
 		}
 		return responseDto;
 	}

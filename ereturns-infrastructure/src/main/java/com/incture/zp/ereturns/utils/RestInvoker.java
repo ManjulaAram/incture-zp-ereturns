@@ -70,10 +70,8 @@ public class RestInvoker {
 			}
 			reader.close();
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
 			return e.getMessage();
 		} catch (IOException e) {
-			e.printStackTrace();
 			return e.getMessage();
 		}
 		return sb.toString();
