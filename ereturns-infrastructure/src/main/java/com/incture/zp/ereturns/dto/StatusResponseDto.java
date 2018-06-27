@@ -58,6 +58,12 @@ public class StatusResponseDto implements Serializable {
 	
 	private String reason;
 	
+	private String batch;
+	
+	private String expiryDate;
+	
+	private String eccResponse;
+	
 	private Set<AttachmentDto> attachments;
 	
 	public String getMessage() {
@@ -262,6 +268,30 @@ public class StatusResponseDto implements Serializable {
 
 	public void setReason(String reason) {
 		this.reason = reason;
+	}
+
+	public String getBatch() {
+		return batch;
+	}
+
+	public void setBatch(String batch) {
+		this.batch = batch;
+	}
+
+	public String getExpiryDate() {
+		return expiryDate;
+	}
+
+	public void setExpiryDate(String expiryDate) {
+		this.expiryDate = expiryDate;
+	}
+
+	public String getEccResponse() {
+		return eccResponse;
+	}
+
+	public void setEccResponse(String eccResponse) {
+		this.eccResponse = eccResponse;
 	}
 	
 }

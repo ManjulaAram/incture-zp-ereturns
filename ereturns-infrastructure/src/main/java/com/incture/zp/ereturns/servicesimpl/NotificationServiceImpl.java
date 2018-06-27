@@ -86,8 +86,7 @@ public class NotificationServiceImpl implements NotificationService {
 					statusRequestDto.setRequestId(requestId);
 					messageMap.put("messageTitle", "Request Approved");
 					messageMap.put("messageBody",("Your Request "+requestId+" is approved"));
-					notifyUtil.sendNotification(messageMap.get("messageTitle"), token, messageMap.get("messageBody"),
-							requestService.getStatusDetails(statusRequestDto));
+					notifyUtil.sendNotification(messageMap.get("messageTitle"), token, messageMap.get("messageBody"), null);
 					responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
 					responseDto.setMessage("Notification sent");
 					responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);

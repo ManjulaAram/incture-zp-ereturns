@@ -25,10 +25,16 @@ public class PushNotificationUtil {
 		try {
 
 			String serverKey = EReturnConstants.SERVER_KEY;
-
+			Message message;
 			Sender sender = new Sender(serverKey);
-			Message message = new Message.Builder().addData("title", msgTitle).addData("body", msgBody).addData("PendingRequestDetails", new JSONObject(list).toString())
-					.collapseKey("type_a").build();
+			if(list != null) {
+				message = new Message.Builder().addData("title", msgTitle).addData("body", msgBody).addData("PendingRequestDetails", new JSONObject(list).toString())
+						.collapseKey("type_a").build();
+			} else {
+				message = new Message.Builder().addData("title", msgTitle).addData("body", msgBody)
+						.collapseKey("type_a").build();
+			}
+
 			sender.send(message, token, 4);
 		} catch (Exception e) {
 			System.out.println("Execption:"+e.getMessage());

@@ -28,7 +28,7 @@ public class ReasonRepositoryImpl implements ReasonRepository {
 
 		List<ReasonDto> reasonDtoList = new ArrayList<ReasonDto>();
 		List<Reason> reasonList = new ArrayList<Reason>();
-		String queryStr = "select r from Reason r";
+		String queryStr = "select r from Reason r ORDER BY reasonName";
 
 		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
 

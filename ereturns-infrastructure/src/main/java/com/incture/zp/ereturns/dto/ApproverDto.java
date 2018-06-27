@@ -14,6 +14,7 @@ public class ApproverDto implements Serializable {
 	private String status;
 	private String approverName;
 	private String approvalDate;
+	private String commentsByApprover;
 	public String getStatus() {
 		return status;
 	}
@@ -32,8 +33,11 @@ public class ApproverDto implements Serializable {
 	public void setApprovalDate(String approvalDate) {
 		this.approvalDate = approvalDate;
 	}
-	
-	
-	
+	public String getCommentsByApprover() {
+		return commentsByApprover;
+	}
+	public void setCommentsByApprover(String commentsByApprover) {
+		this.commentsByApprover = commentsByApprover;
+	}
 	
 }

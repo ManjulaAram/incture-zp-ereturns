@@ -64,14 +64,14 @@ public class RequestRepositoryImpl implements RequestRepository {
 
 	@Override
 	public List<StatusResponseDto> getStatusDetails(StatusRequestDto requestDto) {
-
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		StringBuilder queryString = new StringBuilder();
 		queryString
 				.append("SELECT r, o, h, i FROM Request r, ReturnOrder o, Header h, Item i WHERE r.requestId = o.returnOrderData.requestId "
 						+ "AND r.requestHeader.headerId = h.headerId AND h.headerId = i.itemData.headerId AND o.itemCode = i.itemCode");
 
 		if (requestDto.getRequestId() != null && !(requestDto.getRequestId().equals(""))) {
-			queryString.append(" AND r.requestId like :requestId");
+			queryString.append(" AND r.requestId=:requestId");
 		}
 
 		if (requestDto.getCreatedBy() != null && !(requestDto.getCreatedBy().equals(""))) {
@@ -79,7 +79,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 		}
 
 		if (requestDto.getCustomerCode() != null && !(requestDto.getCustomerCode().equals(""))) {
-			queryString.append(" AND r.soldTo like :soldTo");
+			queryString.append(" AND r.soldTo=:soldTo");
 		}
 
 		if (requestDto.getCustomerName() != null && !(requestDto.getCustomerName().equals(""))) {
@@ -91,17 +91,17 @@ public class RequestRepositoryImpl implements RequestRepository {
 		}
 
 		if (requestDto.getPendingWith() != null && !(requestDto.getPendingWith().equals(""))) {
-			queryString.append(" AND o.orderPendingWith like :orderPendingWith");
+			queryString.append(" AND o.orderPendingWith=:orderPendingWith");
 		}
 
 		if (requestDto.getPrincipalCode() != null && !(requestDto.getPrincipalCode().equals(""))) {
-			queryString.append(" AND i.principalCode like :principalCode");
+			queryString.append(" AND i.principalCode=:principalCode");
 		}
 		
 		LOGGER.error("Query for Status details:" + queryString.toString());
 		Query query = sessionFactory.getCurrentSession().createQuery(queryString.toString());
 		if (requestDto.getRequestId() != null && !(requestDto.getRequestId().equals(""))) {
-			query.setParameter("requestId", requestDto.getRequestId()+"%");
+			query.setParameter("requestId", requestDto.getRequestId());
 		}
 
 		if (requestDto.getCreatedBy() != null && !(requestDto.getCreatedBy().equals(""))) {
@@ -109,13 +109,13 @@ public class RequestRepositoryImpl implements RequestRepository {
 		}
 
 		if (requestDto.getCustomerCode() != null && !(requestDto.getCustomerCode().equals(""))) {
-			query.setParameter("soldTo", requestDto.getCustomerCode()+"%");
+			query.setParameter("soldTo", requestDto.getCustomerCode());
 		}
 		if (requestDto.getCustomerName() != null && !(requestDto.getCustomerName().equals(""))) {
 			query.setParameter("customer", requestDto.getCustomerName()+"%");
 		}
 		if (requestDto.getPendingWith() != null && !(requestDto.getPendingWith().equals(""))) {
-			query.setParameter("orderPendingWith", requestDto.getPendingWith()+"%");
+			query.setParameter("orderPendingWith", requestDto.getPendingWith());
 		}
 		if ((requestDto.getStartDate() != null && !(requestDto.getStartDate().equals("")))
 				&& (requestDto.getEndDate() != null) && !(requestDto.getEndDate().equals(""))) {
@@ -149,7 +149,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 							statusResponseDto.setItemCode(item2.getItemCode());
 							statusResponseDto.setCreatedBy(returnOrder2.getOrderCreatedBy());
 							if (returnOrder2.getOrderCreatedDate() != null && !(returnOrder2.getOrderCreatedDate().equals(""))) {
-								DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+								
 								String output = dateFormat.format(returnOrder2.getOrderCreatedDate());
 								statusResponseDto.setCreatedOn(output);
 							}
@@ -164,13 +164,19 @@ public class RequestRepositoryImpl implements RequestRepository {
 							statusResponseDto.setReturnType(returnOrder2.getPaymentType());
 							statusResponseDto.setReturnValue(returnOrder2.getReturnValue());
 							statusResponseDto.setSalesPerson(EReturnConstants.SALES_PERSON);
-							statusResponseDto.setSalesPerson(returnOrder2.getOrderComments());
-							if(returnOrder2.getReason() != null && !(returnOrder2.getReason().equals("")))
-								statusResponseDto.setReason(reasonRepository.getReasonById(returnOrder2.getReason()));
+							statusResponseDto.setOrderComments(returnOrder2.getOrderComments());
+//							if(returnOrder2.getReason() != null && !(returnOrder2.getReason().equals("")))
+//								statusResponseDto.setReason(reasonRepository.getReasonById(returnOrder2.getReason()));
+//							else
+//								statusResponseDto.setReason("");
+							statusResponseDto.setBatch(item2.getBatch());
+							if(item2.getExpiryDate() != null && !(item2.getExpiryDate().equals("")))
+								statusResponseDto.setExpiryDate(dateFormat.format(item2.getExpiryDate()));
 							else
-								statusResponseDto.setReason("");
+								statusResponseDto.setExpiryDate("");
 	
 							// Request Level
+							statusResponseDto.setEccResponse(request.getEccReturnOrderNo());
 							statusResponseDto.setRequestId(request.getRequestId());
 							statusResponseDto.setShipTo(request.getShipTo());
 							statusResponseDto.setSoldTo(request.getSoldTo());
