@@ -24,6 +24,8 @@ import com.incture.zp.ereturns.services.UserService;
 import com.incture.zp.ereturns.services.WorkFlowService;
 import com.incture.zp.ereturns.services.WorkflowTrackerService;
 import com.incture.zp.ereturns.utils.RestInvoker;
+import com.incture.zp.ereturns.utils.ServiceUtil;
+import com.sap.core.connectivity.api.configuration.DestinationConfiguration;
 
 @Service
 @Transactional
@@ -49,14 +51,14 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 	String pwd;
 	
 	public WorkflowTrackerServiceImpl() {
-//		DestinationConfiguration destConfiguration = ServiceUtil.getDest(EReturnsWorkflowConstants.WORKFLOW_DESTINATION);
-//		destination = destConfiguration.getProperty(EReturnsWorkflowConstants.WORKFLOW_DESTINATION_URL);
-//		user = destConfiguration.getProperty(EReturnsWorkflowConstants.WORKFLOW_DESTINATION_USER);
-//		pwd = destConfiguration.getProperty(EReturnsWorkflowConstants.WORKFLOW_DESTINATION_PWD);
+		DestinationConfiguration destConfiguration = ServiceUtil.getDest(EReturnsWorkflowConstants.WORKFLOW_DESTINATION);
+		destination = destConfiguration.getProperty(EReturnsWorkflowConstants.WORKFLOW_DESTINATION_URL);
+		user = destConfiguration.getProperty(EReturnsWorkflowConstants.WORKFLOW_DESTINATION_USER);
+		pwd = destConfiguration.getProperty(EReturnsWorkflowConstants.WORKFLOW_DESTINATION_PWD);
 		
-		destination = EReturnsWorkflowConstants.WORKFLOW_DESTINATION_URL;
-		user = EReturnsWorkflowConstants.WORKFLOW_DESTINATION_USER;
-		pwd = EReturnsWorkflowConstants.WORKFLOW_DESTINATION_PWD;
+//		destination = EReturnsWorkflowConstants.WORKFLOW_DESTINATION_URL;
+//		user = EReturnsWorkflowConstants.WORKFLOW_DESTINATION_USER;
+//		pwd = EReturnsWorkflowConstants.WORKFLOW_DESTINATION_PWD;
 	}
 	
 	// Tracking

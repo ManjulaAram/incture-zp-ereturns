@@ -22,6 +22,8 @@ import com.incture.zp.ereturns.repositories.UserRepository;
 import com.incture.zp.ereturns.services.UserService;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
 import com.incture.zp.ereturns.utils.RestInvoker;
+import com.incture.zp.ereturns.utils.ServiceUtil;
+import com.sap.core.connectivity.api.configuration.DestinationConfiguration;
 
 @Service
 @Transactional
@@ -40,14 +42,14 @@ public class UserServiceImpl implements UserService {
 	String pwd;
 	
 	public UserServiceImpl() {
-//		DestinationConfiguration destConfiguration = ServiceUtil.getDest(EReturnConstants.SCIM_DESTINATION);
-//		destination = destConfiguration.getProperty(EReturnConstants.SCIM_DESTINATION_URL);
-//		user = destConfiguration.getProperty(EReturnConstants.SCIM_DESTINATION_USER);
-//		pwd = destConfiguration.getProperty(EReturnConstants.SCIM_DESTINATION_PWD);
+		DestinationConfiguration destConfiguration = ServiceUtil.getDest(EReturnConstants.SCIM_DESTINATION);
+		destination = destConfiguration.getProperty(EReturnConstants.SCIM_DESTINATION_URL);
+		user = destConfiguration.getProperty(EReturnConstants.SCIM_DESTINATION_USER);
+		pwd = destConfiguration.getProperty(EReturnConstants.SCIM_DESTINATION_PWD);
 		
-		destination = EReturnConstants.SCIM_DESTINATION_URL;
-		user = EReturnConstants.SCIM_DESTINATION_USER;
-		pwd = EReturnConstants.SCIM_DESTINATION_PWD;
+//		destination = EReturnConstants.SCIM_DESTINATION_URL;
+//		user = EReturnConstants.SCIM_DESTINATION_USER;
+//		pwd = EReturnConstants.SCIM_DESTINATION_PWD;
 
 	}
 	

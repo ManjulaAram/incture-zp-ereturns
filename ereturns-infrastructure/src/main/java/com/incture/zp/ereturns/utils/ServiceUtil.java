@@ -1,8 +1,14 @@
 package com.incture.zp.ereturns.utils;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import com.sap.core.connectivity.api.configuration.ConnectivityConfiguration;
+import com.sap.core.connectivity.api.configuration.DestinationConfiguration;
 
 @Component
 public class ServiceUtil {
@@ -16,19 +22,19 @@ public class ServiceUtil {
 		return false;
 	}
 	
-//	public static DestinationConfiguration getDest(String destinationName) {
-//		if (!ServiceUtil.isEmpty(destinationName)) {
-//			try {
-//				Context ctx = new InitialContext();
-//				ConnectivityConfiguration configuration =
-//						(ConnectivityConfiguration) ctx.lookup("java:comp/env/connectivityConfiguration");
-//				DestinationConfiguration destConfiguration = configuration.getConfiguration(destinationName);
-//				return destConfiguration;
-//			} catch (Exception e) {
-//				LOGGER.error("Workflow getting destination error:" + e.getMessage());
-//			}
-//		}
-//		return null;
-//	}
+	public static DestinationConfiguration getDest(String destinationName) {
+		if (!ServiceUtil.isEmpty(destinationName)) {
+			try {
+				Context ctx = new InitialContext();
+				ConnectivityConfiguration configuration =
+						(ConnectivityConfiguration) ctx.lookup("java:comp/env/connectivityConfiguration");
+				DestinationConfiguration destConfiguration = configuration.getConfiguration(destinationName);
+				return destConfiguration;
+			} catch (Exception e) {
+				LOGGER.error("Workflow getting destination error:" + e.getMessage());
+			}
+		}
+		return null;
+	}
 
 }

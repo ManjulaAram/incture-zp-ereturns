@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -120,8 +121,10 @@ public class RequestRepositoryImpl implements RequestRepository {
 				&& (requestDto.getEndDate() != null) && !(requestDto.getEndDate().equals(""))) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			try {
-				query.setParameter("startDate", sdf.parse(requestDto.getStartDate()));
-				query.setParameter("endDate", sdf.parse(requestDto.getEndDate()));
+				Date d1 = (Date) sdf.parse(requestDto.getStartDate());
+				Date d2 = (Date) sdf.parse(requestDto.getEndDate());
+				query.setParameter("startDate", d1);
+				query.setParameter("endDate", d2);
 			} catch (ParseException e) {
 				LOGGER.error("Exception On Date format:" + e.getMessage());
 			}

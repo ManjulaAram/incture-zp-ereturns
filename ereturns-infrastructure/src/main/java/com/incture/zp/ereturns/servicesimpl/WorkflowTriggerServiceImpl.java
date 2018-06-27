@@ -42,6 +42,8 @@ import com.incture.zp.ereturns.services.ReturnOrderService;
 import com.incture.zp.ereturns.services.WorkFlowService;
 import com.incture.zp.ereturns.services.WorkflowTriggerService;
 import com.incture.zp.ereturns.utils.RestInvoker;
+import com.incture.zp.ereturns.utils.ServiceUtil;
+import com.sap.core.connectivity.api.configuration.DestinationConfiguration;
 
 @Service
 @Transactional
@@ -72,14 +74,14 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 	String pwd;
 	
 	public WorkflowTriggerServiceImpl() {
-//		DestinationConfiguration destConfiguration = ServiceUtil.getDest(EReturnsWorkflowConstants.WORKFLOW_DESTINATION);
-//		destination = destConfiguration.getProperty(EReturnsWorkflowConstants.WORKFLOW_DESTINATION_URL);
-//		user = destConfiguration.getProperty(EReturnsWorkflowConstants.WORKFLOW_DESTINATION_USER);
-//		pwd = destConfiguration.getProperty(EReturnsWorkflowConstants.WORKFLOW_DESTINATION_PWD);
+		DestinationConfiguration destConfiguration = ServiceUtil.getDest(EReturnsWorkflowConstants.WORKFLOW_DESTINATION);
+		destination = destConfiguration.getProperty(EReturnsWorkflowConstants.WORKFLOW_DESTINATION_URL);
+		user = destConfiguration.getProperty(EReturnsWorkflowConstants.WORKFLOW_DESTINATION_USER);
+		pwd = destConfiguration.getProperty(EReturnsWorkflowConstants.WORKFLOW_DESTINATION_PWD);
 		
-		destination = EReturnsWorkflowConstants.WORKFLOW_DESTINATION_URL;
-		user = EReturnsWorkflowConstants.WORKFLOW_DESTINATION_USER;
-		pwd = EReturnsWorkflowConstants.WORKFLOW_DESTINATION_PWD;
+//		destination = EReturnsWorkflowConstants.WORKFLOW_DESTINATION_URL;
+//		user = EReturnsWorkflowConstants.WORKFLOW_DESTINATION_USER;
+//		pwd = EReturnsWorkflowConstants.WORKFLOW_DESTINATION_PWD;
 
 	}
 	
@@ -371,6 +373,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			obj.put(EReturnsWorkflowConstants.ACTION, EReturnsWorkflowConstants.WORKFLOW_A);
 			obj.put(EReturnsWorkflowConstants.WORKFLOW_LOGIN_USER, loginUser);
 			obj.put(EReturnsWorkflowConstants.WORKFLOW_COMMENTS, comments);
+			obj.put(EReturnsWorkflowConstants.WORKFLOW_FLAG, EReturnsWorkflowConstants.STATUS_APPROVED);
 			jsonObj.put(EReturnsWorkflowConstants.CONTEXT, obj);
 
 			payloadData = jsonObj.toString();
@@ -381,6 +384,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			obj.put(EReturnsWorkflowConstants.ACTION, EReturnsWorkflowConstants.WORKFLOW_R);
 			obj.put(EReturnsWorkflowConstants.WORKFLOW_LOGIN_USER, loginUser);
 			obj.put(EReturnsWorkflowConstants.WORKFLOW_COMMENTS, comments);
+			obj.put(EReturnsWorkflowConstants.WORKFLOW_FLAG, EReturnsWorkflowConstants.STATUS_REJECTED);
 			jsonObj.put(EReturnsWorkflowConstants.CONTEXT, obj);
 
 			payloadData = jsonObj.toString();
