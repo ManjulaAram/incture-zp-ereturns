@@ -16,6 +16,7 @@ import com.incture.zp.ereturns.dto.CustomerDto;
 import com.incture.zp.ereturns.dto.HeaderDto;
 import com.incture.zp.ereturns.dto.ItemDto;
 import com.incture.zp.ereturns.dto.RequestDto;
+import com.incture.zp.ereturns.dto.RequestHistoryDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.ReasonDto;
 import com.incture.zp.ereturns.dto.UserDto;
@@ -25,6 +26,7 @@ import com.incture.zp.ereturns.model.Customer;
 import com.incture.zp.ereturns.model.Header;
 import com.incture.zp.ereturns.model.Item;
 import com.incture.zp.ereturns.model.Request;
+import com.incture.zp.ereturns.model.RequestHistory;
 import com.incture.zp.ereturns.model.ReturnOrder;
 import com.incture.zp.ereturns.model.Reason;
 import com.incture.zp.ereturns.model.User;
@@ -425,6 +427,66 @@ public class ImportExportUtil {
 
 		return workFlow;
 
+	}
+
+	public RequestHistory importRequestHistoryDto(RequestHistoryDto requestHistoryDto) {
+		RequestHistory requestHistory = new RequestHistory();
+		requestHistory.setRequestApprovedBy(requestHistoryDto.getRequestApprovedBy());
+		if (requestHistoryDto.getRequestApprovedDate() != null && !(requestHistoryDto.getRequestApprovedDate().equals(""))) {
+			requestHistory.setRequestApprovedDate(convertStringToDate(requestHistoryDto.getRequestApprovedDate()));
+		}
+		requestHistory.setRequestCreatedBy(requestHistoryDto.getRequestCreatedBy());
+
+		if (requestHistoryDto.getRequestCreatedDate() != null && !(requestHistoryDto.getRequestCreatedDate().equals(""))) {
+			requestHistory.setRequestCreatedDate(convertStringToDate(requestHistoryDto.getRequestCreatedDate()));
+		}
+		requestHistory.setRequestId(requestHistoryDto.getRequestId());
+		requestHistory.setRequestPendingWith(requestHistoryDto.getRequestPendingWith());
+		requestHistory.setRequestStatus(requestHistoryDto.getRequestStatus());
+		requestHistory.setRequestUpdatedBy(requestHistoryDto.getRequestUpdatedBy());
+		if (requestHistoryDto.getRequestUpdatedDate() != null && !(requestHistoryDto.getRequestUpdatedDate().equals(""))) {
+			requestHistory.setRequestUpdatedDate(convertStringToDate(requestHistoryDto.getRequestUpdatedDate()));
+		}
+
+		requestHistory.setCustomer(requestHistoryDto.getCustomer());
+		requestHistory.setInvoiceNo(requestHistoryDto.getInvoiceNo());
+		requestHistory.setItemCode(requestHistoryDto.getItemCode());
+		requestHistory.setMaterial(requestHistoryDto.getMaterial());
+		requestHistory.setRequestHistoryId(requestHistoryDto.getRequestHistoryId());
+		requestHistory.setRequestorComments(requestHistoryDto.getRequestorComments());
+		
+		return requestHistory;
+	}
+
+	public RequestHistoryDto exportRequestHistoryDto(RequestHistory requestHistory) {
+		
+		RequestHistoryDto requestHistoryDto = new RequestHistoryDto();
+		requestHistoryDto.setRequestApprovedBy(requestHistoryDto.getRequestApprovedBy());
+		if (requestHistory.getRequestApprovedDate() != null && !(requestHistory.getRequestApprovedDate().equals(""))) {
+			requestHistoryDto.setRequestApprovedDate(convertDateToString(requestHistory.getRequestApprovedDate()));
+		}
+		requestHistoryDto.setRequestCreatedBy(requestHistoryDto.getRequestCreatedBy());
+
+		if (requestHistory.getRequestCreatedDate() != null && !(requestHistory.getRequestCreatedDate().equals(""))) {
+			requestHistoryDto.setRequestCreatedDate(convertDateToString(requestHistory.getRequestCreatedDate()));
+		}
+		requestHistoryDto.setRequestId(requestHistoryDto.getRequestId());
+		requestHistoryDto.setRequestPendingWith(requestHistoryDto.getRequestPendingWith());
+		requestHistoryDto.setRequestStatus(requestHistoryDto.getRequestStatus());
+		requestHistoryDto.setRequestUpdatedBy(requestHistoryDto.getRequestUpdatedBy());
+		if (requestHistory.getRequestUpdatedDate() != null && !(requestHistory.getRequestUpdatedDate().equals(""))) {
+			requestHistoryDto.setRequestUpdatedDate(convertDateToString(requestHistory.getRequestUpdatedDate()));
+		}
+
+		requestHistoryDto.setCustomer(requestHistoryDto.getCustomer());
+		requestHistoryDto.setInvoiceNo(requestHistoryDto.getInvoiceNo());
+		requestHistoryDto.setItemCode(requestHistoryDto.getItemCode());
+		requestHistoryDto.setMaterial(requestHistoryDto.getMaterial());
+		requestHistoryDto.setRequestHistoryId(requestHistoryDto.getRequestHistoryId());
+		requestHistoryDto.setRequestorComments(requestHistoryDto.getRequestorComments());
+
+		
+		return requestHistoryDto;
 	}
 
 	private String convertDateToString(Date input) {

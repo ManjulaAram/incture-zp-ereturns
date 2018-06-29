@@ -1,77 +1,36 @@
-package com.incture.zp.ereturns.model;
+package com.incture.zp.ereturns.dto;
 
-import java.util.Date;
+public class RequestHistoryDto {
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-@Entity
-@Table(name = "T_REQUEST_HISTORY")
-public class RequestHistory {
-
-	@Id
-	@Column(name = "REQUEST_HISTORY_ID")
-	@GeneratedValue(strategy= GenerationType.AUTO)
 	private Long requestHistoryId;
 	
-	@Column(name = "REQ_CREATED_BY")
 	private String requestCreatedBy;
 	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "REQ_CREATED_DATE")
-	private Date requestCreatedDate;
+	private String requestCreatedDate;
 	
-	@Column(name = "REQ_STATUS")
 	private String requestStatus;
 	
-	@Column(name = "REQ_UPDATED_BY")
 	private String requestUpdatedBy;
 	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "REQ_UPDATED_DATE")
-	private Date requestUpdatedDate;
+	private String requestUpdatedDate;
 
-	@Column(name = "REQ_APPROVED_BY")
 	private String requestApprovedBy;
 	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "REQ_APPROVED_DATE")
-	private Date requestApprovedDate;
+	private String requestApprovedDate;
 	
-	@Column(name = "REQ_PENDING_WITH")
 	private String requestPendingWith;
 
-	@Column(name = "REQUEST_ID")
 	private String requestId;
 	
-	@Column(name = "INVOICE_NO")
 	private String invoiceNo;  
 	
-	@Column(name = "ITEM_CODE")
 	private String itemCode;  
 	
-	@Column(name = "MATERIAL")
 	private String material; 
 
-	@Column(name = "CUSTOMER")
 	private String customer; 
 	
-	@Column(name = "REQUESTOR_COMMENTS")
-	private String requestorComments; 
-	
-	public Long getRequestHistoryId() {
-		return requestHistoryId;
-	}
-
-	public void setRequestHistoryId(Long requestHistoryId) {
-		this.requestHistoryId = requestHistoryId;
-	}
+	private String requestorComments;
 
 	public String getRequestCreatedBy() {
 		return requestCreatedBy;
@@ -81,11 +40,11 @@ public class RequestHistory {
 		this.requestCreatedBy = requestCreatedBy;
 	}
 
-	public Date getRequestCreatedDate() {
+	public String getRequestCreatedDate() {
 		return requestCreatedDate;
 	}
 
-	public void setRequestCreatedDate(Date requestCreatedDate) {
+	public void setRequestCreatedDate(String requestCreatedDate) {
 		this.requestCreatedDate = requestCreatedDate;
 	}
 
@@ -105,11 +64,11 @@ public class RequestHistory {
 		this.requestUpdatedBy = requestUpdatedBy;
 	}
 
-	public Date getRequestUpdatedDate() {
+	public String getRequestUpdatedDate() {
 		return requestUpdatedDate;
 	}
 
-	public void setRequestUpdatedDate(Date requestUpdatedDate) {
+	public void setRequestUpdatedDate(String requestUpdatedDate) {
 		this.requestUpdatedDate = requestUpdatedDate;
 	}
 
@@ -121,11 +80,11 @@ public class RequestHistory {
 		this.requestApprovedBy = requestApprovedBy;
 	}
 
-	public Date getRequestApprovedDate() {
+	public String getRequestApprovedDate() {
 		return requestApprovedDate;
 	}
 
-	public void setRequestApprovedDate(Date requestApprovedDate) {
+	public void setRequestApprovedDate(String requestApprovedDate) {
 		this.requestApprovedDate = requestApprovedDate;
 	}
 
@@ -153,6 +112,14 @@ public class RequestHistory {
 		this.invoiceNo = invoiceNo;
 	}
 
+	public String getItemCode() {
+		return itemCode;
+	}
+
+	public void setItemCode(String itemCode) {
+		this.itemCode = itemCode;
+	}
+
 	public String getMaterial() {
 		return material;
 	}
@@ -169,14 +136,6 @@ public class RequestHistory {
 		this.customer = customer;
 	}
 
-	public String getItemCode() {
-		return itemCode;
-	}
-
-	public void setItemCode(String itemCode) {
-		this.itemCode = itemCode;
-	}
-
 	public String getRequestorComments() {
 		return requestorComments;
 	}
@@ -184,5 +143,13 @@ public class RequestHistory {
 	public void setRequestorComments(String requestorComments) {
 		this.requestorComments = requestorComments;
 	}
+
+	public Long getRequestHistoryId() {
+		return requestHistoryId;
+	}
+
+	public void setRequestHistoryId(Long requestHistoryId) {
+		this.requestHistoryId = requestHistoryId;
+	} 
 
 }

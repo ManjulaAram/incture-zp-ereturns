@@ -6,6 +6,6 @@ public interface NotificationService {
 
 	public ResponseDto sendNotificationForApprover(String requestId, String pendingWith);
 	
-	public ResponseDto sendNotificationForRequestor(String requestId, String createdBy);
+	public ResponseDto sendNotificationForRequestor(String requestId, String createdBy, String action);
 	
 }

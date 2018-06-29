@@ -209,7 +209,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			}
 			if(responseDto != null && eccFlag) {
 				if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_SUCCESS_STATUS)) {
-					notificationService.sendNotificationForRequestor(res.getRequestId(), res.getRequestCreatedBy());
+					notificationService.sendNotificationForRequestor(res.getRequestId(), res.getRequestCreatedBy(), "A");
 					requestRepository.updateEccReturnOrder(EReturnConstants.COMPLETE, responseDto.getMessage(), requestId);
 				} else if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_ERROR_STATUS)) {
 					responseDto.setMessage(responseDto.getMessage());
@@ -254,6 +254,9 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 				if(res.getRequestPendingWith() != null && !(res.getRequestPendingWith().equals(""))) {
 					notificationService.sendNotificationForApprover(res.getRequestId(), res.getRequestPendingWith());
 				}
+				if(res.getRequestStatus() != null && res.getRequestStatus().equalsIgnoreCase("REJECTED")) {
+					notificationService.sendNotificationForRequestor(res.getRequestId(), res.getRequestCreatedBy(), "R");
+				}
 			}
 		} catch (MalformedURLException e) {
 			responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
@@ -275,7 +278,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 	}
 
 	public synchronized ResponseDto requestAction(String taskInstanceId, String reqStatus, String loginUser, String comments) {
-		String responseData = "";
+		
 		List<String> cookies = null;
 		String csrfToken = "";
 		String payloadData;
@@ -283,7 +286,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
 		String responseCode = "";
 		payloadData = buildPayload(reqStatus, loginUser, comments);
-		LOGGER.error(payloadData);
+		LOGGER.error("Payload for Approver action:"+payloadData);
 
 		try {
 
@@ -344,11 +347,11 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			os.flush();
 
 			postUrlConnection.connect();
-			responseData = getDataFromStream(postUrlConnection.getInputStream());
+			String responseData = getDataFromStream(postUrlConnection.getInputStream());
 			responseCode = postUrlConnection.getResponseCode() + "";
-			LOGGER.error(responseCode+":response data after complete workflow:" + responseData.toString());
 			responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
 			responseDto.setCode(responseCode);
+			responseDto.setMessage(responseData);
 		} catch (MalformedURLException e) {
 			responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
 			responseDto.setMessage(e.getMessage());

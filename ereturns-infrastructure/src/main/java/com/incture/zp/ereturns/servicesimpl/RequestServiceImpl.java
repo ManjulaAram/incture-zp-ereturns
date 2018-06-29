@@ -217,7 +217,6 @@ public class RequestServiceImpl implements RequestService {
 			jsonObj.put(EReturnsWorkflowConstants.INVOICE, requestDto.getHeaderDto().getInvoiceNo());
 			jsonObj.put(EReturnsWorkflowConstants.MATERIAL, itemDto.getMaterialDesc());
 
-
 			JSONObject obj = new JSONObject();
 			obj.put(EReturnsWorkflowConstants.CONTEXT, jsonObj);
 			obj.put(EReturnsWorkflowConstants.DEFINITION_ID, EReturnsWorkflowConstants.DEFINITION_VALUE);
@@ -259,7 +258,7 @@ public class RequestServiceImpl implements RequestService {
 			}
 			if(eccFlag) {
 				if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_SUCCESS_STATUS)) {
-					notificationService.sendNotificationForRequestor(requestDto2.getRequestId(), requestDto2.getRequestCreatedBy());
+					notificationService.sendNotificationForRequestor(requestDto2.getRequestId(), requestDto2.getRequestCreatedBy(), "A");
 					requestRepository.updateEccReturnOrder(EReturnConstants.COMPLETE, responseDto.getMessage(), requestId);
 				} else if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_ERROR_STATUS)) {
 					responseDto.setMessage(responseDto.getMessage());

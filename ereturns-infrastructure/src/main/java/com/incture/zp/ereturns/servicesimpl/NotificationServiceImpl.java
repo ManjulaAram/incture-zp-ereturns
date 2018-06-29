@@ -71,7 +71,7 @@ public class NotificationServiceImpl implements NotificationService {
 		return responseDto;
 	}
 	
-	public ResponseDto sendNotificationForRequestor(String requestId, String createdBy) {
+	public ResponseDto sendNotificationForRequestor(String requestId, String createdBy, String action) {
 
 		ResponseDto responseDto = new ResponseDto();
 		PushNotificationUtil notifyUtil = new PushNotificationUtil();
@@ -81,11 +81,14 @@ public class NotificationServiceImpl implements NotificationService {
 			if(userDto != null && !(userDto.getMobileToken().equals(""))) {
 				String token = userDto.getMobileToken();
 				try {
-					StatusRequestDto statusRequestDto=new StatusRequestDto();
 					Map<String, String> messageMap=new HashMap<String, String>();
-					statusRequestDto.setRequestId(requestId);
-					messageMap.put("messageTitle", "Request Approved");
-					messageMap.put("messageBody",("Your Request "+requestId+" is approved"));
+					if(action != null && !(action.equals("")) && action.equalsIgnoreCase("A")) {
+						messageMap.put("messageTitle", "Request Approved");
+						messageMap.put("messageBody",("Your Request "+requestId+" is approved"));
+					} else {
+						messageMap.put("messageTitle", "Request Rejected");
+						messageMap.put("messageBody",("Your Request "+requestId+" is Rejected"));
+					}
 					notifyUtil.sendNotification(messageMap.get("messageTitle"), token, messageMap.get("messageBody"), null);
 					responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
 					responseDto.setMessage("Notification sent");

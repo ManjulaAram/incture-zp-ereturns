@@ -98,7 +98,8 @@ public class RequestRepositoryImpl implements RequestRepository {
 			queryString.append(" AND i.principalCode=:principalCode");
 		}
 		
-		LOGGER.error("Query for Status details:" + queryString.toString());
+		queryString.append(" ORDER BY r.requestId DESC");
+		LOGGER.error("Query for Status details:" + queryString);
 		Query query = sessionFactory.getCurrentSession().createQuery(queryString.toString());
 		if (requestDto.getRequestId() != null && !(requestDto.getRequestId().equals(""))) {
 			query.setParameter("requestId", requestDto.getRequestId());
@@ -165,10 +166,10 @@ public class RequestRepositoryImpl implements RequestRepository {
 							statusResponseDto.setReturnValue(returnOrder2.getReturnValue());
 							statusResponseDto.setSalesPerson(EReturnConstants.SALES_PERSON);
 							statusResponseDto.setOrderComments(returnOrder2.getOrderComments());
-//							if(returnOrder2.getReason() != null && !(returnOrder2.getReason().equals("")))
-//								statusResponseDto.setReason(reasonRepository.getReasonById(returnOrder2.getReason()));
-//							else
-//								statusResponseDto.setReason("");
+							if(returnOrder2.getReason() != null && !(returnOrder2.getReason().equals("")))
+								statusResponseDto.setReason(reasonRepository.getReasonById(returnOrder2.getReason()));
+							else
+								statusResponseDto.setReason("");
 							statusResponseDto.setBatch(item2.getBatch());
 							if(item2.getExpiryDate() != null && !(item2.getExpiryDate().equals("")))
 								statusResponseDto.setExpiryDate(dateFormat.format(item2.getExpiryDate()));
