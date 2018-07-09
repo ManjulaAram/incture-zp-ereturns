@@ -6,12 +6,14 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import com.incture.zp.ereturns.dto.RequestHistoryDto;
 import com.incture.zp.ereturns.model.RequestHistory;
 import com.incture.zp.ereturns.repositories.RequestHistoryRepository;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
 
+@Repository
 public class RequestHistoryRepositoryImpl implements RequestHistoryRepository {
 	
 	@Autowired
@@ -19,7 +21,7 @@ public class RequestHistoryRepositoryImpl implements RequestHistoryRepository {
 
 	@Autowired
 	ImportExportUtil importExportUtil;
-
+	
 	@Override
 	public List<RequestHistoryDto> getRequestHistory(String requestId) {
 		

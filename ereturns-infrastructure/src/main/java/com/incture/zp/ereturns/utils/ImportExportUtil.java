@@ -461,29 +461,29 @@ public class ImportExportUtil {
 	public RequestHistoryDto exportRequestHistoryDto(RequestHistory requestHistory) {
 		
 		RequestHistoryDto requestHistoryDto = new RequestHistoryDto();
-		requestHistoryDto.setRequestApprovedBy(requestHistoryDto.getRequestApprovedBy());
+		requestHistoryDto.setRequestApprovedBy(requestHistory.getRequestApprovedBy());
 		if (requestHistory.getRequestApprovedDate() != null && !(requestHistory.getRequestApprovedDate().equals(""))) {
 			requestHistoryDto.setRequestApprovedDate(convertDateToString(requestHistory.getRequestApprovedDate()));
 		}
-		requestHistoryDto.setRequestCreatedBy(requestHistoryDto.getRequestCreatedBy());
+		requestHistoryDto.setRequestCreatedBy(requestHistory.getRequestCreatedBy());
 
 		if (requestHistory.getRequestCreatedDate() != null && !(requestHistory.getRequestCreatedDate().equals(""))) {
 			requestHistoryDto.setRequestCreatedDate(convertDateToString(requestHistory.getRequestCreatedDate()));
 		}
-		requestHistoryDto.setRequestId(requestHistoryDto.getRequestId());
-		requestHistoryDto.setRequestPendingWith(requestHistoryDto.getRequestPendingWith());
-		requestHistoryDto.setRequestStatus(requestHistoryDto.getRequestStatus());
-		requestHistoryDto.setRequestUpdatedBy(requestHistoryDto.getRequestUpdatedBy());
+		requestHistoryDto.setRequestId(requestHistory.getRequestId());
+		requestHistoryDto.setRequestPendingWith(requestHistory.getRequestPendingWith());
+		requestHistoryDto.setRequestStatus(requestHistory.getRequestStatus());
+		requestHistoryDto.setRequestUpdatedBy(requestHistory.getRequestUpdatedBy());
 		if (requestHistory.getRequestUpdatedDate() != null && !(requestHistory.getRequestUpdatedDate().equals(""))) {
 			requestHistoryDto.setRequestUpdatedDate(convertDateToString(requestHistory.getRequestUpdatedDate()));
 		}
 
-		requestHistoryDto.setCustomer(requestHistoryDto.getCustomer());
-		requestHistoryDto.setInvoiceNo(requestHistoryDto.getInvoiceNo());
-		requestHistoryDto.setItemCode(requestHistoryDto.getItemCode());
-		requestHistoryDto.setMaterial(requestHistoryDto.getMaterial());
-		requestHistoryDto.setRequestHistoryId(requestHistoryDto.getRequestHistoryId());
-		requestHistoryDto.setRequestorComments(requestHistoryDto.getRequestorComments());
+		requestHistoryDto.setCustomer(requestHistory.getCustomer());
+		requestHistoryDto.setInvoiceNo(requestHistory.getInvoiceNo());
+		requestHistoryDto.setItemCode(requestHistory.getItemCode());
+		requestHistoryDto.setMaterial(requestHistory.getMaterial());
+		requestHistoryDto.setRequestHistoryId(requestHistory.getRequestHistoryId());
+		requestHistoryDto.setRequestorComments(requestHistory.getRequestorComments());
 
 		
 		return requestHistoryDto;

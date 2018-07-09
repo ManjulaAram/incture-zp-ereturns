@@ -5,12 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.transaction.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.dto.ResponseDto;
@@ -71,6 +70,7 @@ public class NotificationServiceImpl implements NotificationService {
 		return responseDto;
 	}
 	
+	@Override
 	public ResponseDto sendNotificationForRequestor(String requestId, String createdBy, String action) {
 
 		ResponseDto responseDto = new ResponseDto();
@@ -82,10 +82,10 @@ public class NotificationServiceImpl implements NotificationService {
 				String token = userDto.getMobileToken();
 				try {
 					Map<String, String> messageMap=new HashMap<String, String>();
-					if(action != null && !(action.equals("")) && action.equalsIgnoreCase("A")) {
+					if(action.equalsIgnoreCase("A")) {
 						messageMap.put("messageTitle", "Request Approved");
 						messageMap.put("messageBody",("Your Request "+requestId+" is approved"));
-					} else {
+					} else if(action.equalsIgnoreCase("R")) {
 						messageMap.put("messageTitle", "Request Rejected");
 						messageMap.put("messageBody",("Your Request "+requestId+" is Rejected"));
 					}

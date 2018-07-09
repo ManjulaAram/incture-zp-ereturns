@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.dto.EmailDto;
+import com.incture.zp.ereturns.dto.IdpUserDetailsDto;
 import com.incture.zp.ereturns.dto.IdpUserIdDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.UserDto;
@@ -70,8 +71,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public EmailDto getEmailByRole(String role) {
+	public EmailDto getEmailByRole(String role, String createdBy) {
 		EmailDto emailDto = new EmailDto();
+		
 		String url = destination;
 		String username = user;
 		String password = pwd;
@@ -107,7 +109,13 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 		LOGGER.error("Idp Email by Role:"+sb.toString());
-		emailDto.setEmail(sb.toString());
+		if(role != null && !(role.equals(""))) {
+			emailDto.setEmail(sb.toString());
+		} 
+		if(role.equalsIgnoreCase("NA")){
+			IdpUserDetailsDto details = getIdpUserDetailsById(createdBy);
+			emailDto.setEmail(details.getEmail());
+		}
 		return emailDto;
 	}
 	
@@ -178,14 +186,52 @@ public class UserServiceImpl implements UserService {
 		String response = restInvoker.getData(path);
 
 		JSONObject responseObject=new JSONObject(response);
-		if(responseObject.get(EReturnConstants.IDP_NAME).toString()!="" && responseObject.get(EReturnConstants.IDP_NAME).toString()!=null)
+		if(responseObject.get(EReturnConstants.IDP_NAME) != null && !(responseObject.get(EReturnConstants.IDP_NAME).equals("")))
 		{
-		JSONObject nameObject=new JSONObject();
-		nameObject=(JSONObject)responseObject.get(EReturnConstants.IDP_NAME);
-		userName.append(nameObject.get(EReturnConstants.IDP_GIVEN_NAME)).append(" ");
-		userName.append(nameObject.get(EReturnConstants.IDP_FAMILY_NAME));
+			JSONObject nameObject=new JSONObject();
+			nameObject=(JSONObject)responseObject.get(EReturnConstants.IDP_NAME);
+			userName.append(nameObject.get(EReturnConstants.IDP_GIVEN_NAME)).append(" ");
+			userName.append(nameObject.get(EReturnConstants.IDP_FAMILY_NAME));
 		}
 		return userName.toString();
+	}
+
+	@Override
+	public IdpUserDetailsDto getIdpUserDetailsById(String userId) {
+		IdpUserDetailsDto idpUserIdDto = new IdpUserDetailsDto();
+		StringBuilder userName = new StringBuilder();
+		String url = destination;
+		String username = user;
+		String password = pwd;
+		String path="";
+		RestInvoker restInvoker = new RestInvoker(url, username, password);
+		path="/"+userId;
+		String response = restInvoker.getData(path);
+
+		JSONObject responseObject=new JSONObject(response);
+		if(responseObject != null) {
+			if(responseObject.get(EReturnConstants.IDP_NAME) != null && !(responseObject.get(EReturnConstants.IDP_NAME).equals("")))
+			{
+				JSONObject nameObject=new JSONObject();
+				nameObject=(JSONObject)responseObject.get(EReturnConstants.IDP_NAME);
+				userName.append(nameObject.get(EReturnConstants.IDP_GIVEN_NAME)).append(" ");
+				userName.append(nameObject.get(EReturnConstants.IDP_FAMILY_NAME));
+			}
+			idpUserIdDto.setUserName(userName.toString());
+			if(responseObject.get(EReturnConstants.IDP_EMAILS) != null && !(responseObject.get(EReturnConstants.IDP_EMAILS).equals("")))
+			{
+				JSONArray mailArray = new JSONArray();
+				mailArray = (JSONArray) responseObject.get(EReturnConstants.IDP_EMAILS);
+				for (int mailCounter = 0; mailCounter < mailArray.length(); mailCounter++) {
+					JSONObject mailObject = new JSONObject();
+					mailObject=(JSONObject)mailArray.get(mailCounter);
+					String email = "";
+					email = mailObject.get(EReturnConstants.IDP_VALUE).toString();
+					idpUserIdDto.setEmail(email);
+				} 
+			}
+		}
+		return idpUserIdDto;
 	}
 
 	public ResponseDto loginUser() {

@@ -16,6 +16,7 @@ import com.incture.zp.ereturns.dto.CompleteTaskRequestDto;
 import com.incture.zp.ereturns.dto.CompleteTasksDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
+import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.StatusPendingDto;
 import com.incture.zp.ereturns.dto.StatusRequestDto;
 import com.incture.zp.ereturns.dto.StatusResponseDto;
@@ -34,7 +35,7 @@ public class EReturnsRequestController {
 
 	@Autowired
 	RequestService requestService;
-	
+
 	@Autowired
 	WorkflowTrackerService wfTraackerService;
 
@@ -99,7 +100,15 @@ public class EReturnsRequestController {
 	public ResponseDto completeWorkflow(@RequestBody CompleteTasksDto completeTasksDto) {
 		ResponseDto responseDto = null;
 		for(CompleteTaskRequestDto completeTaskRequestDto : completeTasksDto.getCompleteRequestDto()) {
-			responseDto = workFlowTriggerService.completeTask(completeTaskRequestDto);
+			List<ReturnOrderDto> list = returnOrderService.getReturnOrderByRequestId(completeTaskRequestDto.getRequestId());
+			for(ReturnOrderDto returnOrderDto : list) {
+				completeTaskRequestDto.setItemCode(returnOrderDto.getItemCode());
+				completeTaskRequestDto.setRequestId(returnOrderDto.getRequestId());
+				completeTaskRequestDto.setFlag(completeTaskRequestDto.getFlag());
+				completeTaskRequestDto.setLoginUser(completeTaskRequestDto.getLoginUser());
+				completeTaskRequestDto.setOrderComments(completeTaskRequestDto.getOrderComments());
+				responseDto = workFlowTriggerService.completeTask(completeTaskRequestDto);
+			}
 		}
 		return responseDto;
 		 
@@ -108,7 +117,14 @@ public class EReturnsRequestController {
 	@RequestMapping(value = "/getTaskInstance", method = RequestMethod.POST,consumes = { "application/json" })
 	@ResponseBody
 	public WorkflowInstanceDto getAllRequests(@RequestBody CompleteTaskRequestDto completeTaskRequestDto) {
-		return wfTraackerService.getTaskDetails(completeTaskRequestDto);
+//		return wfTraackerService.getTaskDetails(completeTaskRequestDto);
+		return wfTraackerService.getTrackDetails(completeTaskRequestDto);
+	}
+	
+	@RequestMapping(value = "/getTrackDetails", method = RequestMethod.POST,consumes = { "application/json" })
+	@ResponseBody
+	public WorkflowInstanceDto getTrackDetails(@RequestBody CompleteTaskRequestDto completeTaskRequestDto) {
+		return wfTraackerService.getTrackDetails(completeTaskRequestDto);
 	}
 	
 	@RequestMapping(value = "/pushData", method = RequestMethod.POST, consumes = { "application/json" })
@@ -121,6 +137,12 @@ public class EReturnsRequestController {
 	@ResponseBody
 	public StatusPendingDto getRequestStatusByUserId(@PathVariable(value = "userId") String userId) {
 		return returnOrderService.getRequestStatusByUserId(userId);
+	}
+	
+	@RequestMapping(value = "/getRequestStatus/{requestId}", method = RequestMethod.GET)
+	@ResponseBody
+	public String getRequestStatus(@PathVariable(value = "requestId") String requestId) {
+		return requestService.getRequestStatus(requestId);
 	}
 	
 	@RequestMapping(value = "/pushDataToECC/{requestId}", method = RequestMethod.GET)

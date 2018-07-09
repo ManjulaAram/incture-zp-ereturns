@@ -120,7 +120,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 		}
 		if ((requestDto.getStartDate() != null && !(requestDto.getStartDate().equals("")))
 				&& (requestDto.getEndDate() != null) && !(requestDto.getEndDate().equals(""))) {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			try {
 				Date d1 = (Date) sdf.parse(requestDto.getStartDate());
 				Date d2 = (Date) sdf.parse(requestDto.getEndDate());
@@ -166,6 +166,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 							statusResponseDto.setReturnValue(returnOrder2.getReturnValue());
 							statusResponseDto.setSalesPerson(EReturnConstants.SALES_PERSON);
 							statusResponseDto.setOrderComments(returnOrder2.getOrderComments());
+							statusResponseDto.setPrincipalCode(item2.getPrincipalCode());
 							if(returnOrder2.getReason() != null && !(returnOrder2.getReason().equals("")))
 								statusResponseDto.setReason(reasonRepository.getReasonById(returnOrder2.getReason()));
 							else
@@ -177,6 +178,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 								statusResponseDto.setExpiryDate("");
 	
 							// Request Level
+							statusResponseDto.setCurrency(request.getRequestHeader().getCurrency());
 							statusResponseDto.setEccResponse(request.getEccReturnOrderNo());
 							statusResponseDto.setRequestId(request.getRequestId());
 							statusResponseDto.setShipTo(request.getShipTo());
@@ -227,6 +229,16 @@ public class RequestRepositoryImpl implements RequestRepository {
 			list.add(importExportUtil.exportRequestDto(request));
 		}
 		return list;
+	}
+
+	@Override
+	public String getRequestStatus(String requestId) {
+		String str = "SELECT r.requestStatus FROM Request r WHERE r.requestId=:requestId";
+		Query query = sessionFactory.getCurrentSession().createQuery(str);
+		query.setParameter("requestId", requestId);
+		String status = (String) query.uniqueResult();
+		LOGGER.error("Request status:" + status);
+		return status;
 	}
 
 	public int updateEccReturnOrder(String eccStatus, String eccNo, String requestId) {

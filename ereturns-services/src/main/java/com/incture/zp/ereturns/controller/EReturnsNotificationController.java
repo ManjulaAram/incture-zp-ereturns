@@ -36,7 +36,7 @@ public class EReturnsNotificationController {
 	@ResponseBody
 	@RequestMapping(path = "/sendNotificationForRequestor", method = RequestMethod.POST)
 	public ResponseDto sendNotificationForRequestor(@RequestBody RequestDto requestDto) {
-		return notifyService.sendNotificationForRequestor(requestDto.getRequestId(), requestDto.getRequestCreatedBy(), "");
+		return notifyService.sendNotificationForRequestor(requestDto.getRequestId(), requestDto.getRequestCreatedBy(), "A");
 
 	}
 }

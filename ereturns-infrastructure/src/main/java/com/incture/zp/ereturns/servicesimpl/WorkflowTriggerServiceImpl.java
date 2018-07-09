@@ -169,7 +169,6 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 				.getWorkFLowInstance(requestId, requestDto.getItemCode()).getWorkFlowInstanceId();
 		String responseData = "";
 
-		LOGGER.error("workflowInstanceId" + workFlowInstanceId);
 		try {
 
 			synchronized(this) {
@@ -195,68 +194,75 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 					instanceId=instanceObject.get(EReturnConstants.IDP_ID).toString();
 				}
 			}
+			LOGGER.error("Instance Id from workflow:" + instanceId);
 			if(instanceId != null && !(instanceId.equals(""))){
 				responseDto = requestAction(instanceId, requestDto.getFlag(), requestDto.getLoginUser(), requestDto.getOrderComments());
 			}
-			RequestDto res = requestService.getRequestById(requestDto.getRequestId());
-			if (responseDto.getCode().equals(EReturnConstants.WORKFLOW_STATUS_CODE)) {
-				Thread.sleep(5000);
-				String status = updateOrderDetails(instanceId);
-				if(status.equalsIgnoreCase(EReturnConstants.COMPLETE)) {
-					responseDto = hciMappingService.pushDataToEcc(res);
-					eccFlag = true;
-				}
-			}
-			if(responseDto != null && eccFlag) {
-				if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_SUCCESS_STATUS)) {
-					notificationService.sendNotificationForRequestor(res.getRequestId(), res.getRequestCreatedBy(), "A");
-					requestRepository.updateEccReturnOrder(EReturnConstants.COMPLETE, responseDto.getMessage(), requestId);
-				} else if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_ERROR_STATUS)) {
-					responseDto.setMessage(responseDto.getMessage());
-					
-					//Re-triggering the process
-					workFlowService.deleteWorkflow(requestId);
-					LOGGER.error("Re-Triggering workflow:" + responseDto.getMessage());
-					for (ItemDto itemDto : res.getHeaderDto().getItemSet()) {
-						String workflowInstanceId = "";
-						WorkFlowDto workFlowDto = new WorkFlowDto();
-
-						// start process
-						JSONObject jsonObj = new JSONObject();
-						jsonObj.put(EReturnsWorkflowConstants.REQUEST_ID, requestId);
-						jsonObj.put(EReturnsWorkflowConstants.ITEM_CODE, itemDto.getItemCode());
-						jsonObj.put(EReturnsWorkflowConstants.INITIATOR, res.getRequestCreatedBy());
-						jsonObj.put(EReturnsWorkflowConstants.INVOICE, res.getHeaderDto().getInvoiceNo());
-						jsonObj.put(EReturnsWorkflowConstants.MATERIAL, itemDto.getMaterialDesc());
-
-						JSONObject obj = new JSONObject();
-						obj.put(EReturnsWorkflowConstants.CONTEXT, jsonObj);
-						obj.put(EReturnsWorkflowConstants.DEFINITION_ID, EReturnsWorkflowConstants.DEFINITION_VALUE);
-
-						String payload = obj.toString();
-						String output = triggerWorkflow(payload);
-						JSONObject resultJsonObject = new JSONObject(output);
-						workflowInstanceId = resultJsonObject.getString(EReturnsWorkflowConstants.WORKFLOW_INSTANCE_ID);
-
-						workFlowDto.setRequestId(requestId);
-						workFlowDto.setWorkFlowInstanceId(workflowInstanceId);
-
-						workFlowDto.setMaterialCode(itemDto.getItemCode());
-						workFlowDto.setPrincipal(itemDto.getPrincipalCode());
-						workFlowDto.setTaskInstanceId("");
-						workFlowService.addWorkflowInstance(workFlowDto);
-						
-						LOGGER.error("Process triggered successfully :" + output);
+			if(responseDto.getCode() != null) {
+				RequestDto res = requestService.getRequestById(requestDto.getRequestId());
+				if (responseDto.getCode().equals(EReturnConstants.WORKFLOW_STATUS_CODE)) {
+					Thread.sleep(5000);
+					String status = updateOrderDetails(instanceId);
+					if(status.equalsIgnoreCase(EReturnConstants.COMPLETE)) {
+						responseDto = hciMappingService.pushDataToEcc(res);
+						eccFlag = true;
 					}
 				}
-			} 
-			if(responseDto.getCode().equals(EReturnConstants.WORKFLOW_STATUS_CODE)) {
-				if(res.getRequestPendingWith() != null && !(res.getRequestPendingWith().equals(""))) {
-					notificationService.sendNotificationForApprover(res.getRequestId(), res.getRequestPendingWith());
+				if(responseDto != null && eccFlag) {
+					if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_SUCCESS_STATUS)) {
+						notificationService.sendNotificationForRequestor(res.getRequestId(), res.getRequestCreatedBy(), "A");
+						requestRepository.updateEccReturnOrder(EReturnConstants.COMPLETE, responseDto.getMessage(), requestId);
+					} else if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_ERROR_STATUS)) {
+						responseDto.setMessage(responseDto.getMessage());
+						
+						//Re-triggering the process
+						workFlowService.deleteWorkflow(requestId);
+						LOGGER.error("Re-Triggering workflow:" + responseDto.getMessage());
+						for (ItemDto itemDto : res.getHeaderDto().getItemSet()) {
+							String workflowInstanceId = "";
+							WorkFlowDto workFlowDto = new WorkFlowDto();
+
+							// start process
+							JSONObject jsonObj = new JSONObject();
+							jsonObj.put(EReturnsWorkflowConstants.REQUEST_ID, requestId);
+							jsonObj.put(EReturnsWorkflowConstants.ITEM_CODE, itemDto.getItemCode());
+							jsonObj.put(EReturnsWorkflowConstants.INITIATOR, res.getRequestCreatedBy());
+							jsonObj.put(EReturnsWorkflowConstants.INVOICE, res.getHeaderDto().getInvoiceNo());
+							jsonObj.put(EReturnsWorkflowConstants.MATERIAL, itemDto.getMaterialDesc());
+
+							JSONObject obj = new JSONObject();
+							obj.put(EReturnsWorkflowConstants.CONTEXT, jsonObj);
+							obj.put(EReturnsWorkflowConstants.DEFINITION_ID, EReturnsWorkflowConstants.DEFINITION_VALUE);
+
+							String payload = obj.toString();
+							String output = triggerWorkflow(payload);
+							JSONObject resultJsonObject = new JSONObject(output);
+							workflowInstanceId = resultJsonObject.getString(EReturnsWorkflowConstants.WORKFLOW_INSTANCE_ID);
+
+							workFlowDto.setRequestId(requestId);
+							workFlowDto.setWorkFlowInstanceId(workflowInstanceId);
+
+							workFlowDto.setMaterialCode(itemDto.getItemCode());
+							workFlowDto.setPrincipal(itemDto.getPrincipalCode());
+							workFlowDto.setTaskInstanceId("");
+							workFlowService.addWorkflowInstance(workFlowDto);
+						}
+					}
+				} 
+				if(responseDto.getCode().equals(EReturnConstants.WORKFLOW_STATUS_CODE)) {
+					if(res.getRequestStatus() != null && res.getRequestStatus().equalsIgnoreCase(EReturnsWorkflowConstants.STATUS_REJECTED)) {
+						LOGGER.error("Push notification for creator:" + res.getRequestCreatedBy());
+						notificationService.sendNotificationForRequestor(res.getRequestId(), res.getRequestCreatedBy(), EReturnsWorkflowConstants.WORKFLOW_R);
+					}
+					if(res.getRequestStatus() != null && res.getRequestStatus().equalsIgnoreCase(EReturnConstants.INPROGRESS)) {
+						LOGGER.error("Push notification for approver:" + res.getRequestPendingWith());
+						notificationService.sendNotificationForApprover(res.getRequestId(), res.getRequestPendingWith());
+					}
 				}
-				if(res.getRequestStatus() != null && res.getRequestStatus().equalsIgnoreCase("REJECTED")) {
-					notificationService.sendNotificationForRequestor(res.getRequestId(), res.getRequestCreatedBy(), "R");
-				}
+			} else {
+				responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
+				responseDto.setMessage("No Response from Workflow");
+				responseDto.setStatus(EReturnConstants.ERROR_STATUS);
 			}
 		} catch (MalformedURLException e) {
 			responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);

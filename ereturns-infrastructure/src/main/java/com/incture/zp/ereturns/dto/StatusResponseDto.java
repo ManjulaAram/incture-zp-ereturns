@@ -64,6 +64,10 @@ public class StatusResponseDto implements Serializable {
 	
 	private String eccResponse;
 	
+	private String principalCode;
+	
+	private String currency;
+	
 	private Set<AttachmentDto> attachments;
 	
 	public String getMessage() {
@@ -292,6 +296,22 @@ public class StatusResponseDto implements Serializable {
 
 	public void setEccResponse(String eccResponse) {
 		this.eccResponse = eccResponse;
+	}
+
+	public String getPrincipalCode() {
+		return principalCode;
+	}
+
+	public void setPrincipalCode(String principalCode) {
+		this.principalCode = principalCode;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
 	}
 	
 }

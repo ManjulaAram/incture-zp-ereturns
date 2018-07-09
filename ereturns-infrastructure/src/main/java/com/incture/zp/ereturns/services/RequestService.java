@@ -20,4 +20,7 @@ public interface RequestService {
 	public List<RequestDto> getAllRequests();
 	
 	public ResponseDto pushDataToEccForTest(String requestId);
+	
+	public String getRequestStatus(String requestId);
+	
 }

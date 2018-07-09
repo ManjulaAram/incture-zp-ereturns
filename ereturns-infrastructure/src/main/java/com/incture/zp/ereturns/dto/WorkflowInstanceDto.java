@@ -20,7 +20,7 @@ public class WorkflowInstanceDto implements Serializable {
 	private String completedAt;
 	private List<String> receipents;
 	private String eccResponse;
-	private List<String> commentsByApprover;
+	
 	public String getCreatedBy() {
 		return createdBy;
 	}
@@ -83,12 +83,6 @@ public class WorkflowInstanceDto implements Serializable {
 	}
 	public void setEccResponse(String eccResponse) {
 		this.eccResponse = eccResponse;
-	}
-	public List<String> getCommentsByApprover() {
-		return commentsByApprover;
-	}
-	public void setCommentsByApprover(List<String> commentsByApprover) {
-		this.commentsByApprover = commentsByApprover;
 	}
 	
 }

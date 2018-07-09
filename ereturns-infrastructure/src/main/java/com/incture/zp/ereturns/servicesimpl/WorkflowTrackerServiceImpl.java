@@ -15,9 +15,11 @@ import com.incture.zp.ereturns.constants.EReturnsWorkflowConstants;
 import com.incture.zp.ereturns.dto.ApproverDto;
 import com.incture.zp.ereturns.dto.CompleteTaskRequestDto;
 import com.incture.zp.ereturns.dto.RequestDto;
+import com.incture.zp.ereturns.dto.RequestHistoryDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.WorkFlowDto;
 import com.incture.zp.ereturns.dto.WorkflowInstanceDto;
+import com.incture.zp.ereturns.repositories.RequestHistoryRepository;
 import com.incture.zp.ereturns.repositories.ReturnOrderRepository;
 import com.incture.zp.ereturns.services.RequestService;
 import com.incture.zp.ereturns.services.UserService;
@@ -40,6 +42,9 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 
 	@Autowired
 	RequestService requestService;
+	
+	@Autowired
+	RequestHistoryRepository requestHistoryRepository;
 	
 	@Autowired
 	ReturnOrderRepository returnOrderRepository;
@@ -78,7 +83,6 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 		RestInvoker restInvoker = new RestInvoker(url, user, pwd);
 
 		String response = restInvoker.getData("v1/workflow-instances/" + workflowInstanceId + "/execution-logs");
-		LOGGER.error("From Work instances execution - logs:"+response);
 		List<String> recipientList = new ArrayList<>();
 		List<ApproverDto> approverList = new ArrayList<>();
 		JSONArray executionLogs = new JSONArray(response);
@@ -132,10 +136,69 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 				comments.add(returnOrderDto.getOrderComments());
 			}
 		}
-		instanceDto.setCommentsByApprover(comments);
 		return instanceDto;
 	}
-	
+
+	public WorkflowInstanceDto getTrackDetails(CompleteTaskRequestDto completeTaskRequestDto) {
+		
+		RequestDto requestDto = requestService.getRequestById(completeTaskRequestDto.getRequestId());
+		
+		WorkflowInstanceDto instanceDto = new WorkflowInstanceDto();
+		List<ApproverDto> approverList = new ArrayList<>();
+		List<RequestHistoryDto> executionLogs = requestHistoryRepository.getRequestHistory(completeTaskRequestDto.getRequestId());
+		List<String> recipientList = new ArrayList<>(); // pending with
+		boolean flag = false;
+		ApproverDto approverDto = null;
+		String material = "";
+		for(RequestHistoryDto logObject : executionLogs) {
+			if(logObject.getRequestStatus() != null) {
+				if(logObject.getRequestStatus().equalsIgnoreCase("INPROGRESS")) {
+					instanceDto.setStatus(logObject.getRequestStatus());
+					recipientList.add(logObject.getRequestPendingWith());
+				} 
+				if(logObject.getRequestStatus().equalsIgnoreCase("COMPLETED")) {
+					instanceDto.setCompletedAt(logObject.getRequestApprovedDate());
+					instanceDto.setStatus(logObject.getRequestStatus());
+					flag = true;
+				}
+				if(logObject.getRequestStatus().equalsIgnoreCase("REJECTED")) {
+					instanceDto.setCompletedAt(logObject.getRequestApprovedDate());
+					instanceDto.setStatus(logObject.getRequestStatus());
+					flag = true;
+				}
+				if(logObject.getRequestApprovedBy() != null && !(logObject.getRequestApprovedBy().equals(""))) {
+						approverDto = new ApproverDto();
+					
+						approverDto.setApproverName(userService.getUserNameById(logObject.getRequestApprovedBy()));
+						approverDto.setApprovalDate(logObject.getRequestApprovedDate());
+						approverDto.setCommentsByApprover(logObject.getRequestorComments());
+						if(logObject.getRequestStatus().equalsIgnoreCase("COMPLETED")) {
+							approverDto.setStatus(EReturnsWorkflowConstants.STATUS_APPROVED);
+						} else if(logObject.getRequestStatus().equalsIgnoreCase("REJECTED")) {
+							approverDto.setStatus(EReturnsWorkflowConstants.STATUS_REJECTED);
+						} else {
+							approverDto.setStatus(EReturnsWorkflowConstants.STATUS_APPROVED);
+						}
+						approverList.add(approverDto);
+				}
+			}
+			
+			material = logObject.getMaterial();
+		}
+		if(flag) {
+			recipientList.clear();
+		}
+			instanceDto.setCreatedBy(userService.getUserNameById(requestDto.getRequestCreatedBy()));
+			instanceDto.setCreatedAt(requestDto.getRequestCreatedDate());
+			instanceDto.setRequestId(requestDto.getRequestId());
+			instanceDto.setMaterialCode(material);
+			instanceDto.setApproverList(approverList);
+			instanceDto.setReceipents(recipientList);
+			instanceDto.setEccResponse(requestDto.getEccReturnOrderNo());
+			
+		return instanceDto;
+	}
+
 	private String getTaskStatus(String taskId)
 	{
 		String url = destination+EReturnsWorkflowConstants.WORKFLOW_REST_API;
@@ -154,7 +217,7 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 		{
 			status = EReturnsWorkflowConstants.STATUS_REJECTED;
 		}
-return status;
+		return status;
 	}
 
 	private String formatDateString(String date) {

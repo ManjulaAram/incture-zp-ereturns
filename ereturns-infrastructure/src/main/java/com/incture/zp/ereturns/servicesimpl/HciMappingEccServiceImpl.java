@@ -5,13 +5,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.constants.EReturnsHciConstants;
@@ -21,6 +20,8 @@ import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.services.HciMappingEccService;
 import com.incture.zp.ereturns.utils.RestInvoker;
+import com.incture.zp.ereturns.utils.ServiceUtil;
+import com.sap.core.connectivity.api.configuration.DestinationConfiguration;
 
 @Service
 @Transactional
@@ -82,6 +83,8 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 			item.put(EReturnsHciConstants.ORDER_REASON, returnOrderList.get(i).getReason());
 			itemsArry.put(item);
 			
+			header.put(EReturnsHciConstants.ORDER_REASON, returnOrderList.get(0).getReason());
+			
 			JSONObject schedules = new JSONObject();
 			schedules.put(EReturnsHciConstants.ITEM_NO, itemDto.getItemCode());
 			schedules.put(EReturnsHciConstants.SCHEDULE_LINE, EReturnConstants.ECC_SCHEDULE_LINE);
@@ -104,15 +107,15 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		
 //		call rest invoker to push data
 		
-//		DestinationConfiguration destConfiguration = ServiceUtil.getDest(EReturnsHciConstants.HCI_ECC_ENDPOINT);
-//		String destination = destConfiguration.getProperty(EReturnsHciConstants.HCI_DESTINATION_URL);
-//		String username = destConfiguration.getProperty(EReturnsHciConstants.HCI_DESTINATION_USER);
-//		String password = destConfiguration.getProperty(EReturnsHciConstants.HCI_DESTINATION_PWD);
-//		String url = destination;
+		DestinationConfiguration destConfiguration = ServiceUtil.getDest(EReturnsHciConstants.HCI_ECC_ENDPOINT);
+		String destination = destConfiguration.getProperty(EReturnsHciConstants.HCI_DESTINATION_URL);
+		String username = destConfiguration.getProperty(EReturnsHciConstants.HCI_DESTINATION_USER);
+		String password = destConfiguration.getProperty(EReturnsHciConstants.HCI_DESTINATION_PWD);
+		String url = destination;
 		
-		String url = EReturnsHciConstants.HCI_ECC_ENDPOINT_URL;
-		String username = EReturnsHciConstants.USERNAME;
-		String password = EReturnsHciConstants.PASSWORD;
+//		String url = EReturnsHciConstants.HCI_ECC_ENDPOINT_URL;
+//		String username = EReturnsHciConstants.USERNAME;
+//		String password = EReturnsHciConstants.PASSWORD;
 		
 
 		RestInvoker restInvoker = new RestInvoker(url, username, password);

@@ -42,10 +42,10 @@ public class EReturnsUserController {
 		return userService.addUser(userDto);
 	}
 	
-	@RequestMapping("/getMail/{role}")
-	public EmailDto getMailIds(@PathVariable String role)
+	@RequestMapping("/getMail/{Initiator}/{role}")
+	public EmailDto getMailIds(@PathVariable String Initiator, @PathVariable String role)
 	{
-		return userService.getEmailByRole(role);
+		return userService.getEmailByRole(role, Initiator);
 	}
 
 	@RequestMapping("/getUserIdByRole/{role}")

@@ -28,7 +28,7 @@ public class ReturnOrder {
 	@Column(name = "REASON", length = 255)
 	private String reason;
 	
-	@Column(name = "REMARK", length = 255)
+	@Column(name = "REMARK")
 	private String remark;
 	
 	@Column(name = "RETURN_PRICE", length = 50)
@@ -70,8 +70,7 @@ public class ReturnOrder {
 	@Column(name = "ORDER_PENDING_WITH", length = 100)
 	private String orderPendingWith;
 
-
-	@Column(name = "ORDER_COMMENTS", length = 100)
+	@Column(name = "ORDER_COMMENTS")
 	private String orderComments;
 
 	@ManyToOne

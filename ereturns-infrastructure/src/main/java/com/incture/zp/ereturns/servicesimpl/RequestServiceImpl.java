@@ -84,7 +84,7 @@ public class RequestServiceImpl implements RequestService {
 
 		String requestId = null;
 		DuplicateMaterialDto duplicateDto = findDuplicate(requestDto);
-		duplicateDto.setDuplicate(false);
+//		duplicateDto.setDuplicate(false);
 		if(duplicateDto.isDuplicate()) {
 			responseDto.setCode(EReturnConstants.DUPLICATE_CODE);
 			responseDto.setMessage(duplicateDto.getMaterials().toString());
@@ -184,13 +184,16 @@ public class RequestServiceImpl implements RequestService {
 								(requestDto2.getRequestStatus().equalsIgnoreCase(EReturnConstants.INPROGRESS)))) {
 					for (ItemDto itemDto : requestDto2.getHeaderDto().getItemSet()) {
 						for (ItemDto itemDto2 : requestDto.getHeaderDto().getItemSet()) {
-							if (itemDto.getMaterial().equals(itemDto2.getMaterial())) {
-								duplicate = true;
-								materials.add("Duplicate Invoice "+requestDto.getHeaderDto().getInvoiceNo()
-										+" and Material "+itemDto.getMaterial() +" exist");
-								break;
-							} else {
-								duplicate = false;
+							for(ReturnOrderDto returnOrderDto : requestDto2.getSetReturnOrderDto()) {
+								if (itemDto.getMaterial().equals(itemDto2.getMaterial()) && returnOrderDto.getItemCode().equalsIgnoreCase(itemDto.getItemCode())) {
+									duplicate = true;
+									int remainingQty = Integer.parseInt(itemDto.getAvailableQty()) - Integer.parseInt(returnOrderDto.getReturnQty());
+									materials.add("Duplicate Invoice "+requestDto.getHeaderDto().getInvoiceNo()
+											+" and Material "+itemDto.getMaterial() +" exist with available Quantity "+remainingQty);
+									break;
+								} else {
+									duplicate = false;
+								}
 							}
 						}
 					}
@@ -205,8 +208,8 @@ public class RequestServiceImpl implements RequestService {
 	private ResponseDto triggerWorkflow(RequestDto requestDto, String requestId, ResponseDto responseDto) {
 		boolean eccFlag = false;
 		boolean pushFlag = false;
+		String workFlowInstanceId = "";
 		for (ItemDto itemDto : requestDto.getHeaderDto().getItemSet()) {
-			String workFlowInstanceId = "";
 			WorkFlowDto workFlowDto = new WorkFlowDto();
 
 			// start process
@@ -216,6 +219,9 @@ public class RequestServiceImpl implements RequestService {
 			jsonObj.put(EReturnsWorkflowConstants.INITIATOR, requestDto.getRequestCreatedBy());
 			jsonObj.put(EReturnsWorkflowConstants.INVOICE, requestDto.getHeaderDto().getInvoiceNo());
 			jsonObj.put(EReturnsWorkflowConstants.MATERIAL, itemDto.getMaterialDesc());
+			
+			jsonObj.put(EReturnsWorkflowConstants.CREATED_DATE, requestDto.getRequestCreatedDate());
+			jsonObj.put(EReturnsWorkflowConstants.CUSTOMER, requestDto.getCustomerNo());
 
 			JSONObject obj = new JSONObject();
 			obj.put(EReturnsWorkflowConstants.CONTEXT, jsonObj);
@@ -237,9 +243,28 @@ public class RequestServiceImpl implements RequestService {
 			LOGGER.error("Process triggered successfully :" + output);
 		}
 		
+		// This is for Auto approvals need to check rule directly
 		try {
-			RequestDto requestDto2 = getRequestById(requestId);
+			
 			Thread.sleep(10000);
+//			synchronized(this) {
+//				
+//				String url = "https://bpmworkflowruntimecbbe88bff-c8e00d73c.ap1.hana.ondemand.com/workflow-service/rest/";
+//				String user = "P000003";
+//				String pwd = "Incture@16";
+//				RestInvoker restInvoker = new RestInvoker(url, user, pwd);
+//				
+//				String response = restInvoker.getData("v1/workflow-instances/"+workFlowInstanceId+"/context");
+//				JSONObject updateObject = new JSONObject(response);
+//				
+////				JSONObject updateContent = new JSONObject();
+////				updateContent = updateObject.getJSONObject(EReturnsWorkflowConstants.UPDATE_CONTENT);
+////				String status = updateContent.getString(EReturnsWorkflowConstants.STATUS).toString();
+//				LOGGER.error("Status from context:"+response);
+//			}
+
+			RequestDto requestDto2 = getRequestById(requestId);
+			LOGGER.error("On Auto complete :" + requestDto2.getRequestStatus());
 			List<ReturnOrderDto> returnList = returnOrderRepository.getReturnOrderByRequestId(requestId);
 			if(returnList.size() > 0) {
 				for(ReturnOrderDto returnOrderDto : returnList) {
@@ -250,15 +275,16 @@ public class RequestServiceImpl implements RequestService {
 							LOGGER.error("Data pushed to HCI successfully :" + responseDto.getMessage());
 							break;
 						} 
-						if(returnOrderDto.getOrderStatus().equalsIgnoreCase(EReturnConstants.INPROGRESS)) {
-							pushFlag = true;
-						}
 					}
 				}
 			}
+			if(requestDto2.getRequestStatus().equalsIgnoreCase(EReturnConstants.INPROGRESS)) {
+				pushFlag = true;
+			}
 			if(eccFlag) {
 				if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_SUCCESS_STATUS)) {
-					notificationService.sendNotificationForRequestor(requestDto2.getRequestId(), requestDto2.getRequestCreatedBy(), "A");
+					LOGGER.error("Push notification for creator:" + requestDto2.getRequestCreatedBy());
+					notificationService.sendNotificationForRequestor(requestDto2.getRequestId(), requestDto2.getRequestCreatedBy(), EReturnsWorkflowConstants.WORKFLOW_A);
 					requestRepository.updateEccReturnOrder(EReturnConstants.COMPLETE, responseDto.getMessage(), requestId);
 				} else if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_ERROR_STATUS)) {
 					responseDto.setMessage(responseDto.getMessage());
@@ -271,6 +297,7 @@ public class RequestServiceImpl implements RequestService {
 				} 
 			} 
 			if(pushFlag) {
+				LOGGER.error("Push notification for approver:" + requestDto2.getRequestPendingWith());
 				notificationService.sendNotificationForApprover(requestDto2.getRequestId(), requestDto2.getRequestPendingWith());
 			}
 
@@ -283,6 +310,11 @@ public class RequestServiceImpl implements RequestService {
 			LOGGER.error("Re-Triggering workflow Error:" + e.getMessage());
 		}
 		return responseDto;
+	}
+	
+	@Override
+	public String getRequestStatus(String requestId) {
+		return requestRepository.getRequestStatus(requestId);
 	}
 	
 	@Override

@@ -19,4 +19,6 @@ public interface RequestRepository {
 	public List<RequestDto> getAllRequests();
 	
 	public int updateEccReturnOrder(String eccStatus, String eccNo, String requestId);
+	
+	public String getRequestStatus(String requestId);
 }
