@@ -6,8 +6,6 @@ import java.util.Set;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -31,8 +29,6 @@ public class AttachmentRepositoryImpl implements AttachmentRepository {
 	@Autowired
 	GetReferenceData getReferenceData;
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(AttachmentRepositoryImpl.class);
-
 	@Override
 	public Attachment getAttachmentByAttachmentId(String id) {
 		return (Attachment) sessionFactory.getCurrentSession().get(Attachment.class, id);	}
@@ -105,7 +101,6 @@ public class AttachmentRepositoryImpl implements AttachmentRepository {
 	@Override
 	public Set<AttachmentDto> getAttachmentsById(String id) {
 		Set<AttachmentDto> attachmentDtos = new HashSet<>();
-		LOGGER.error("Find Attachment Id by RequestId:"+id);
 		StringBuilder queryString = new StringBuilder();
 		if(id.contains("R")) {
 			queryString.append("SELECT a FROM Attachment a WHERE a.requestId =:id");

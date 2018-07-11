@@ -232,6 +232,7 @@ public class ImportExportUtil {
 		request.setEccReturnOrderNo(requestDto.getEccReturnOrderNo());
 		request.setEccStatus(requestDto.getEccStatus());
 
+		request.setClient(requestDto.getClient());
 		return request;
 	}
 
@@ -277,6 +278,8 @@ public class ImportExportUtil {
 		requestDto.setBusinessUnit(request.getBusinessUnit());
 		requestDto.setEccReturnOrderNo(request.getEccReturnOrderNo());
 		requestDto.setEccStatus(request.getEccStatus());
+		
+		requestDto.setClient(request.getClient());
 		
 		return requestDto;
 	}

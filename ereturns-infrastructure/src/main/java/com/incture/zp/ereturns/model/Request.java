@@ -72,7 +72,10 @@ public class Request {
 
 	@Column(name = "ECC_RETURN_ORDER_NO", length = 255)
 	private String eccReturnOrderNo;
-
+	
+	@Column(name = "CLIENT", length = 50)
+	private String client;
+	
 	@OneToOne(cascade = CascadeType.ALL)
 	private Header requestHeader; 
 	
@@ -230,5 +233,13 @@ public class Request {
 	public void setEccReturnOrderNo(String eccReturnOrderNo) {
 		this.eccReturnOrderNo = eccReturnOrderNo;
 	}
-	
+
+	public String getClient() {
+		return client;
+	}
+
+	public void setClient(String client) {
+		this.client = client;
+	}
+
 }

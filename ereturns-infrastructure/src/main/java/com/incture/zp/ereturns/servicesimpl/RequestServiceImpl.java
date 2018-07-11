@@ -82,14 +82,16 @@ public class RequestServiceImpl implements RequestService {
 		ResponseDto responseDto = new ResponseDto();
 		boolean processStartFlag = false;
 		
-		String requestId = null;
-		if(requestDto.getUnrefFlag() != null && !(requestDto.getUnrefFlag().equals("")) 
-				&& requestDto.getUnrefFlag().equalsIgnoreCase("TRUE")) {
+		String requestId = "";
+		String unref = requestDto.getUnrefFlag();
+		if(unref != null && !(unref.equals("")) && unref.equalsIgnoreCase("TRUE")) {
 			responseDto = saveData(requestDto);
 			if (responseDto != null) {
 				if (responseDto.getCode().equals(EReturnConstants.SUCCESS_STATUS_CODE)) {
+					requestId = getRequestId(responseDto);
 					RequestDto requestDto2 = getRequestById(requestId);
 					responseDto = hciMappingService.pushDataToEcc(requestDto2);
+					requestRepository.updateEccReturnOrder(EReturnConstants.COMPLETE, responseDto.getMessage(), requestId);
 				}
 			}
 		} else {
@@ -103,6 +105,7 @@ public class RequestServiceImpl implements RequestService {
 				responseDto = saveData(requestDto);
 				if (responseDto != null) {
 					if (responseDto.getCode().equals(EReturnConstants.SUCCESS_STATUS_CODE)) {
+						requestId = getRequestId(responseDto);
 						processStartFlag = true;
 					}
 				}
@@ -165,20 +168,23 @@ public class RequestServiceImpl implements RequestService {
 		List<RequestDto> list = getAllRequests();
 		if (list != null && list.size() > 0) {
 			for (RequestDto requestDto2 : list) {
-				if (requestDto2.getHeaderDto().getInvoiceNo().equals(requestDto.getHeaderDto().getInvoiceNo()) &&
-						((requestDto2.getRequestStatus().equalsIgnoreCase(EReturnConstants.NEW)) || 
-								(requestDto2.getRequestStatus().equalsIgnoreCase(EReturnConstants.INPROGRESS)))) {
-					for (ItemDto itemDto : requestDto2.getHeaderDto().getItemSet()) {
-						for (ItemDto itemDto2 : requestDto.getHeaderDto().getItemSet()) {
-							for(ReturnOrderDto returnOrderDto : requestDto2.getSetReturnOrderDto()) {
-								if (itemDto.getMaterial().equals(itemDto2.getMaterial()) && returnOrderDto.getItemCode().equalsIgnoreCase(itemDto.getItemCode())) {
-									duplicate = true;
-									int remainingQty = Integer.parseInt(itemDto.getAvailableQty()) - Integer.parseInt(returnOrderDto.getReturnQty());
-									materials.add("Duplicate Invoice "+requestDto.getHeaderDto().getInvoiceNo()
-											+" and Material "+itemDto.getMaterial() +" exist with available Quantity "+remainingQty);
-									break;
-								} else {
-									duplicate = false;
+				if(requestDto2.getHeaderDto().getInvoiceNo() != null) {
+					if (requestDto2.getHeaderDto().getInvoiceNo().equals(requestDto.getHeaderDto().getInvoiceNo()) &&
+							((requestDto2.getRequestStatus().equalsIgnoreCase(EReturnConstants.NEW)) || 
+									(requestDto2.getRequestStatus().equalsIgnoreCase(EReturnConstants.INPROGRESS)) ||
+									(requestDto2.getRequestStatus().equalsIgnoreCase(EReturnConstants.REJECTED)))) {
+						for (ItemDto itemDto : requestDto2.getHeaderDto().getItemSet()) {
+							for (ItemDto itemDto2 : requestDto.getHeaderDto().getItemSet()) {
+								for(ReturnOrderDto returnOrderDto : requestDto2.getSetReturnOrderDto()) {
+									if (itemDto.getMaterial().equals(itemDto2.getMaterial()) && returnOrderDto.getItemCode().equalsIgnoreCase(itemDto.getItemCode())) {
+										duplicate = true;
+										int remainingQty = Integer.parseInt(itemDto.getAvailableQty()) - Integer.parseInt(returnOrderDto.getReturnQty());
+										materials.add("Request "+requestDto2.getRequestId()+" for Invoice "+requestDto.getHeaderDto().getInvoiceNo()
+												+" and Material "+itemDto.getMaterial() +" already in approval queue and remaining Quantity is "+remainingQty);
+										break;
+									} else {
+										duplicate = false;
+									}
 								}
 							}
 						}
@@ -237,19 +243,19 @@ public class RequestServiceImpl implements RequestService {
 	@Override
 	public ResponseDto pushDataToEccForTest(String requestId) {
 		RequestDto requestDto = getRequestById(requestId);
+		String client = requestDto.getClient();
+		if(client != null && !(client.equals("")) && client.equalsIgnoreCase("WEB")) {
+			requestDto.setPurchaseOrder("ERC");
+		} else {
+			requestDto.setPurchaseOrder("ERS");
+		}
 		return hciMappingService.pushDataToEcc(requestDto);
 	}
 
 	private ResponseDto saveData(RequestDto requestDto) {
 		ResponseDto responseDto = new ResponseDto(); 
-		String requestId = "";
 		try { 
 			responseDto = requestRepository.addRequest(importExportUtil.importRequestDto(requestDto));
-			if (responseDto != null) {
-				if (responseDto.getMessage() != null) {
-					requestId = responseDto.getMessage().substring(8, 19);
-				}
-			}
 
 			Set<AttachmentDto> setAttachment = requestDto.getSetAttachments();
 			for (AttachmentDto attachmentDto : setAttachment) {
@@ -257,7 +263,7 @@ public class RequestServiceImpl implements RequestService {
 				String attachmentName = ecmDocumentService.uploadAttachment(decodedString,
 						attachmentDto.getAttachmentName(), attachmentDto.getAttachmentType());
 				attachmentDto.setAttachmentName(attachmentName);
-				attachmentDto.setRequestId(requestId);
+				attachmentDto.setRequestId(getRequestId(responseDto));
 				Attachment attachment = importExportUtil.importAttachmentDto(attachmentDto);
 				attachmentRepository.addAttachment(attachment);
 			}
@@ -269,5 +275,16 @@ public class RequestServiceImpl implements RequestService {
 			}
 		}
 		return responseDto;
+	}
+	
+	private String getRequestId(ResponseDto responseDto) {
+		String requestId = "";
+		if (responseDto != null) {
+			if (responseDto.getMessage() != null) {
+				requestId = responseDto.getMessage().substring(8, 19);
+			}
+		}
+
+		return requestId;
 	}
 }
