@@ -46,6 +46,12 @@ public class RequestDto {
 	private String eccStatus;
 
 	private String eccReturnOrderNo;
+	
+	private String unrefFlag;
+	
+	private String purchaseOrder;
+	
+	private String client;
 
 	public String getRequestId() {
 		return requestId;
@@ -207,4 +213,28 @@ public class RequestDto {
 		this.eccReturnOrderNo = eccReturnOrderNo;
 	}
 
+	public String getUnrefFlag() {
+		return unrefFlag;
+	}
+
+	public void setUnrefFlag(String unrefFlag) {
+		this.unrefFlag = unrefFlag;
+	}
+
+	public String getPurchaseOrder() {
+		return purchaseOrder;
+	}
+
+	public void setPurchaseOrder(String purchaseOrder) {
+		this.purchaseOrder = purchaseOrder;
+	}
+
+	public String getClient() {
+		return client;
+	}
+
+	public void setClient(String client) {
+		this.client = client;
+	}
+	
 }

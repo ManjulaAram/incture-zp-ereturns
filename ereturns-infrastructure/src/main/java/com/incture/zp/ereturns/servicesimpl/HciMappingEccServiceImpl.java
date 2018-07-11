@@ -45,8 +45,8 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		JSONArray itemsArry = new JSONArray();
 		JSONArray scheduleArry = new JSONArray();
 		
-		partnerShipTo.put(EReturnsHciConstants.PARTNER_NUMBER, requestDto.getShipTo());
 		partnerShipTo.put(EReturnsHciConstants.PARTNER_ROLE, EReturnsHciConstants.SHIP_TO_PARTY);
+		partnerShipTo.put(EReturnsHciConstants.PARTNER_NUMBER, requestDto.getShipTo());
 		partnerArry.put(partnerShipTo);
 
 		partnerSoldTo.put(EReturnsHciConstants.PARTNER_ROLE, EReturnsHciConstants.SOLD_TO_PARTY);
@@ -61,20 +61,21 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		header.put(EReturnsHciConstants.SALES_ORG, requestDto.getHeaderDto().getSalesOrg());
 		header.put(EReturnsHciConstants.DISTRIBUTION_CHANNEL, requestDto.getHeaderDto().getDistrChan());
 		header.put(EReturnsHciConstants.DIVISION, requestDto.getHeaderDto().getDivision());
+		header.put(EReturnsHciConstants.PO_METHOD, requestDto.getPurchaseOrder());
 		 
 		List<ItemDto> itemList = new ArrayList<>();
 		itemList.addAll(requestDto.getHeaderDto().getItemSet());
 		
 		List<ReturnOrderDto> returnOrderList = new ArrayList<>();
 		returnOrderList.addAll(requestDto.getSetReturnOrderDto());
-		
+		String reason = "";
 		for(int i = 0; i < itemList.size(); i++) {
 			ItemDto itemDto = itemList.get(i);
 			
 			JSONObject item = new JSONObject();
 			
 			item.put(EReturnsHciConstants.PLANT, itemDto.getPlant());
-			item.put(EReturnsHciConstants.STORE_LOC, itemDto.getStoreLoc());
+			item.put(EReturnsHciConstants.STORE_LOC, "");
 			item.put(EReturnsHciConstants.MATERIAL, itemDto.getMaterial());
 			item.put(EReturnsHciConstants.ITEM_NO, itemDto.getItemCode());
 			item.put(EReturnsHciConstants.TARGET_QTY, returnOrderList.get(i).getReturnQty());// need to get from return order
@@ -83,7 +84,7 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 			item.put(EReturnsHciConstants.ORDER_REASON, returnOrderList.get(i).getReason());
 			itemsArry.put(item);
 			
-			header.put(EReturnsHciConstants.ORDER_REASON, returnOrderList.get(0).getReason());
+			reason = returnOrderList.get(0).getReason();
 			
 			JSONObject schedules = new JSONObject();
 			schedules.put(EReturnsHciConstants.ITEM_NO, itemDto.getItemCode());
@@ -94,7 +95,7 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 			scheduleArry.put(schedules);
 		}
 		 
-
+		header.put(EReturnsHciConstants.ORDER_REASON, reason);
 		orderCreation.put(EReturnsHciConstants.RETURN_PARTNERS, partnerArry);
 		orderCreation.put(EReturnsHciConstants.RETURN_HEADER, header);
 		orderCreation.put(EReturnsHciConstants.RETURN_ITEMS, itemsArry);

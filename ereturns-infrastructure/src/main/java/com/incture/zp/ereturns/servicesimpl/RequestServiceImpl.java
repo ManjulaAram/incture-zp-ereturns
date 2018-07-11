@@ -81,50 +81,36 @@ public class RequestServiceImpl implements RequestService {
 	public ResponseDto addRequest(RequestDto requestDto) {
 		ResponseDto responseDto = new ResponseDto();
 		boolean processStartFlag = false;
-
+		
 		String requestId = null;
-		DuplicateMaterialDto duplicateDto = findDuplicate(requestDto);
-//		duplicateDto.setDuplicate(false);
-		if(duplicateDto.isDuplicate()) {
-			responseDto.setCode(EReturnConstants.DUPLICATE_CODE);
-			responseDto.setMessage(duplicateDto.getMaterials().toString());
-			responseDto.setStatus(EReturnConstants.DUPLICATE);
+		if(requestDto.getUnrefFlag() != null && !(requestDto.getUnrefFlag().equals("")) 
+				&& requestDto.getUnrefFlag().equalsIgnoreCase("TRUE")) {
+			responseDto = saveData(requestDto);
+			if (responseDto != null) {
+				if (responseDto.getCode().equals(EReturnConstants.SUCCESS_STATUS_CODE)) {
+					RequestDto requestDto2 = getRequestById(requestId);
+					responseDto = hciMappingService.pushDataToEcc(requestDto2);
+				}
+			}
 		} else {
-			try { 
-				responseDto = requestRepository.addRequest(importExportUtil.importRequestDto(requestDto));
-				if (responseDto != null) {
-					if (responseDto.getMessage() != null) {
-						requestId = responseDto.getMessage().substring(8, 19);
-					}
-				}
-
-				Set<AttachmentDto> setAttachment = requestDto.getSetAttachments();
-				for (AttachmentDto attachmentDto : setAttachment) {
-					byte[] decodedString = Base64.decodeBase64(attachmentDto.getContent());
-					String attachmentName = ecmDocumentService.uploadAttachment(decodedString,
-							attachmentDto.getAttachmentName(), attachmentDto.getAttachmentType());
-					attachmentDto.setAttachmentName(attachmentName);
-					attachmentDto.setRequestId(requestId);
-					Attachment attachment = importExportUtil.importAttachmentDto(attachmentDto);
-					attachmentRepository.addAttachment(attachment);
-				}
-
+			DuplicateMaterialDto duplicateDto = findDuplicate(requestDto);
+			duplicateDto.setDuplicate(false);
+			if(duplicateDto.isDuplicate()) {
+				responseDto.setCode(EReturnConstants.DUPLICATE_CODE);
+				responseDto.setMessage(duplicateDto.getMaterials().toString());
+				responseDto.setStatus(EReturnConstants.DUPLICATE);
+			} else {
+				responseDto = saveData(requestDto);
 				if (responseDto != null) {
 					if (responseDto.getCode().equals(EReturnConstants.SUCCESS_STATUS_CODE)) {
 						processStartFlag = true;
 					}
 				}
-			} catch (Exception e) {
-				if(responseDto != null) {
-					responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
-					responseDto.setStatus(EReturnConstants.ERROR_STATUS);
-					responseDto.setMessage(e.getMessage());
-				}
 			}
-		}
-		
-		if (processStartFlag) {
-			responseDto = triggerWorkflow(requestDto, requestId, responseDto);
+			
+			if (processStartFlag) {
+				responseDto = triggerWorkflow(requestDto, requestId, responseDto);
+			}
 		}
 		return responseDto;
 	}
@@ -206,8 +192,6 @@ public class RequestServiceImpl implements RequestService {
 	}
 	
 	private ResponseDto triggerWorkflow(RequestDto requestDto, String requestId, ResponseDto responseDto) {
-		boolean eccFlag = false;
-		boolean pushFlag = false;
 		String workFlowInstanceId = "";
 		for (ItemDto itemDto : requestDto.getHeaderDto().getItemSet()) {
 			WorkFlowDto workFlowDto = new WorkFlowDto();
@@ -242,73 +226,6 @@ public class RequestServiceImpl implements RequestService {
 			
 			LOGGER.error("Process triggered successfully :" + output);
 		}
-		
-		// This is for Auto approvals need to check rule directly
-		try {
-			
-			Thread.sleep(10000);
-//			synchronized(this) {
-//				
-//				String url = "https://bpmworkflowruntimecbbe88bff-c8e00d73c.ap1.hana.ondemand.com/workflow-service/rest/";
-//				String user = "P000003";
-//				String pwd = "Incture@16";
-//				RestInvoker restInvoker = new RestInvoker(url, user, pwd);
-//				
-//				String response = restInvoker.getData("v1/workflow-instances/"+workFlowInstanceId+"/context");
-//				JSONObject updateObject = new JSONObject(response);
-//				
-////				JSONObject updateContent = new JSONObject();
-////				updateContent = updateObject.getJSONObject(EReturnsWorkflowConstants.UPDATE_CONTENT);
-////				String status = updateContent.getString(EReturnsWorkflowConstants.STATUS).toString();
-//				LOGGER.error("Status from context:"+response);
-//			}
-
-			RequestDto requestDto2 = getRequestById(requestId);
-			LOGGER.error("On Auto complete :" + requestDto2.getRequestStatus());
-			List<ReturnOrderDto> returnList = returnOrderRepository.getReturnOrderByRequestId(requestId);
-			if(returnList.size() > 0) {
-				for(ReturnOrderDto returnOrderDto : returnList) {
-					if(returnOrderDto.getRequestId().equalsIgnoreCase(requestId)) {
-						if(returnOrderDto.getOrderStatus().equalsIgnoreCase(EReturnConstants.COMPLETE)) {
-							responseDto = hciMappingService.pushDataToEcc(requestDto2);
-							eccFlag = true;
-							LOGGER.error("Data pushed to HCI successfully :" + responseDto.getMessage());
-							break;
-						} 
-					}
-				}
-			}
-			if(requestDto2.getRequestStatus().equalsIgnoreCase(EReturnConstants.INPROGRESS)) {
-				pushFlag = true;
-			}
-			if(eccFlag) {
-				if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_SUCCESS_STATUS)) {
-					LOGGER.error("Push notification for creator:" + requestDto2.getRequestCreatedBy());
-					notificationService.sendNotificationForRequestor(requestDto2.getRequestId(), requestDto2.getRequestCreatedBy(), EReturnsWorkflowConstants.WORKFLOW_A);
-					requestRepository.updateEccReturnOrder(EReturnConstants.COMPLETE, responseDto.getMessage(), requestId);
-				} else if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_ERROR_STATUS)) {
-					responseDto.setMessage(responseDto.getMessage());
-					
-					//Re-triggering the process
-					workFlowService.deleteWorkflow(requestId);
-					
-					LOGGER.error("Re-Triggering workflow:" + responseDto.getMessage());
-					triggerWorkflow(requestDto2, requestId, responseDto);
-				} 
-			} 
-			if(pushFlag) {
-				LOGGER.error("Push notification for approver:" + requestDto2.getRequestPendingWith());
-				notificationService.sendNotificationForApprover(requestDto2.getRequestId(), requestDto2.getRequestPendingWith());
-			}
-
-		} catch (InterruptedException e) {
-			if(responseDto != null) {
-				responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
-				responseDto.setStatus(EReturnConstants.ERROR_STATUS);
-				responseDto.setMessage(e.getMessage());
-			}
-			LOGGER.error("Re-Triggering workflow Error:" + e.getMessage());
-		}
 		return responseDto;
 	}
 	
@@ -323,4 +240,34 @@ public class RequestServiceImpl implements RequestService {
 		return hciMappingService.pushDataToEcc(requestDto);
 	}
 
+	private ResponseDto saveData(RequestDto requestDto) {
+		ResponseDto responseDto = new ResponseDto(); 
+		String requestId = "";
+		try { 
+			responseDto = requestRepository.addRequest(importExportUtil.importRequestDto(requestDto));
+			if (responseDto != null) {
+				if (responseDto.getMessage() != null) {
+					requestId = responseDto.getMessage().substring(8, 19);
+				}
+			}
+
+			Set<AttachmentDto> setAttachment = requestDto.getSetAttachments();
+			for (AttachmentDto attachmentDto : setAttachment) {
+				byte[] decodedString = Base64.decodeBase64(attachmentDto.getContent());
+				String attachmentName = ecmDocumentService.uploadAttachment(decodedString,
+						attachmentDto.getAttachmentName(), attachmentDto.getAttachmentType());
+				attachmentDto.setAttachmentName(attachmentName);
+				attachmentDto.setRequestId(requestId);
+				Attachment attachment = importExportUtil.importAttachmentDto(attachmentDto);
+				attachmentRepository.addAttachment(attachment);
+			}
+		} catch (Exception e) {
+			if(responseDto != null) {
+				responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
+				responseDto.setStatus(EReturnConstants.ERROR_STATUS);
+				responseDto.setMessage(e.getMessage());
+			}
+		}
+		return responseDto;
+	}
 }

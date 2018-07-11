@@ -172,6 +172,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 		try {
 
 			synchronized(this) {
+				LOGGER.error(">>>>>>>>>>>>>123"+workFlowInstanceId);
 				URL getUrl = new URL(destination+EReturnsWorkflowConstants.GET_WORK_FLOW_INSTANCE + workFlowInstanceId);
 				HttpURLConnection urlConnection = (HttpURLConnection) getUrl.openConnection();
 				
@@ -182,9 +183,10 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 				urlConnection.setRequestProperty(EReturnConstants.CONTENT_TYPE, EReturnConstants.CONTENT_APPLICATION);
 				
 				urlConnection.connect();
+				LOGGER.error(">>>>>>>>>>>>>"+urlConnection.getResponseCode());
 				responseData = getDataFromStream(urlConnection.getInputStream());
 			}
-			
+			LOGGER.error(workFlowInstanceId+"response data from workflow:" + responseData);
 			String instanceId="";
 			JSONArray jsonArray = new JSONArray(responseData);
 			for (int counter = 0; counter < jsonArray.length(); counter++) {
@@ -201,6 +203,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			if(responseDto.getCode() != null) {
 				RequestDto res = requestService.getRequestById(requestDto.getRequestId());
 				if (responseDto.getCode().equals(EReturnConstants.WORKFLOW_STATUS_CODE)) {
+					res.setPurchaseOrder("ERP");
 					Thread.sleep(5000);
 					String status = updateOrderDetails(instanceId);
 					if(status.equalsIgnoreCase(EReturnConstants.COMPLETE)) {

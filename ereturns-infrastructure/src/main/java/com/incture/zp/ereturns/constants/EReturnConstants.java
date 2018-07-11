@@ -12,7 +12,8 @@ public interface EReturnConstants {
 	
 	public static final String INPROGRESS = "INPROGRESS";
 	public static final String NEW = "NEW";
-
+	public static final String REJECTED = "REJECTED";
+	
 	public static final String COLON = ":";
 
 	public static final String ECM_LOOKUP_NAME = "java:comp/env/EcmService";

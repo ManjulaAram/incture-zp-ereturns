@@ -31,6 +31,7 @@ public interface EReturnsHciConstants {
 	public static final String SALES_ORG = "sales_org";
 	public static final String DISTRIBUTION_CHANNEL = "distr_chan";
 	public static final String DIVISION = "division";
+	public static final String PO_METHOD = "po_method";
 	
 	public static final String PLANT = "plant";
 	public static final String STORE_LOC = "store_loc";
