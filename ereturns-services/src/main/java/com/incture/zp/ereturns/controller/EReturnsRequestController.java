@@ -148,6 +148,6 @@ public class EReturnsRequestController {
 	@RequestMapping(value = "/pushDataToECC/{requestId}", method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseDto pushDataToECC(@PathVariable(value = "requestId") String requestId) {
-		return requestService.pushDataToEccForTest(requestId);
+		return requestService.postToEcc(requestId);
 	}
 }

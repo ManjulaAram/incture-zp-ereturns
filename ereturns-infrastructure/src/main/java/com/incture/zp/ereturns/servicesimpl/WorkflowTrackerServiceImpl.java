@@ -169,7 +169,13 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 				if(logObject.getRequestApprovedBy() != null && !(logObject.getRequestApprovedBy().equals(""))) {
 						approverDto = new ApproverDto();
 					
-						approverDto.setApproverName(userService.getUserNameById(logObject.getRequestApprovedBy()));
+						if(logObject.getRequestApprovedBy() != null && !(logObject.getRequestApprovedBy().equals(""))) {
+							if(logObject.getRequestApprovedBy().equalsIgnoreCase("WF_SYSTEM")) {
+								approverDto.setApproverName("WF_SYSTEM");
+							} else {
+								approverDto.setApproverName(userService.getUserNameById(logObject.getRequestApprovedBy()));
+							}
+						}
 						approverDto.setApprovalDate(logObject.getRequestApprovedDate());
 						approverDto.setCommentsByApprover(logObject.getRequestorComments());
 						if(logObject.getRequestStatus().equalsIgnoreCase("COMPLETED")) {

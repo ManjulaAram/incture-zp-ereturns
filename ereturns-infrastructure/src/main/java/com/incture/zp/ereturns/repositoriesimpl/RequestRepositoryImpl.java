@@ -92,6 +92,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 
 		if (requestDto.getPendingWith() != null && !(requestDto.getPendingWith().equals(""))) {
 			queryString.append(" AND o.orderPendingWith=:orderPendingWith");
+			queryString.append(" AND o.orderStatus=:orderStatus");
 		}
 
 		if (requestDto.getPrincipalCode() != null && !(requestDto.getPrincipalCode().equals(""))) {
@@ -117,6 +118,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 		}
 		if (requestDto.getPendingWith() != null && !(requestDto.getPendingWith().equals(""))) {
 			query.setParameter("orderPendingWith", requestDto.getPendingWith());
+			query.setParameter("orderStatus", "INPROGRESS");
 		}
 		if ((requestDto.getStartDate() != null && !(requestDto.getStartDate().equals("")))
 				&& (requestDto.getEndDate() != null) && !(requestDto.getEndDate().equals(""))) {
@@ -139,7 +141,6 @@ public class RequestRepositoryImpl implements RequestRepository {
 		List<Object[]> objectsList = query.list();
 		List<StatusResponseDto> reqList = new ArrayList<>();
 		StatusResponseDto statusResponseDto = null;
-		LOGGER.error("Results for Request:" + objectsList.size());
 		for (Object[] objects : objectsList) {
 			request = (Request) objects[0];
 			
@@ -179,13 +180,17 @@ public class RequestRepositoryImpl implements RequestRepository {
 	
 							// Request Level
 							statusResponseDto.setCurrency(request.getRequestHeader().getCurrency());
-							statusResponseDto.setEccResponse(request.getEccReturnOrderNo());
 							statusResponseDto.setRequestId(request.getRequestId());
 							statusResponseDto.setShipTo(request.getShipTo());
 							statusResponseDto.setSoldTo(request.getSoldTo());
 							statusResponseDto.setInvoiceNo(request.getRequestHeader().getInvoiceNo());
 							statusResponseDto.setCustomerName(request.getCustomer());
 							statusResponseDto.setCustomerCode(request.getCustomerNo());
+							if(returnOrder2.getOrderStatus().equalsIgnoreCase(EReturnConstants.COMPLETE)) {
+								statusResponseDto.setEccResponse(request.getEccReturnOrderNo());
+							} else {
+								statusResponseDto.setEccResponse("");
+							}
 	
 							statusResponseDto.setMessage(EReturnConstants.SUCCESS_STATUS);
 							statusResponseDto.setStatus(EReturnConstants.SUCCESS_STATUS);

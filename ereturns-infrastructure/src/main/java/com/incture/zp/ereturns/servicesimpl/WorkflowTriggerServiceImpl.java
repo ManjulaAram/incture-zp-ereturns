@@ -214,7 +214,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 						requestRepository.updateEccReturnOrder(EReturnConstants.COMPLETE, responseDto.getMessage(), requestId);
 					} else if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_ERROR_STATUS)) {
 						responseDto.setMessage(responseDto.getMessage());
-						
+						requestRepository.updateEccReturnOrder(EReturnConstants.ECC_ERROR_STATUS, responseDto.getMessage(), requestId);
 						//Re-triggering the process
 						workFlowService.deleteWorkflow(requestId);
 						LOGGER.error("Re-Triggering workflow:" + responseDto.getMessage());

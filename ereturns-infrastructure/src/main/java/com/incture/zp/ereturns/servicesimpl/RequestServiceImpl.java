@@ -89,9 +89,7 @@ public class RequestServiceImpl implements RequestService {
 			if (responseDto != null) {
 				if (responseDto.getCode().equals(EReturnConstants.SUCCESS_STATUS_CODE)) {
 					requestId = getRequestId(responseDto);
-					RequestDto requestDto2 = getRequestById(requestId);
-					responseDto = hciMappingService.pushDataToEcc(requestDto2);
-					requestRepository.updateEccReturnOrder(EReturnConstants.COMPLETE, responseDto.getMessage(), requestId);
+					processStartFlag = true;
 				}
 			}
 		} else {
@@ -110,10 +108,9 @@ public class RequestServiceImpl implements RequestService {
 					}
 				}
 			}
-			
-			if (processStartFlag) {
-				responseDto = triggerWorkflow(requestDto, requestId, responseDto);
-			}
+		}
+		if (processStartFlag) {
+			responseDto = triggerWorkflow(requestDto, requestId, responseDto);
 		}
 		return responseDto;
 	}
@@ -171,8 +168,7 @@ public class RequestServiceImpl implements RequestService {
 				if(requestDto2.getHeaderDto().getInvoiceNo() != null) {
 					if (requestDto2.getHeaderDto().getInvoiceNo().equals(requestDto.getHeaderDto().getInvoiceNo()) &&
 							((requestDto2.getRequestStatus().equalsIgnoreCase(EReturnConstants.NEW)) || 
-									(requestDto2.getRequestStatus().equalsIgnoreCase(EReturnConstants.INPROGRESS)) ||
-									(requestDto2.getRequestStatus().equalsIgnoreCase(EReturnConstants.REJECTED)))) {
+									(requestDto2.getRequestStatus().equalsIgnoreCase(EReturnConstants.INPROGRESS)))) {
 						for (ItemDto itemDto : requestDto2.getHeaderDto().getItemSet()) {
 							for (ItemDto itemDto2 : requestDto.getHeaderDto().getItemSet()) {
 								for(ReturnOrderDto returnOrderDto : requestDto2.getSetReturnOrderDto()) {
@@ -180,7 +176,7 @@ public class RequestServiceImpl implements RequestService {
 										duplicate = true;
 										int remainingQty = Integer.parseInt(itemDto.getAvailableQty()) - Integer.parseInt(returnOrderDto.getReturnQty());
 										materials.add("Request "+requestDto2.getRequestId()+" for Invoice "+requestDto.getHeaderDto().getInvoiceNo()
-												+" and Material "+itemDto.getMaterial() +" already in approval queue and remaining Quantity is "+remainingQty);
+												+" and Material "+itemDto.getMaterial() +" already in approval queue and queued quantity is "+remainingQty);
 										break;
 									} else {
 										duplicate = false;
@@ -241,7 +237,7 @@ public class RequestServiceImpl implements RequestService {
 	}
 	
 	@Override
-	public ResponseDto pushDataToEccForTest(String requestId) {
+	public ResponseDto postToEcc(String requestId) {
 		RequestDto requestDto = getRequestById(requestId);
 		String client = requestDto.getClient();
 		if(client != null && !(client.equals("")) && client.equalsIgnoreCase("WEB")) {

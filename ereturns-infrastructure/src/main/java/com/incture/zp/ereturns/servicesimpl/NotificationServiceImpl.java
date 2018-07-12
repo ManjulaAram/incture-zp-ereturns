@@ -51,10 +51,12 @@ public class NotificationServiceImpl implements NotificationService {
 					for(int i = 0 ; i < userList.size() ; i++) {
 						String userId = userList.get(i);
 						UserDto userDto = userService.getUserById(userId);
-						if(userDto != null && !(userDto.getMobileToken().equals(""))) {
-							String token = userDto.getMobileToken();
-							notifyUtil.sendNotification(messageMap.get("messageTitle"), token, messageMap.get("messageBody"),
-									requestService.getStatusDetails(statusRequestDto));
+						if(userDto != null) {
+							if(userDto.getMobileToken() != null && !(userDto.getMobileToken().equals(""))) {
+								String token = userDto.getMobileToken();
+								notifyUtil.sendNotification(messageMap.get("messageTitle"), token, messageMap.get("messageBody"),
+										requestService.getStatusDetails(statusRequestDto));
+							}
 						}
 					}
 				}

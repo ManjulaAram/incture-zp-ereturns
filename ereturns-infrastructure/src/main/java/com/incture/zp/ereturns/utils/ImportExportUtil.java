@@ -233,6 +233,7 @@ public class ImportExportUtil {
 		request.setEccStatus(requestDto.getEccStatus());
 
 		request.setClient(requestDto.getClient());
+		request.setUnref(requestDto.getUnrefFlag());
 		return request;
 	}
 
@@ -280,6 +281,7 @@ public class ImportExportUtil {
 		requestDto.setEccStatus(request.getEccStatus());
 		
 		requestDto.setClient(request.getClient());
+		requestDto.setUnrefFlag(request.getUnref());
 		
 		return requestDto;
 	}

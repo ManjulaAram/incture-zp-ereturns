@@ -76,6 +76,9 @@ public class Request {
 	@Column(name = "CLIENT", length = 50)
 	private String client;
 	
+	@Column(name = "UN_REFERENCED", length = 50)
+	private String unref;
+	
 	@OneToOne(cascade = CascadeType.ALL)
 	private Header requestHeader; 
 	
@@ -240,6 +243,14 @@ public class Request {
 
 	public void setClient(String client) {
 		this.client = client;
+	}
+
+	public String getUnref() {
+		return unref;
+	}
+
+	public void setUnref(String unref) {
+		this.unref = unref;
 	}
 
 }
