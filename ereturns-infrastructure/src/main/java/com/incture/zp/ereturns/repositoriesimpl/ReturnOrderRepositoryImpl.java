@@ -117,5 +117,23 @@ public class ReturnOrderRepositoryImpl implements ReturnOrderRepository {
 		statusPendingDto.setRejected(rejected);
 		return statusPendingDto;
 	}
+	
+	public List<ReturnOrderDto> getPendingWith(String role) {
+		
+		List<ReturnOrderDto> returnOrderDtos = new ArrayList<ReturnOrderDto>();
+		
+		String queryStr = "SELECT o FROM ReturnOrder o where o.orderPendingWith=:orderPendingWith";
+		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
+		query.setParameter("orderPendingWith", role);
+		@SuppressWarnings("unchecked")
+		List<ReturnOrder> reqList = query.list();
+		for (ReturnOrder returnOrder : reqList) {
+			returnOrderDtos.add(importExportUtil.exportReturnOrderDto(returnOrder));
+		}
+		return returnOrderDtos;
+	}
+	
+	
+
 
 }

@@ -5,7 +5,5 @@ import com.incture.zp.ereturns.dto.WorkflowInstanceDto;
 
 public interface WorkflowTrackerService {
 
-	public WorkflowInstanceDto getTaskDetails(CompleteTaskRequestDto completeTaskRequestDto);
-	
 	public WorkflowInstanceDto getTrackDetails(CompleteTaskRequestDto completeTaskRequestDto);
 }

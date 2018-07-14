@@ -229,6 +229,9 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 							jsonObj.put(EReturnsWorkflowConstants.INITIATOR, res.getRequestCreatedBy());
 							jsonObj.put(EReturnsWorkflowConstants.INVOICE, res.getHeaderDto().getInvoiceNo());
 							jsonObj.put(EReturnsWorkflowConstants.MATERIAL, itemDto.getMaterialDesc());
+							
+							jsonObj.put(EReturnsWorkflowConstants.CREATED_DATE, res.getRequestCreatedDate());
+							jsonObj.put(EReturnsWorkflowConstants.CUSTOMER, res.getCustomerNo());
 
 							JSONObject obj = new JSONObject();
 							obj.put(EReturnsWorkflowConstants.CONTEXT, jsonObj);
@@ -261,7 +264,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 				}
 			} else {
 				responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
-				responseDto.setMessage("No Response from Workflow");
+				responseDto.setMessage("Request has already claimed");
 				responseDto.setStatus(EReturnConstants.ERROR_STATUS);
 			}
 		} catch (MalformedURLException e) {

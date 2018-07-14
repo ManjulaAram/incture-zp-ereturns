@@ -56,7 +56,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 			responseDto.setMessage("Request " + requestId + " Saved Successfully");
 		}
 		sessionFactory.getCurrentSession().saveOrUpdate(request);
-		responseDto.setMessage("Request " + request.getRequestId() + " Created Successfully");
+		responseDto.setMessage("Request " + request.getRequestId() + " created successfully");
 		responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
 		responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
 		return responseDto;

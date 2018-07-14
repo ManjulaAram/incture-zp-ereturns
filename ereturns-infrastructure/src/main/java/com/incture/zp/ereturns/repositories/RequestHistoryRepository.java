@@ -6,6 +6,7 @@ import com.incture.zp.ereturns.dto.RequestHistoryDto;
 
 public interface RequestHistoryRepository {
 
-	public List<RequestHistoryDto> getRequestHistory(String requestId);
+	public List<RequestHistoryDto> getRequestHistory(String requestId, String itemCode);
 	
+	public List<RequestHistoryDto> getApprovedBy(String user);
 }

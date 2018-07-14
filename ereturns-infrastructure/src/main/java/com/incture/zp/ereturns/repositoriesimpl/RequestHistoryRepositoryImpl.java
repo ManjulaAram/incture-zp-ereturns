@@ -23,13 +23,14 @@ public class RequestHistoryRepositoryImpl implements RequestHistoryRepository {
 	ImportExportUtil importExportUtil;
 	
 	@Override
-	public List<RequestHistoryDto> getRequestHistory(String requestId) {
+	public List<RequestHistoryDto> getRequestHistory(String requestId, String itemCode) {
 		
 		List<RequestHistoryDto> requestHistoryDtos = new ArrayList<RequestHistoryDto>();
 		
-		String queryStr = "select rh from RequestHistory rh where rh.requestId=:requestId";
+		String queryStr = "select rh from RequestHistory rh where rh.requestId=:requestId and rh.itemCode=:itemCode";
 		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
 		query.setParameter("requestId", requestId);
+		query.setParameter("itemCode", itemCode);
 		@SuppressWarnings("unchecked")
 		List<RequestHistory> reqList = query.list();
 		for (RequestHistory requestHistory : reqList) {
@@ -38,4 +39,20 @@ public class RequestHistoryRepositoryImpl implements RequestHistoryRepository {
 		return requestHistoryDtos;
 	}
 
+	public List<RequestHistoryDto> getApprovedBy(String user) {
+		
+		List<RequestHistoryDto> requestHistoryDtos = new ArrayList<RequestHistoryDto>();
+		
+		String queryStr = "select rh from RequestHistory rh where rh.requestApprovedBy=:requestApprovedBy";
+		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
+		query.setParameter("requestApprovedBy", user);
+		@SuppressWarnings("unchecked")
+		List<RequestHistory> reqList = query.list();
+		for (RequestHistory requestHistory : reqList) {
+			requestHistoryDtos.add(importExportUtil.exportRequestHistoryDto(requestHistory));
+		}
+		
+		return requestHistoryDtos;
+	}
+	
 }

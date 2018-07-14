@@ -17,11 +17,13 @@ import com.incture.zp.ereturns.dto.CompleteTasksDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
+import com.incture.zp.ereturns.dto.RoleDto;
 import com.incture.zp.ereturns.dto.StatusPendingDto;
 import com.incture.zp.ereturns.dto.StatusRequestDto;
 import com.incture.zp.ereturns.dto.StatusResponseDto;
 import com.incture.zp.ereturns.dto.WorkflowInstanceDto;
 import com.incture.zp.ereturns.services.HciMappingEccService;
+import com.incture.zp.ereturns.services.RequestHistoryService;
 import com.incture.zp.ereturns.services.RequestService;
 import com.incture.zp.ereturns.services.ReturnOrderService;
 import com.incture.zp.ereturns.services.WorkflowTrackerService;
@@ -41,6 +43,9 @@ public class EReturnsRequestController {
 
 	@Autowired
 	ReturnOrderService returnOrderService;
+	
+	@Autowired
+	RequestHistoryService requestHistoryService;
 	
 	@Autowired
 	HciMappingEccService hciMappingEccService;
@@ -117,7 +122,6 @@ public class EReturnsRequestController {
 	@RequestMapping(value = "/getTaskInstance", method = RequestMethod.POST,consumes = { "application/json" })
 	@ResponseBody
 	public WorkflowInstanceDto getAllRequests(@RequestBody CompleteTaskRequestDto completeTaskRequestDto) {
-//		return wfTraackerService.getTaskDetails(completeTaskRequestDto);
 		return wfTraackerService.getTrackDetails(completeTaskRequestDto);
 	}
 	
@@ -137,6 +141,12 @@ public class EReturnsRequestController {
 	@ResponseBody
 	public StatusPendingDto getRequestStatusByUserId(@PathVariable(value = "userId") String userId) {
 		return returnOrderService.getRequestStatusByUserId(userId);
+	}
+	
+	@RequestMapping(value = "/getPendingStatusForApprover", method = RequestMethod.POST, consumes = { "application/json" })
+	@ResponseBody
+	public StatusPendingDto getPendingStatusForApprover(@RequestBody RoleDto roleDto) {
+		return requestHistoryService.getStatusForApprover(roleDto);
 	}
 	
 	@RequestMapping(value = "/getRequestStatus/{requestId}", method = RequestMethod.GET)

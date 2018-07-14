@@ -19,4 +19,5 @@ public interface ReturnOrderRepository {
 	
 	public StatusPendingDto getRequestStatusByUserId(String userId);
 	
+	public List<ReturnOrderDto> getPendingWith(String role);
 }
