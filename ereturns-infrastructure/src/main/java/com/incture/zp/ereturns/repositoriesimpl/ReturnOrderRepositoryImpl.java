@@ -14,6 +14,7 @@ import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.StatusPendingDto;
+import com.incture.zp.ereturns.dto.UpdateDto;
 import com.incture.zp.ereturns.model.ReturnOrder;
 import com.incture.zp.ereturns.repositories.ReturnOrderRepository;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
@@ -133,7 +134,22 @@ public class ReturnOrderRepositoryImpl implements ReturnOrderRepository {
 		return returnOrderDtos;
 	}
 	
-	
+	public int updateReturnOrderTrigger(UpdateDto updateDto) {
+		String queryStr = "UPDATE ReturnOrder SET orderPendingWith=:orderPendingWith, orderStatus=:orderStatus, orderApprovedBy=:orderApprovedBy, "
+				+ "orderApprovedDate=:orderApprovedDate "
+				+ "WHERE requestId=:requestId AND itemCode=:itemCode";
+		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
+		query.setParameter("orderPendingWith", updateDto.getPendingWith());
+		query.setParameter("orderStatus", updateDto.getEccStatus());
+		query.setParameter("orderApprovedBy", updateDto.getApprovedBy());
+		query.setParameter("orderApprovedDate", updateDto.getApprovedDate());
+		query.setParameter("requestId", updateDto.getRequestId());
+		query.setParameter("itemCode", updateDto.getItemCode());
+		
+		int result = query.executeUpdate();
+		return result;
+
+	}
 
 
 }

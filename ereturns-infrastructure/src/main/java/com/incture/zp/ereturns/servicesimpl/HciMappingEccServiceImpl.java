@@ -120,7 +120,6 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		
 
 		RestInvoker restInvoker = new RestInvoker(url, username, password);
-		LOGGER.error("Response coming from ECC1:");
 		String response = restInvoker.postDataToServer(EReturnConstants.ECC_HCI_URL, returnOrder.toString());
 		LOGGER.error("Response coming from ECC:"+response);
 		if(response != null && !(response.equals(""))) {

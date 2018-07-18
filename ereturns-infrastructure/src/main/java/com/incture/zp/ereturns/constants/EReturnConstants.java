@@ -62,7 +62,22 @@ public interface EReturnConstants {
 //	public static final String SCIM_DESTINATION_USER = "T000004";
 //	public static final String SCIM_DESTINATION_PWD = "Incture@123";
 
-
+	// DB destination
+	public static final String DATABASE_DESTINATION = "zuelligDbConnection";
+	public static final String DATABASE_DESTINATION_URL = "URL";
+	public static final String DATABASE_DESTINATION_USER = "User";
+	public static final String DATABASE_DESTINATION_PWD = "Password";
+	public static final String DATABASE_REST_API_REQUESTID ="/zuellig/ruleService.xsjs?requestId=";
+	public static final String DATABASE_REST_API_ITEMCODE ="&itemCode=";
+	
+//	public static final String DATABASE_DESTINATION_URL = "https://ydyce7231891.ap1.hana.ondemand.com";
+//	public static final String DATABASE_DESTINATION_USER = "DB_USER";
+//	public static final String DATABASE_DESTINATION_PWD = "123Welcome123Welcome";
+	
+	public static final String IN_EXPIRY = "InexpPolicy";
+	public static final String REASON = "Reason";
+	
+	
 	//IDP standard service constants
 	
 	public static final String IDP_FAMILY_NAME = "familyName";

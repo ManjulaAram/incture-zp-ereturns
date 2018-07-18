@@ -33,10 +33,13 @@ import com.incture.zp.ereturns.services.EcmDocumentService;
 import com.incture.zp.ereturns.services.HciMappingEccService;
 import com.incture.zp.ereturns.services.NotificationService;
 import com.incture.zp.ereturns.services.RequestService;
+import com.incture.zp.ereturns.services.UserService;
 import com.incture.zp.ereturns.services.WorkFlowService;
 import com.incture.zp.ereturns.services.WorkflowTriggerService;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
+import com.incture.zp.ereturns.utils.RestInvoker;
 import com.incture.zp.ereturns.utils.ServiceUtil;
+import com.sap.core.connectivity.api.configuration.DestinationConfiguration;
 
 @Service
 @Transactional
@@ -73,6 +76,9 @@ public class RequestServiceImpl implements RequestService {
 	ServiceUtil serviceUtil;
 	
 	@Autowired
+	UserService userService;
+	
+	@Autowired
 	NotificationService notificationService;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequestServiceImpl.class);
@@ -94,7 +100,7 @@ public class RequestServiceImpl implements RequestService {
 			}
 		} else {
 			DuplicateMaterialDto duplicateDto = findDuplicate(requestDto);
-			duplicateDto.setDuplicate(false);
+//			duplicateDto.setDuplicate(false);
 			if(duplicateDto.isDuplicate()) {
 				responseDto.setCode(EReturnConstants.DUPLICATE_CODE);
 				responseDto.setMessage(duplicateDto.getMaterials().toString());
@@ -110,7 +116,7 @@ public class RequestServiceImpl implements RequestService {
 			}
 		}
 		if (processStartFlag) {
-			responseDto = triggerWorkflow(requestDto, requestId, responseDto);
+			responseDto = triggerWorkflow(requestId, responseDto);
 		}
 		return responseDto;
 	}
@@ -174,9 +180,9 @@ public class RequestServiceImpl implements RequestService {
 								for(ReturnOrderDto returnOrderDto : requestDto2.getSetReturnOrderDto()) {
 									if (itemDto.getMaterial().equals(itemDto2.getMaterial()) && returnOrderDto.getItemCode().equalsIgnoreCase(itemDto.getItemCode())) {
 										duplicate = true;
-										int remainingQty = Integer.parseInt(itemDto.getAvailableQty()) - Integer.parseInt(returnOrderDto.getReturnQty());
+										int remainingQty = Integer.parseInt(returnOrderDto.getReturnQty());
 										materials.add("Request "+requestDto2.getRequestId()+" for Invoice "+requestDto.getHeaderDto().getInvoiceNo()
-												+" and Material "+itemDto.getMaterial() +" already in approval queue and queued quantity is "+remainingQty);
+												+" and Material "+itemDto.getMaterial() +" is already in approval queue with quantity "+remainingQty+ " .Hence cannot proceed for new Request");
 										break;
 									} else {
 										duplicate = false;
@@ -193,11 +199,22 @@ public class RequestServiceImpl implements RequestService {
 		return duplicateMaterialDto;
 	}
 	
-	private ResponseDto triggerWorkflow(RequestDto requestDto, String requestId, ResponseDto responseDto) {
+	private ResponseDto triggerWorkflow(String requestId, ResponseDto responseDto) {
 		String workFlowInstanceId = "";
+		RequestDto requestDto = getRequestById(requestId);
+		DestinationConfiguration destConfiguration = ServiceUtil.getDest(EReturnConstants.DATABASE_DESTINATION);
+		String destination = destConfiguration.getProperty(EReturnConstants.DATABASE_DESTINATION_URL);
+		String username = destConfiguration.getProperty(EReturnConstants.DATABASE_DESTINATION_USER);
+		String password = destConfiguration.getProperty(EReturnConstants.DATABASE_DESTINATION_PWD);
+		String url = destination;
+
+//		String url = EReturnConstants.DATABASE_DESTINATION_URL;
+//		String username = EReturnConstants.DATABASE_DESTINATION_USER;
+//		String password = EReturnConstants.DATABASE_DESTINATION_PWD;
+
 		for (ItemDto itemDto : requestDto.getHeaderDto().getItemSet()) {
 			WorkFlowDto workFlowDto = new WorkFlowDto();
-
+			
 			// start process
 			JSONObject jsonObj = new JSONObject();
 			jsonObj.put(EReturnsWorkflowConstants.REQUEST_ID, requestId);
@@ -227,6 +244,36 @@ public class RequestServiceImpl implements RequestService {
 			workFlowService.addWorkflowInstance(workFlowDto);
 			
 			LOGGER.error("Process triggered successfully :" + output);
+			
+			RestInvoker restInvoker = new RestInvoker(url, username, password);
+			String path = EReturnConstants.DATABASE_REST_API_REQUESTID+requestId+EReturnConstants.DATABASE_REST_API_ITEMCODE+itemDto.getItemCode();
+			String response = restInvoker.getData(path);
+			LOGGER.error("Response coming from DB:"+response);
+
+			JSONObject responseObject = new JSONObject(response);
+			if(responseObject != null) {
+				boolean policy = (boolean) responseObject.get(EReturnConstants.IN_EXPIRY);
+				String reason = (String) responseObject.get(EReturnConstants.REASON);
+				
+				if(policy)
+				{
+					if(!(reason.equalsIgnoreCase("T21")) && !(reason.equalsIgnoreCase("T22"))) {
+//					Auto approve
+						notificationService.sendNotificationForRequestor(requestId, requestDto.getRequestCreatedBy(), "A");
+					} else {
+//					Pricipal
+						notificationService.sendNotificationForApprover(requestId, "Principal");
+					}
+				} else {
+					if(!(reason.equalsIgnoreCase("T21")) && !(reason.equalsIgnoreCase("T22"))) {
+//					Principal
+						notificationService.sendNotificationForApprover(requestId, "Principal");
+					} else {
+//					Pricipal && ZP
+						notificationService.sendNotificationForApprover(requestId, "Principal");
+					}
+				}
+			}
 		}
 		return responseDto;
 	}
@@ -283,4 +330,5 @@ public class RequestServiceImpl implements RequestService {
 
 		return requestId;
 	}
+	
 }

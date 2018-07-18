@@ -67,6 +67,7 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 				completeTaskRequestDto.getItemCode());
 		List<String> recipientList = new ArrayList<>(); // pending with
 		boolean flag = false;
+		boolean reTrigger = false;
 		ApproverDto approverDto = null;
 		String material = "";
 		String recipient = "";
@@ -91,7 +92,7 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 					
 						if(logObject.getRequestApprovedBy() != null && !(logObject.getRequestApprovedBy().equals(""))) {
 							if(logObject.getRequestApprovedBy().equalsIgnoreCase("WF_SYSTEM")) {
-								approverDto.setApproverName("NA");
+								approverDto.setApproverName(logObject.getRequestApprovedBy());
 								approverDto.setCommentsByApprover("");
 							} else {
 								approverDto.setApproverName(userService.getUserNameById(logObject.getRequestApprovedBy()));
@@ -113,8 +114,17 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 			material = logObject.getMaterial();
 		}
 		recipientList.add(recipient);
+		if(requestDto.getEccStatus() != null && !(requestDto.getEccStatus().equals(""))) {
+			if(requestDto.getEccStatus().equalsIgnoreCase("ECC_ERROR")) {
+				reTrigger = true;
+				flag = false;
+			}
+		}
 		if(flag) {
 			recipientList.clear();
+		}
+		if(reTrigger) {
+			approverList.clear();
 		}
 			instanceDto.setCreatedBy(userService.getUserNameById(requestDto.getRequestCreatedBy()));
 			instanceDto.setCreatedAt(requestDto.getRequestCreatedDate());

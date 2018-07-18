@@ -33,8 +33,9 @@ import com.incture.zp.ereturns.dto.CompleteTaskRequestDto;
 import com.incture.zp.ereturns.dto.ItemDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
-import com.incture.zp.ereturns.dto.WorkFlowDto;
+import com.incture.zp.ereturns.dto.UpdateDto;
 import com.incture.zp.ereturns.repositories.RequestRepository;
+import com.incture.zp.ereturns.repositories.ReturnOrderRepository;
 import com.incture.zp.ereturns.services.HciMappingEccService;
 import com.incture.zp.ereturns.services.NotificationService;
 import com.incture.zp.ereturns.services.RequestService;
@@ -63,6 +64,9 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 	
 	@Autowired
 	RequestRepository requestRepository;
+	
+	@Autowired
+	ReturnOrderRepository returnOrderRepository;
 
 	@Autowired
 	ReturnOrderService returnOrderService;
@@ -162,6 +166,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
 	@Override
 	public ResponseDto completeTask(CompleteTaskRequestDto requestDto) {
+		
 		ResponseDto responseDto = new ResponseDto();
 		boolean eccFlag = false;
 		String requestId = requestDto.getRequestId();
@@ -169,8 +174,8 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 				.getWorkFLowInstance(requestId, requestDto.getItemCode()).getWorkFlowInstanceId();
 		String responseData = "";
 
+		RequestDto res = requestService.getRequestById(requestDto.getRequestId());
 		try {
-
 			synchronized(this) {
 				URL getUrl = new URL(destination+EReturnsWorkflowConstants.GET_WORK_FLOW_INSTANCE + workFlowInstanceId);
 				HttpURLConnection urlConnection = (HttpURLConnection) getUrl.openConnection();
@@ -198,7 +203,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 				responseDto = requestAction(instanceId, requestDto.getFlag(), requestDto.getLoginUser(), requestDto.getOrderComments());
 			}
 			if(responseDto.getCode() != null) {
-				RequestDto res = requestService.getRequestById(requestDto.getRequestId());
+				
 				if (responseDto.getCode().equals(EReturnConstants.WORKFLOW_STATUS_CODE)) {
 					res.setPurchaseOrder("ERP");
 					Thread.sleep(5000);
@@ -213,42 +218,22 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 						notificationService.sendNotificationForRequestor(res.getRequestId(), res.getRequestCreatedBy(), "A");
 						requestRepository.updateEccReturnOrder(EReturnConstants.COMPLETE, responseDto.getMessage(), requestId);
 					} else if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_ERROR_STATUS)) {
+						
 						responseDto.setMessage(responseDto.getMessage());
-						requestRepository.updateEccReturnOrder(EReturnConstants.ECC_ERROR_STATUS, responseDto.getMessage(), requestId);
-						//Re-triggering the process
-						workFlowService.deleteWorkflow(requestId);
-						LOGGER.error("Re-Triggering workflow:" + responseDto.getMessage());
-						for (ItemDto itemDto : res.getHeaderDto().getItemSet()) {
-							String workflowInstanceId = "";
-							WorkFlowDto workFlowDto = new WorkFlowDto();
-
-							// start process
-							JSONObject jsonObj = new JSONObject();
-							jsonObj.put(EReturnsWorkflowConstants.REQUEST_ID, requestId);
-							jsonObj.put(EReturnsWorkflowConstants.ITEM_CODE, itemDto.getItemCode());
-							jsonObj.put(EReturnsWorkflowConstants.INITIATOR, res.getRequestCreatedBy());
-							jsonObj.put(EReturnsWorkflowConstants.INVOICE, res.getHeaderDto().getInvoiceNo());
-							jsonObj.put(EReturnsWorkflowConstants.MATERIAL, itemDto.getMaterialDesc());
-							
-							jsonObj.put(EReturnsWorkflowConstants.CREATED_DATE, res.getRequestCreatedDate());
-							jsonObj.put(EReturnsWorkflowConstants.CUSTOMER, res.getCustomerNo());
-
-							JSONObject obj = new JSONObject();
-							obj.put(EReturnsWorkflowConstants.CONTEXT, jsonObj);
-							obj.put(EReturnsWorkflowConstants.DEFINITION_ID, EReturnsWorkflowConstants.DEFINITION_VALUE);
-
-							String payload = obj.toString();
-							String output = triggerWorkflow(payload);
-							JSONObject resultJsonObject = new JSONObject(output);
-							workflowInstanceId = resultJsonObject.getString(EReturnsWorkflowConstants.WORKFLOW_INSTANCE_ID);
-
-							workFlowDto.setRequestId(requestId);
-							workFlowDto.setWorkFlowInstanceId(workflowInstanceId);
-
-							workFlowDto.setMaterialCode(itemDto.getItemCode());
-							workFlowDto.setPrincipal(itemDto.getPrincipalCode());
-							workFlowDto.setTaskInstanceId("");
-							workFlowService.addWorkflowInstance(workFlowDto);
+//						requestRepository.updateEccReturnOrder(EReturnConstants.ECC_ERROR_STATUS, responseDto.getMessage(), requestId);
+						//update tables of request, return order and history
+						UpdateDto updateDto = new UpdateDto();
+						updateDto.setApprovedBy("");
+						updateDto.setApprovedDate("");
+						updateDto.setEccNo(responseDto.getMessage());
+						updateDto.setEccStatus(EReturnConstants.ECC_ERROR_STATUS);
+						updateDto.setPendingWith(res.getRequestPendingWith());
+						updateDto.setRequestId(res.getRequestId());
+						updateDto.setStatus("INPROGRESS");
+						requestRepository.updateRequestTrigger(updateDto);
+						for(ItemDto itemDto : res.getHeaderDto().getItemSet()) {
+							updateDto.setItemCode(itemDto.getItemCode());
+							returnOrderRepository.updateReturnOrderTrigger(updateDto);
 						}
 					}
 				} 
@@ -257,14 +242,14 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 						LOGGER.error("Push notification for creator:" + res.getRequestCreatedBy());
 						notificationService.sendNotificationForRequestor(res.getRequestId(), res.getRequestCreatedBy(), EReturnsWorkflowConstants.WORKFLOW_R);
 					}
-					if(res.getRequestStatus() != null && res.getRequestStatus().equalsIgnoreCase(EReturnConstants.INPROGRESS)) {
-						LOGGER.error("Push notification for approver:" + res.getRequestPendingWith());
-						notificationService.sendNotificationForApprover(res.getRequestId(), res.getRequestPendingWith());
+					if(res.getRequestStatus() != null && res.getRequestStatus().equalsIgnoreCase(EReturnConstants.INPROGRESS) && !eccFlag) {
+						// ZP approver
+						notificationService.sendNotificationForApprover(res.getRequestId(), "ZP-Approver");
 					}
 				}
 			} else {
 				responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
-				responseDto.setMessage("Request has already claimed");
+				responseDto.setMessage("No response from workflow.");
 				responseDto.setStatus(EReturnConstants.ERROR_STATUS);
 			}
 		} catch (MalformedURLException e) {
