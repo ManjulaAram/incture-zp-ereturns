@@ -184,7 +184,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 							statusResponseDto.setNetQuantity(item2.getAvailableQty());
 							statusResponseDto.setNetValue(item2.getNetValue());
 							statusResponseDto.setReturnQuantity(returnOrder2.getReturnQty());
-							statusResponseDto.setReturnReason(returnOrder2.getReason());
+							statusResponseDto.setReturnReason(item2.getItemName());// this will change
 							statusResponseDto.setRemark(returnOrder2.getRemark());
 							statusResponseDto.setReturnType(returnOrder2.getPaymentType());
 							statusResponseDto.setReturnValue(returnOrder2.getReturnValue());
@@ -192,7 +192,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 							statusResponseDto.setOrderComments(returnOrder2.getOrderComments());
 							statusResponseDto.setPrincipalCode(item2.getPrincipalCode());
 							if(returnOrder2.getReason() != null && !(returnOrder2.getReason().equals("")))
-								statusResponseDto.setReason(reasonRepository.getReasonById(returnOrder2.getReason()));
+								statusResponseDto.setReason(reasonRepository.getReasonById(item2.getItemName())); // this will change
 							else
 								statusResponseDto.setReason("");
 							statusResponseDto.setBatch(item2.getBatch());
@@ -295,9 +295,20 @@ public class RequestRepositoryImpl implements RequestRepository {
 				+ "WHERE requestId=:requestId";
 		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
 		query.setParameter("requestPendingWith", updateDto.getPendingWith());
-		query.setParameter("requestStatus", updateDto.getEccStatus());
+		query.setParameter("requestStatus", updateDto.getStatus());
 		query.setParameter("requestApprovedBy", updateDto.getApprovedBy());
-		query.setParameter("requestApprovedDate", updateDto.getApprovedDate());
+		
+		if(updateDto.getApprovedDate() != null && !(updateDto.getApprovedDate().equals(""))) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			try {
+				Date d1 = (Date) sdf.parse(updateDto.getApprovedDate());
+				query.setParameter("requestApprovedDate", d1);
+			} catch (ParseException e) {
+				LOGGER.error("Exception On Date format:" + e.getMessage());
+			}
+		} else {
+			query.setParameter("requestApprovedDate", null);
+		}
 		query.setParameter("eccStatus", updateDto.getEccStatus());
 		query.setParameter("eccReturnOrderNo", updateDto.getEccNo());
 		query.setParameter("requestId", updateDto.getRequestId());

@@ -79,7 +79,7 @@ public class NotificationServiceImpl implements NotificationService {
 		PushNotificationUtil notifyUtil = new PushNotificationUtil();
 	
 			LOGGER.error("Created by Pending with for Push Notification:"+createdBy);
-			UserDto userDto = userService.getUserById(createdBy);
+			UserDto userDto = userService.getUserDetailsById(createdBy);
 			if(userDto != null && !(userDto.getMobileToken().equals(""))) {
 				String token = userDto.getMobileToken();
 				try {

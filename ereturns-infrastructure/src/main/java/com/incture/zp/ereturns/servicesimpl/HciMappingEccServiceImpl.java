@@ -81,10 +81,10 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 			item.put(EReturnsHciConstants.TARGET_QTY, returnOrderList.get(i).getReturnQty());// need to get from return order
 			item.put(EReturnsHciConstants.REF_DOC, requestDto.getHeaderDto().getInvoiceNo());
 			item.put(EReturnsHciConstants.CURRENCY, requestDto.getHeaderDto().getCurrency());
-			item.put(EReturnsHciConstants.ORDER_REASON, returnOrderList.get(i).getReason());
+			item.put(EReturnsHciConstants.ORDER_REASON, itemDto.getItemName());
 			itemsArry.put(item);
 			
-			reason = returnOrderList.get(0).getReason();
+			reason = returnOrderList.get(i).getReason();
 			
 			JSONObject schedules = new JSONObject();
 			schedules.put(EReturnsHciConstants.ITEM_NO, itemDto.getItemCode());

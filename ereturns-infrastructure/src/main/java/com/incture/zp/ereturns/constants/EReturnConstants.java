@@ -87,4 +87,6 @@ public interface EReturnConstants {
 	public static final String IDP_EMAILS = "emails";
 	public static final String IDP_ID = "id";
 	public static final String IDP_VALUE = "value";
+	
+	public static final String IDP_GROUPS = "groups";
 }

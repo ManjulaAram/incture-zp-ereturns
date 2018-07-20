@@ -25,4 +25,6 @@ public interface UserService {
 	public List<String> getUsersByRole(String role);
 	
 	public IdpUserDetailsDto getIdpUserDetailsById(String userId);
+	
+	public UserDto getUserDetailsById(String id);
 }

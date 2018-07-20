@@ -259,7 +259,7 @@ public class RequestServiceImpl implements RequestService {
 				{
 					if(!(reason.equalsIgnoreCase("T21")) && !(reason.equalsIgnoreCase("T22"))) {
 //					Auto approve
-						notificationService.sendNotificationForRequestor(requestId, requestDto.getRequestCreatedBy(), "A");
+//						notificationService.sendNotificationForRequestor(requestId, requestDto.getRequestCreatedBy(), "A");
 					} else {
 //					Pricipal
 						notificationService.sendNotificationForApprover(requestId, "Principal");

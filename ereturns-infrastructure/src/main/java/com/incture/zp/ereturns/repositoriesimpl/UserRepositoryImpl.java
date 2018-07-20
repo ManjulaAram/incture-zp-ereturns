@@ -1,5 +1,7 @@
 package com.incture.zp.ereturns.repositoriesimpl;
 
+import java.util.List;
+
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.dto.ResponseDto;
+import com.incture.zp.ereturns.dto.UserDto;
 import com.incture.zp.ereturns.model.User;
 import com.incture.zp.ereturns.repositories.UserRepository;
 import com.incture.zp.ereturns.utils.GetReferenceData;
@@ -49,6 +52,22 @@ public class UserRepositoryImpl implements UserRepository {
 		return user;
 	}
 
+	@Override
+	public UserDto getUserDetailsById(String id) {
+		
+		UserDto userDto = new UserDto();
+		String queryStr = "SELECT u FROM User u WHERE u.idpUserId=:idpUserId";
+		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
+		query.setParameter("idpUserId", id);
+		
+		@SuppressWarnings("unchecked")
+		List<User> userList =  query.list();
+		for(User user : userList) {
+			userDto = importExportUtil.exportUserDto(user);
+		}
+		
+		return userDto;
+	}
 	@Override
 	public ResponseDto delete(User user) {
 		ResponseDto responseDto = new ResponseDto();

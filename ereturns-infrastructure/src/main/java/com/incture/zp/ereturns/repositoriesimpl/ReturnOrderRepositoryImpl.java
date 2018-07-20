@@ -1,6 +1,9 @@
 package com.incture.zp.ereturns.repositoriesimpl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -137,12 +140,22 @@ public class ReturnOrderRepositoryImpl implements ReturnOrderRepository {
 	public int updateReturnOrderTrigger(UpdateDto updateDto) {
 		String queryStr = "UPDATE ReturnOrder SET orderPendingWith=:orderPendingWith, orderStatus=:orderStatus, orderApprovedBy=:orderApprovedBy, "
 				+ "orderApprovedDate=:orderApprovedDate "
-				+ "WHERE requestId=:requestId AND itemCode=:itemCode";
+				+ "WHERE returnOrderData.requestId=:requestId AND itemCode=:itemCode";
 		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
 		query.setParameter("orderPendingWith", updateDto.getPendingWith());
-		query.setParameter("orderStatus", updateDto.getEccStatus());
+		query.setParameter("orderStatus", updateDto.getStatus());
 		query.setParameter("orderApprovedBy", updateDto.getApprovedBy());
-		query.setParameter("orderApprovedDate", updateDto.getApprovedDate());
+		if(updateDto.getApprovedDate() != null && !(updateDto.getApprovedDate().equals(""))) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			try {
+				Date d1 = (Date) sdf.parse(updateDto.getApprovedDate());
+				query.setParameter("orderApprovedDate", d1);
+			} catch (ParseException e) {
+				LOGGER.error("Exception On Date format:" + e.getMessage());
+			}
+		} else {
+			query.setParameter("orderApprovedDate", null);
+		}
 		query.setParameter("requestId", updateDto.getRequestId());
 		query.setParameter("itemCode", updateDto.getItemCode());
 		

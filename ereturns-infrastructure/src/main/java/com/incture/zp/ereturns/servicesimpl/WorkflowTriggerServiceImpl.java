@@ -220,21 +220,21 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 					} else if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_ERROR_STATUS)) {
 						
 						responseDto.setMessage(responseDto.getMessage());
-//						requestRepository.updateEccReturnOrder(EReturnConstants.ECC_ERROR_STATUS, responseDto.getMessage(), requestId);
+						requestRepository.updateEccReturnOrder(EReturnConstants.ECC_ERROR_STATUS, responseDto.getMessage(), requestId);
 						//update tables of request, return order and history
-						UpdateDto updateDto = new UpdateDto();
-						updateDto.setApprovedBy("");
-						updateDto.setApprovedDate("");
-						updateDto.setEccNo(responseDto.getMessage());
-						updateDto.setEccStatus(EReturnConstants.ECC_ERROR_STATUS);
-						updateDto.setPendingWith(res.getRequestPendingWith());
-						updateDto.setRequestId(res.getRequestId());
-						updateDto.setStatus("INPROGRESS");
-						requestRepository.updateRequestTrigger(updateDto);
-						for(ItemDto itemDto : res.getHeaderDto().getItemSet()) {
-							updateDto.setItemCode(itemDto.getItemCode());
-							returnOrderRepository.updateReturnOrderTrigger(updateDto);
-						}
+//						UpdateDto updateDto = new UpdateDto();
+//						updateDto.setApprovedBy("");
+//						updateDto.setApprovedDate("");
+//						updateDto.setEccNo(responseDto.getMessage());
+//						updateDto.setEccStatus(EReturnConstants.ECC_ERROR_STATUS);
+//						updateDto.setPendingWith(res.getRequestPendingWith());
+//						updateDto.setRequestId(res.getRequestId());
+//						updateDto.setStatus("INPROGRESS");
+//						requestRepository.updateRequestTrigger(updateDto);
+//						for(ItemDto itemDto : res.getHeaderDto().getItemSet()) {
+//							updateDto.setItemCode(itemDto.getItemCode());
+//							returnOrderRepository.updateReturnOrderTrigger(updateDto);
+//						}
 					}
 				} 
 				if(responseDto.getCode().equals(EReturnConstants.WORKFLOW_STATUS_CODE)) {

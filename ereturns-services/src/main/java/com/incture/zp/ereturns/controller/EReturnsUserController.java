@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.incture.zp.ereturns.dto.CustomerDto;
 import com.incture.zp.ereturns.dto.EmailDto;
+import com.incture.zp.ereturns.dto.IdpUserDetailsDto;
 import com.incture.zp.ereturns.dto.IdpUserIdDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.UserDto;
@@ -64,5 +65,17 @@ public class EReturnsUserController {
 	public List<CustomerDto> getCustomerBySalesRep(@PathVariable String salesRep)
 	{
 		return customerService.getCustomersBySalesRep(salesRep);
+	}
+	
+	@RequestMapping("/getUserByLoginId/{id}")
+	public UserDto getUserByLoginId(@PathVariable String id)
+	{
+		return userService.getUserDetailsById(id);
+	}
+	
+	@RequestMapping("/getIdpUserDetailsById/{id}")
+	public IdpUserDetailsDto getIdpUserDetailsById(@PathVariable String id)
+	{
+		return userService.getIdpUserDetailsById(id);
 	}
 }

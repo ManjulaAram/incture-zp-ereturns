@@ -230,6 +230,29 @@ public class UserServiceImpl implements UserService {
 					idpUserIdDto.setEmail(email);
 				} 
 			}
+			if(responseObject.get(EReturnConstants.IDP_GROUPS) != null && !(responseObject.get(EReturnConstants.IDP_GROUPS).equals(""))) {
+				LOGGER.error("Groups coming"+responseObject.get(EReturnConstants.IDP_GROUPS));
+				JSONArray roleArray = new JSONArray();
+				roleArray = (JSONArray) responseObject.get(EReturnConstants.IDP_GROUPS);
+				for (int roleCounter = 0; roleCounter < roleArray.length(); roleCounter++) {
+					JSONObject roleObject = new JSONObject();
+					roleObject=(JSONObject) roleArray.get(roleCounter);
+					String role = "";
+					role = roleObject.get(EReturnConstants.IDP_VALUE).toString();
+					if(role != null && !(role.equals(""))) {
+						if(role.equalsIgnoreCase("Principal")) {
+							idpUserIdDto.setRole("Principal");
+							break;
+						} else if(role.equalsIgnoreCase("ZP-Approver")) {
+							idpUserIdDto.setRole("ZP-Approver");	
+							break;
+						} else if(role.equalsIgnoreCase("Requestor")){
+							idpUserIdDto.setRole("Requestor");
+							break;
+						} 
+					}
+				} 
+			}
 		}
 		return idpUserIdDto;
 	}
@@ -239,5 +262,11 @@ public class UserServiceImpl implements UserService {
 		responseDto.setCode(String.valueOf(HttpStatus.SC_OK));
 		responseDto.setStatus(String.valueOf(HttpStatus.SC_OK));
 		return responseDto;
+	}
+
+
+	@Override
+	public UserDto getUserDetailsById(String id) {
+		return userRepository.getUserDetailsById(id);
 	}
 }

@@ -3,13 +3,17 @@ package com.incture.zp.ereturns.repositoriesimpl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
+
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.dto.RequestHistoryDto;
-import com.incture.zp.ereturns.dto.UpdateDto;
+import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.model.RequestHistory;
 import com.incture.zp.ereturns.repositories.RequestHistoryRepository;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
@@ -56,22 +60,15 @@ public class RequestHistoryRepositoryImpl implements RequestHistoryRepository {
 		return requestHistoryDtos;
 	}
 	
-	public int addRequestHistoryTrigger(UpdateDto updateDto) {
-		
-		String queryStr = "UPDATE RequestHistory SET requestPendingWith=:requestPendingWith, requestStatus=:requestStatus, requestApprovedBy=:requestApprovedBy, "
-				+ "requestApprovedDate=:requestApprovedDate, requestorComments:=requestorComments "
-				+ "WHERE requestId=:requestId AND itemCode=:itemCode";
-		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
-		query.setParameter("requestPendingWith", updateDto.getPendingWith());
-		query.setParameter("requestStatus", updateDto.getEccStatus());
-		query.setParameter("requestApprovedBy", updateDto.getApprovedBy());
-		query.setParameter("requestApprovedDate", updateDto.getApprovedDate());
-		query.setParameter("requestorComments", updateDto.getComments());
-		query.setParameter("requestId", updateDto.getRequestId());
-		query.setParameter("itemCode", updateDto.getItemCode());
-		
-		int result = query.executeUpdate();
-		return result;
-
+	@Override
+	@Transactional(value = TxType.REQUIRES_NEW) 
+	public ResponseDto addRequestHistory(RequestHistory requestHistory) {
+		ResponseDto responseDto = new ResponseDto();
+		sessionFactory.getCurrentSession().saveOrUpdate(requestHistory);
+		responseDto.setMessage("created successfully");
+		responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
+		responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
+		return responseDto;
 	}
+	
 }
