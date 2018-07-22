@@ -1,7 +1,10 @@
 package com.incture.zp.ereturns.servicesimpl;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,10 +70,10 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 				completeTaskRequestDto.getItemCode());
 		List<String> recipientList = new ArrayList<>(); // pending with
 		boolean flag = false;
-		boolean reTrigger = false;
 		ApproverDto approverDto = null;
 		String material = "";
 		String recipient = "";
+	
 		for(RequestHistoryDto logObject : executionLogs) {
 			if(logObject.getRequestStatus() != null) {
 				if(logObject.getRequestStatus().equalsIgnoreCase("INPROGRESS")) {
@@ -87,17 +90,16 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 					instanceDto.setStatus(logObject.getRequestStatus());
 					flag = true;
 				}
+				
 				if(logObject.getRequestApprovedBy() != null && !(logObject.getRequestApprovedBy().equals(""))) {
 						approverDto = new ApproverDto();
-					
-						if(logObject.getRequestApprovedBy() != null && !(logObject.getRequestApprovedBy().equals(""))) {
-							if(logObject.getRequestApprovedBy().equalsIgnoreCase("WF_SYSTEM")) {
-								approverDto.setApproverName(logObject.getRequestApprovedBy());
-								approverDto.setCommentsByApprover("");
-							} else {
-								approverDto.setApproverName(userService.getUserNameById(logObject.getRequestApprovedBy()));
-								approverDto.setCommentsByApprover(logObject.getRequestorComments());
-							}
+						
+						if(logObject.getRequestApprovedBy().equalsIgnoreCase("WF_SYSTEM")) {
+							approverDto.setApproverName(logObject.getRequestApprovedBy());
+							approverDto.setCommentsByApprover("");
+						} else {
+							approverDto.setApproverName(userService.getUserNameById(logObject.getRequestApprovedBy()));
+							approverDto.setCommentsByApprover(logObject.getRequestorComments());
 						}
 						approverDto.setApprovalDate(logObject.getRequestApprovedDate());
 						if(logObject.getRequestStatus().equalsIgnoreCase("COMPLETED")) {
@@ -113,24 +115,36 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 			
 			material = logObject.getMaterial();
 		}
+		
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Set<ApproverDto> set = new TreeSet(new Comparator<ApproverDto>() {
+			@Override
+			public int compare(ApproverDto o1, ApproverDto o2) {
+				if((o1.getApproverName()).equalsIgnoreCase(o2.getApproverName())){
+	        		return 0;
+	        	}
+	        	return 1;
+			}
+		});
+		
+		set.addAll(approverList);
+		List<ApproverDto> finalList = new ArrayList<>();
+		finalList.addAll(set);
+		
 		recipientList.add(recipient);
 		if(requestDto.getEccStatus() != null && !(requestDto.getEccStatus().equals(""))) {
 			if(requestDto.getEccStatus().equalsIgnoreCase("ECC_ERROR")) {
-				reTrigger = true;
 				flag = false;
 			}
 		}
 		if(flag) {
 			recipientList.clear();
 		}
-		if(reTrigger) {
-			approverList.clear();
-		}
 			instanceDto.setCreatedBy(userService.getUserNameById(requestDto.getRequestCreatedBy()));
 			instanceDto.setCreatedAt(requestDto.getRequestCreatedDate());
 			instanceDto.setRequestId(requestDto.getRequestId());
 			instanceDto.setMaterialCode(material);
-			instanceDto.setApproverList(approverList);
+			instanceDto.setApproverList(finalList);
 			instanceDto.setReceipents(recipientList);
 			instanceDto.setEccResponse(requestDto.getEccReturnOrderNo());
 			

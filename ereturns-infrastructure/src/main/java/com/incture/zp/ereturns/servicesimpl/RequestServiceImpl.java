@@ -258,18 +258,18 @@ public class RequestServiceImpl implements RequestService {
 				if(policy)
 				{
 					if(!(reason.equalsIgnoreCase("T21")) && !(reason.equalsIgnoreCase("T22"))) {
-//					Auto approve
-//						notificationService.sendNotificationForRequestor(requestId, requestDto.getRequestCreatedBy(), "A");
+					//Auto approve
+					// notificationService.sendNotificationForRequestor(requestId, requestDto.getRequestCreatedBy(), "A");
 					} else {
-//					Pricipal
+					//Pricipal
 						notificationService.sendNotificationForApprover(requestId, "Principal");
 					}
 				} else {
 					if(!(reason.equalsIgnoreCase("T21")) && !(reason.equalsIgnoreCase("T22"))) {
-//					Principal
+					//Principal
 						notificationService.sendNotificationForApprover(requestId, "Principal");
 					} else {
-//					Pricipal && ZP
+					//Pricipal && ZP
 						notificationService.sendNotificationForApprover(requestId, "Principal");
 					}
 				}
@@ -327,7 +327,6 @@ public class RequestServiceImpl implements RequestService {
 				requestId = responseDto.getMessage().substring(8, 19);
 			}
 		}
-
 		return requestId;
 	}
 	
