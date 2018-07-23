@@ -135,6 +135,9 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 		if(requestDto.getEccStatus() != null && !(requestDto.getEccStatus().equals(""))) {
 			if(requestDto.getEccStatus().equalsIgnoreCase("ECC_ERROR")) {
 				flag = false;
+				int index = finalList.size() - 1;
+				finalList.remove(index);
+				instanceDto.setStatus("INPROGRESS");
 			}
 		}
 		if(flag) {

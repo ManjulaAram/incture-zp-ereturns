@@ -253,11 +253,17 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 					if(responseDto.getCode() != null) {
 						
 						if (responseDto.getCode().equals(EReturnConstants.WORKFLOW_STATUS_CODE)) {
-							res.setPurchaseOrder("ERP");
+//							res.setPurchaseOrder("ERP");
 							Thread.sleep(5000);
 							String status = updateOrderDetails(instanceId);
 							if(status.equalsIgnoreCase(EReturnConstants.COMPLETE)) {
 								synchronized(this) {
+									String client = res.getClient();
+									if(client != null && !(client.equals("")) && client.equalsIgnoreCase("WEB")) {
+										res.setPurchaseOrder("ERC");
+									} else {
+										res.setPurchaseOrder("ERS");
+									}
 									responseDto = hciMappingService.pushDataToEcc(res);
 									eccFlag = true;
 								}
@@ -278,8 +284,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 							if(requestDto.getFlag() != null && requestDto.getFlag().equalsIgnoreCase(EReturnsWorkflowConstants.STATUS_REJECTED)) {
 								LOGGER.error("Push notification for creator:" + res.getRequestCreatedBy());
 								notificationService.sendNotificationForRequestor(res.getRequestId(), res.getRequestCreatedBy(), EReturnsWorkflowConstants.WORKFLOW_R);
-							}
-							if(!eccFlag) {
+							} else if(!eccFlag) {
 								// ZP approver
 								notificationService.sendNotificationForApprover(res.getRequestId(), "ZP-Approver");
 							}
