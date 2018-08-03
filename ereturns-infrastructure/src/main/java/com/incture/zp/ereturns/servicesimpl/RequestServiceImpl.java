@@ -166,27 +166,36 @@ public class RequestServiceImpl implements RequestService {
 
 	private DuplicateMaterialDto findDuplicate(RequestDto requestDto) {
 		DuplicateMaterialDto duplicateMaterialDto = new DuplicateMaterialDto();
+		List<ItemDto> itemList = new ArrayList<>();
+		itemList.addAll(requestDto.getHeaderDto().getItemSet());
+		
+		
 		List<String> materials = new ArrayList<>();
 		boolean duplicate = false;
 		List<RequestDto> list = getAllRequests();
+		List<ReturnOrderDto> returnOrderList = new ArrayList<>();
+		
 		if (list != null && list.size() > 0) {
 			for (RequestDto requestDto2 : list) {
-				if(requestDto2.getHeaderDto().getInvoiceNo() != null) {
-					if (requestDto2.getHeaderDto().getInvoiceNo().equals(requestDto.getHeaderDto().getInvoiceNo()) &&
-							((requestDto2.getRequestStatus().equalsIgnoreCase(EReturnConstants.NEW)) || 
-									(requestDto2.getRequestStatus().equalsIgnoreCase(EReturnConstants.INPROGRESS)))) {
+				if (requestDto2.getHeaderDto().getInvoiceNo() != null) {
+					if (requestDto2.getHeaderDto().getInvoiceNo().equals(requestDto.getHeaderDto().getInvoiceNo())
+							&& ((requestDto2.getRequestStatus().equalsIgnoreCase(EReturnConstants.NEW)) || (requestDto2
+									.getRequestStatus().equalsIgnoreCase(EReturnConstants.INPROGRESS)))) {
 						for (ItemDto itemDto : requestDto2.getHeaderDto().getItemSet()) {
-							for (ItemDto itemDto2 : requestDto.getHeaderDto().getItemSet()) {
-								for(ReturnOrderDto returnOrderDto : requestDto2.getSetReturnOrderDto()) {
-									if (itemDto.getMaterial().equals(itemDto2.getMaterial()) && returnOrderDto.getItemCode().equalsIgnoreCase(itemDto.getItemCode())) {
-										duplicate = true;
-										int remainingQty = Integer.parseInt(returnOrderDto.getReturnQty());
-										materials.add("Request "+requestDto2.getRequestId()+" for Invoice "+requestDto.getHeaderDto().getInvoiceNo()
-												+" and Material "+itemDto.getMaterial() +" is already in approval queue with quantity "+remainingQty+ " .Hence cannot proceed for new Request");
-										break;
-									} else {
-										duplicate = false;
-									}
+							for (int i = 0; i < itemList.size(); i++) {
+								ItemDto itemDto2 = itemList.get(i);
+								if (itemDto.getMaterial().equals(itemDto2.getMaterial())) {
+									returnOrderList.addAll(requestDto2.getSetReturnOrderDto());
+								
+									duplicate = true;
+									int remainingQty = Integer.parseInt(returnOrderList.get(i).getReturnQty());
+									materials.add("Request " + requestDto2.getRequestId() + " for Invoice "
+											+ requestDto.getHeaderDto().getInvoiceNo() + " and Material "
+											+ itemDto.getMaterial() + " is already in approval queue with quantity "
+											+ remainingQty + " .Hence cannot proceed for new Request");
+									break;
+								} else {
+									duplicate = false;
 								}
 							}
 						}
@@ -329,5 +338,6 @@ public class RequestServiceImpl implements RequestService {
 		}
 		return requestId;
 	}
+	
 	
 }

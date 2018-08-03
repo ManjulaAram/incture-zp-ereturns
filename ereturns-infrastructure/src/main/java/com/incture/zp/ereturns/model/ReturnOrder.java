@@ -24,6 +24,9 @@ public class ReturnOrder {
 	
 	@Column(name = "RETURN_QTY", length = 50)
 	private String returnQty;
+	
+	@Column(name = "INVOICED_QTY", length = 50)
+	private String invoicedQty;
 
 	@Column(name = "REASON", length = 255)
 	private String reason;
@@ -219,6 +222,14 @@ public class ReturnOrder {
 
 	public void setOrderComments(String orderComments) {
 		this.orderComments = orderComments;
+	}
+
+	public String getInvoicedQty() {
+		return invoicedQty;
+	}
+
+	public void setInvoicedQty(String invoicedQty) {
+		this.invoicedQty = invoicedQty;
 	}
 
 }

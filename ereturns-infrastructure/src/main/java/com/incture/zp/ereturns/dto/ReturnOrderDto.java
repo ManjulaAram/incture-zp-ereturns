@@ -42,6 +42,8 @@ public class ReturnOrderDto implements Serializable {
 	
 	private String orderComments;
 	
+	private String invoicedQty;
+	
 	public Long getReturnOrderId() {
 		return returnOrderId;
 	}
@@ -184,6 +186,14 @@ public class ReturnOrderDto implements Serializable {
 
 	public void setOrderComments(String orderComments) {
 		this.orderComments = orderComments;
+	}
+
+	public String getInvoicedQty() {
+		return invoicedQty;
+	}
+
+	public void setInvoicedQty(String invoicedQty) {
+		this.invoicedQty = invoicedQty;
 	}
 
 }

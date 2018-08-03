@@ -80,13 +80,13 @@ public class NotificationServiceImpl implements NotificationService {
 	
 			LOGGER.error("Created by Pending with for Push Notification:"+createdBy);
 			UserDto userDto = userService.getUserDetailsById(createdBy);
-			if(userDto != null && !(userDto.getMobileToken().equals(""))) {
+			if(userDto != null && userDto.getMobileToken() != null && !(userDto.getMobileToken().equals(""))) {
 				String token = userDto.getMobileToken();
 				try {
 					Map<String, String> messageMap=new HashMap<String, String>();
 					if(action.equalsIgnoreCase("A")) {
 						messageMap.put("messageTitle", "Request Approved");
-						messageMap.put("messageBody",("Your Request "+requestId+" is approved"));
+						messageMap.put("messageBody",("Your Request "+requestId+" is Approved"));
 					} else if(action.equalsIgnoreCase("R")) {
 						messageMap.put("messageTitle", "Request Rejected");
 						messageMap.put("messageBody",("Your Request "+requestId+" is Rejected"));

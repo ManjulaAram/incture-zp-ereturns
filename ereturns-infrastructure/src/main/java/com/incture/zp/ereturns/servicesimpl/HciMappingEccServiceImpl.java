@@ -82,7 +82,14 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 			item.put(EReturnsHciConstants.REF_DOC, requestDto.getHeaderDto().getInvoiceNo());
 			item.put(EReturnsHciConstants.CURRENCY, requestDto.getHeaderDto().getCurrency());
 			item.put(EReturnsHciConstants.ORDER_REASON, itemDto.getItemName());
-			itemsArry.put(item);
+			
+			if(returnOrderList.get(i).getPaymentType() != null && !(returnOrderList.get(i).getPaymentType().equals(""))) {
+				if(returnOrderList.get(i).getPaymentType().equalsIgnoreCase("Credit")) {
+					itemsArry.put(item);
+				} 
+			} else {
+				itemsArry.put(item);
+			}
 			
 			reason = returnOrderList.get(i).getReason();
 			
@@ -119,50 +126,56 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 //		String password = EReturnsHciConstants.PASSWORD;
 		
 
-		RestInvoker restInvoker = new RestInvoker(url, username, password);
-		String response = restInvoker.postDataToServer(EReturnConstants.ECC_HCI_URL, returnOrder.toString());
-		LOGGER.error("Response coming from ECC:"+response);
-		if(response != null && !(response.equals(""))) {
-			if(response.contains(EReturnConstants.ECC_RESPONSE)) {
-				JSONObject returnObj = new JSONObject(response);
-				JSONObject bapiObj = new JSONObject();
-				bapiObj = returnObj.getJSONObject(EReturnConstants.ECC_RESPONSE);
-				responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
-				responseDto.setStatus(EReturnConstants.ECC_SUCCESS_STATUS);
-				responseDto.setMessage(bapiObj.getString("SALESDOCUMENT"));
-				if(responseDto.getMessage().equals("")) {
-					JSONObject msgReturnObj = new JSONObject();
-					msgReturnObj = bapiObj.getJSONObject("RETURN");
-					JSONArray itemAry = msgReturnObj.getJSONArray("item");
-					
-					for (int i = 0; i < itemAry.length(); i++) {
-						JSONObject msgObject = new JSONObject();
-						msgObject = (JSONObject) itemAry.get(i);
-						JSONObject typeObject = new JSONObject();
-						typeObject = (JSONObject) itemAry.get(i);
-						String type = typeObject.get("TYPE").toString();
-						LOGGER.error(msgObject.get("MESSAGE")+"...."+type);
-						if(type != null && !(type.equals("")) && type.equalsIgnoreCase("E")) {
-							responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
-							responseDto.setStatus(EReturnConstants.ECC_ERROR_STATUS);
-							responseDto.setMessage(msgObject.get("MESSAGE").toString());
+		if(itemsArry.length() > 0) {
+			RestInvoker restInvoker = new RestInvoker(url, username, password);
+			String response = restInvoker.postDataToServer(EReturnConstants.ECC_HCI_URL, returnOrder.toString());
+			LOGGER.error("Response coming from ECC:"+response);
+			if(response != null && !(response.equals(""))) {
+				if(response.contains(EReturnConstants.ECC_RESPONSE)) {
+					JSONObject returnObj = new JSONObject(response);
+					JSONObject bapiObj = new JSONObject();
+					bapiObj = returnObj.getJSONObject(EReturnConstants.ECC_RESPONSE);
+					responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
+					responseDto.setStatus(EReturnConstants.ECC_SUCCESS_STATUS);
+					responseDto.setMessage(bapiObj.getString("SALESDOCUMENT"));
+					if(responseDto.getMessage().equals("")) {
+						JSONObject msgReturnObj = new JSONObject();
+						msgReturnObj = bapiObj.getJSONObject("RETURN");
+						JSONArray itemAry = msgReturnObj.getJSONArray("item");
+						
+						for (int i = 0; i < itemAry.length(); i++) {
+							JSONObject msgObject = new JSONObject();
+							msgObject = (JSONObject) itemAry.get(i);
+							JSONObject typeObject = new JSONObject();
+							typeObject = (JSONObject) itemAry.get(i);
+							String type = typeObject.get("TYPE").toString();
+							LOGGER.error(msgObject.get("MESSAGE")+"...."+type);
+							if(type != null && !(type.equals("")) && type.equalsIgnoreCase("E")) {
+								responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
+								responseDto.setStatus(EReturnConstants.ECC_ERROR_STATUS);
+								responseDto.setMessage(msgObject.get("MESSAGE").toString());
+							}
+							break;
 						}
-						break;
-					}
-				} 
-			} else if(response.contains(EReturnConstants.ECC_EXCEPTION)) {
+					} 
+				} else if(response.contains(EReturnConstants.ECC_EXCEPTION)) {
+					responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
+					responseDto.setMessage(response);
+					responseDto.setStatus(EReturnConstants.ECC_ERROR_STATUS);
+				} else if(response.contains(EReturnConstants.ECC_500_ERROR)) {
+					responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
+					responseDto.setMessage(response);
+					responseDto.setStatus(EReturnConstants.ECC_ERROR_STATUS);
+				}
+			} else {
 				responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
-				responseDto.setMessage(response);
-				responseDto.setStatus(EReturnConstants.ECC_ERROR_STATUS);
-			} else if(response.contains(EReturnConstants.ECC_500_ERROR)) {
-				responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
-				responseDto.setMessage(response);
-				responseDto.setStatus(EReturnConstants.ECC_ERROR_STATUS);
+				responseDto.setMessage(EReturnConstants.ECC_NO_DATA_STATUS);
+				responseDto.setStatus(EReturnConstants.ERROR_STATUS);
 			}
 		} else {
-			responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
-			responseDto.setMessage(EReturnConstants.ECC_NO_DATA_STATUS);
-			responseDto.setStatus(EReturnConstants.ERROR_STATUS);
+			responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
+			responseDto.setMessage("No posting on Exchange");
+			responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
 		}
 		return responseDto;
 	}

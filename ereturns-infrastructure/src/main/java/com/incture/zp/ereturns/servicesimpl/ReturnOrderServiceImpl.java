@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.StatusPendingDto;
+import com.incture.zp.ereturns.dto.StatusResponseDto;
 import com.incture.zp.ereturns.model.ReturnOrder;
 import com.incture.zp.ereturns.repositories.ReturnOrderRepository;
 import com.incture.zp.ereturns.services.ReturnOrderService;
@@ -43,6 +44,11 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
 	@Override
 	public StatusPendingDto getRequestStatusByUserId(String userId) {
 		return returnOrderRepository.getRequestStatusByUserId(userId);
+	}
+
+	@Override
+	public List<StatusResponseDto> getRequestorDashboardList(String createdBy, String status) {
+		return returnOrderRepository.getRequestorDashboardList(createdBy, status);
 	}
 
 }

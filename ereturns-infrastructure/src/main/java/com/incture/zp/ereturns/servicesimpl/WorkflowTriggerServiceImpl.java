@@ -33,6 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.constants.EReturnsWorkflowConstants;
 import com.incture.zp.ereturns.dto.CompleteTaskRequestDto;
+import com.incture.zp.ereturns.dto.EmailRequestDto;
+import com.incture.zp.ereturns.dto.EmailResponseDto;
 import com.incture.zp.ereturns.dto.IdpUserDetailsDto;
 import com.incture.zp.ereturns.dto.ItemDto;
 import com.incture.zp.ereturns.dto.RequestDto;
@@ -49,6 +51,7 @@ import com.incture.zp.ereturns.services.ReturnOrderService;
 import com.incture.zp.ereturns.services.UserService;
 import com.incture.zp.ereturns.services.WorkFlowService;
 import com.incture.zp.ereturns.services.WorkflowTriggerService;
+import com.incture.zp.ereturns.utils.EmailService;
 import com.incture.zp.ereturns.utils.RestInvoker;
 import com.incture.zp.ereturns.utils.ServiceUtil;
 import com.sap.core.connectivity.api.configuration.DestinationConfiguration;
@@ -83,6 +86,9 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 	
 	@Autowired
 	RequestHistoryService requestHistoryService;
+	
+	@Autowired 
+	EmailService emailService;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkflowTriggerServiceImpl.class);
 	
@@ -183,6 +189,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 		ResponseDto responseDto = new ResponseDto();
 		RequestDto res = requestService.getRequestById(requestDto.getRequestId());
 		boolean eccFlag = false;
+		boolean notification = false;
 		String requestId = requestDto.getRequestId();
 		if(res != null) {
 			if(res.getEccStatus() != null && res.getRequestStatus() != null 
@@ -200,6 +207,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 							responseDto.setMessage(responseDto.getMessage());
 							// status update
 							reTriggerProcess(res, requestDto.getLoginUser(), responseDto.getMessage(), true, requestDto.getOrderComments(), "");
+							sendingMailToCustomer(res, requestDto, "Approved");
 						} else if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_ERROR_STATUS)) {
 							// adding response dto on error
 							responseDto.setMessage(responseDto.getMessage());
@@ -216,6 +224,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 					responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
 					// change to rejected status
 					reTriggerProcess(res, requestDto.getLoginUser(), "", true, requestDto.getOrderComments(), "Rejected");
+					sendingMailToCustomer(res, requestDto, "Rejected");
 				}
 				
 			} else {
@@ -267,26 +276,30 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 									responseDto = hciMappingService.pushDataToEcc(res);
 									eccFlag = true;
 								}
+							} else {
+								notification = true;
 							}
 						}
 						if(responseDto != null && eccFlag) {
 							if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_SUCCESS_STATUS)) {
 								notificationService.sendNotificationForRequestor(res.getRequestId(), res.getRequestCreatedBy(), "A");
 								requestRepository.updateEccReturnOrder(EReturnConstants.COMPLETE, responseDto.getMessage(), requestId);
+								sendingMailToCustomer(res, requestDto, "Approved");
 							} else if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_ERROR_STATUS)) {
 								responseDto.setMessage(responseDto.getMessage());
-								//requestRepository.updateEccReturnOrder(EReturnConstants.ECC_ERROR_STATUS, responseDto.getMessage(), requestId);
 								//update tables of request, return order and history
 								reTriggerProcess(res, requestDto.getLoginUser(), responseDto.getMessage(), false, "", "");
 							}
 						} 
 						if(responseDto.getCode().equals(EReturnConstants.WORKFLOW_STATUS_CODE)) {
-							if(requestDto.getFlag() != null && requestDto.getFlag().equalsIgnoreCase(EReturnsWorkflowConstants.STATUS_REJECTED)) {
-								LOGGER.error("Push notification for creator:" + res.getRequestCreatedBy());
-								notificationService.sendNotificationForRequestor(res.getRequestId(), res.getRequestCreatedBy(), EReturnsWorkflowConstants.WORKFLOW_R);
-							} else if(!eccFlag) {
-								// ZP approver
-								notificationService.sendNotificationForApprover(res.getRequestId(), "ZP-Approver");
+							if(requestDto.getFlag() != null) {
+								if(requestDto.getFlag().equalsIgnoreCase(EReturnsWorkflowConstants.STATUS_REJECTED)) {
+									notificationService.sendNotificationForRequestor(res.getRequestId(), res.getRequestCreatedBy(), EReturnsWorkflowConstants.WORKFLOW_R);
+									sendingMailToCustomer(res, requestDto, "Rejected");
+								} else if(requestDto.getFlag().equalsIgnoreCase(EReturnsWorkflowConstants.STATUS_APPROVED) && notification) {
+									// ZP approver
+									notificationService.sendNotificationForApprover(res.getRequestId(), "ZP-Approver");
+								}
 							}
 						}
 					} else {
@@ -558,4 +571,36 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 		String current = dateFormat.format(new Date());
 		return current;
 	}
+
+	@Override
+	public EmailResponseDto sendEmail(EmailRequestDto emailRequestDto) {
+		return emailService.sendEmail(emailRequestDto);
+	}
+	
+	public void sendingMailToCustomer(RequestDto res, CompleteTaskRequestDto requestDto, String action) {
+		IdpUserDetailsDto user = userService.getIdpUserDetailsById(res.getRequestCreatedBy());
+		if(user != null && user.getEmail() != null && !(user.getEmail().equals(""))) {
+			LOGGER.error("Created by for Mail:"+user.getEmail()+"...."+user.getRole()+"..."+user.getUserName());
+			List<String> email = new ArrayList<>();
+			
+			EmailRequestDto emailRequestDto = new EmailRequestDto();
+			if(user.getUserName() != null && !(user.getUserName().equals(""))) {
+				emailRequestDto.setCustomerName(user.getUserName());
+			} else {
+				emailRequestDto.setCustomerName("Customer");
+			}
+			email.add(user.getEmail());
+			emailRequestDto.setEmailIds(email);
+			emailRequestDto.setInvoice(res.getHeaderDto().getInvoiceNo());
+			for(ItemDto	itemDto : res.getHeaderDto().getItemSet()) {
+				if(itemDto.getItemCode().equalsIgnoreCase(requestDto.getItemCode())) {
+					emailRequestDto.setMaterial(itemDto.getMaterialDesc());
+				}
+			}
+			emailRequestDto.setRequestId(res.getRequestId());
+			emailRequestDto.setAction(action);
+			emailService.sendEmail(emailRequestDto);
+		}
+	}
+	
 }

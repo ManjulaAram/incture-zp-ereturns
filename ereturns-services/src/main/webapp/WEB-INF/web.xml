@@ -26,6 +26,10 @@
 		<res-type>com.sap.ecm.api.EcmService</res-type>
 	</resource-ref>
 
+	<resource-ref>
+	    <res-ref-name>mail/Session</res-ref-name>
+	    <res-type>javax.mail.Session</res-type>
+	</resource-ref> 
 
 	<login-config>
 		<auth-method>BASIC</auth-method>

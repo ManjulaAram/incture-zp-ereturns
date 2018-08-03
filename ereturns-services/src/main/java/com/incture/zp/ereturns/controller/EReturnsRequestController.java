@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.incture.zp.ereturns.dto.CompleteTaskRequestDto;
 import com.incture.zp.ereturns.dto.CompleteTasksDto;
+import com.incture.zp.ereturns.dto.EmailRequestDto;
+import com.incture.zp.ereturns.dto.EmailResponseDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
@@ -159,5 +161,23 @@ public class EReturnsRequestController {
 	@ResponseBody
 	public ResponseDto pushDataToECC(@PathVariable(value = "requestId") String requestId) {
 		return requestService.postToEcc(requestId);
+	}
+	
+	@RequestMapping(value = "/sendMail", method = RequestMethod.POST, consumes = { "application/json" })
+	@ResponseBody
+	public EmailResponseDto sendMail(@RequestBody EmailRequestDto requestDto) {
+		return workFlowTriggerService.sendEmail(requestDto);
+	}
+	
+	@RequestMapping(value = "/getDashboardPendingStatus/{createdBy}/{status}", method = RequestMethod.GET)
+	@ResponseBody
+	public List<StatusResponseDto> getRequestorDashboardList(@PathVariable(value = "createdBy") String createdBy, @PathVariable(value = "status") String status) {
+		return returnOrderService.getRequestorDashboardList(createdBy, status);
+	}
+	
+	@RequestMapping(value = "/getApproverDashboardList/{status}", method = RequestMethod.POST)
+	@ResponseBody
+	public List<StatusResponseDto> getApproverDashboardList(@PathVariable(value = "status") String status, @RequestBody RoleDto roleDto) {
+		return requestHistoryService.getApproverDashboardList(roleDto, status);
 	}
 }

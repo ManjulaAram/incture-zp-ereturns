@@ -1,6 +1,7 @@
 package com.incture.zp.ereturns.constants;
 
-public class EReturnsWorkflowConstants {
+public interface EReturnsWorkflowConstants {
+
 
 	public static final String GET_XCSRF_TOKEN_ENDPOINT =  "/rest/v1/xsrf-token";
 	public static final String START_WF_ENDPOINT = "/rest/v1/workflow-instances";
@@ -73,4 +74,5 @@ public class EReturnsWorkflowConstants {
 	public static final String WORKFLOW_PATCH = "PATCH";
 
 	public static final String WORKFLOW_FLAG = "flag";
+
 }

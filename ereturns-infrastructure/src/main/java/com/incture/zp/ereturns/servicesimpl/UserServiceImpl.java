@@ -231,7 +231,6 @@ public class UserServiceImpl implements UserService {
 				} 
 			}
 			if(responseObject.get(EReturnConstants.IDP_GROUPS) != null && !(responseObject.get(EReturnConstants.IDP_GROUPS).equals(""))) {
-				LOGGER.error("Groups coming"+responseObject.get(EReturnConstants.IDP_GROUPS));
 				JSONArray roleArray = new JSONArray();
 				roleArray = (JSONArray) responseObject.get(EReturnConstants.IDP_GROUPS);
 				for (int roleCounter = 0; roleCounter < roleArray.length(); roleCounter++) {
