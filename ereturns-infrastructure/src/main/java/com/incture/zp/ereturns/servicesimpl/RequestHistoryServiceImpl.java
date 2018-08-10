@@ -3,6 +3,8 @@ package com.incture.zp.ereturns.servicesimpl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,7 @@ import com.incture.zp.ereturns.dto.StatusPendingDto;
 import com.incture.zp.ereturns.dto.StatusResponseDto;
 import com.incture.zp.ereturns.repositories.RequestHistoryRepository;
 import com.incture.zp.ereturns.repositories.ReturnOrderRepository;
+import com.incture.zp.ereturns.repositoriesimpl.ReturnOrderRepositoryImpl;
 import com.incture.zp.ereturns.services.RequestHistoryService;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
 
@@ -24,31 +27,33 @@ public class RequestHistoryServiceImpl implements RequestHistoryService {
 
 	@Autowired
 	RequestHistoryRepository requestHistoryRepository;
-	
+
 	@Autowired
 	ReturnOrderRepository returnOrderRepository;
-	
+
 	@Autowired
 	ImportExportUtil importExportUtil;
-	
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(RequestHistoryServiceImpl.class);
+
 	@Override
 	public StatusPendingDto getStatusForApprover(RoleDto roleDto) {
-		
+
 		List<String> pendingRequest = new ArrayList<>();
 		List<String> approvedRequest = new ArrayList<>();
 		List<String> rejectedRequest = new ArrayList<>();
 		StatusPendingDto statusPendingDto = new StatusPendingDto();
-		
+
 		List<ReturnOrderDto> list = returnOrderRepository.getPendingWith(roleDto.getRole());
 		List<RequestHistoryDto> reqList = requestHistoryRepository.getApprovedBy(roleDto.getUserId());
-		for(ReturnOrderDto returnOrderDto : list) {
+		for (ReturnOrderDto returnOrderDto : list) {
 			pendingRequest.add(returnOrderDto.getRequestId());
 		}
 		int approved = 0;
 		int rejected = 0;
-		for(RequestHistoryDto requestHistoryDto : reqList) {
-			if(requestHistoryDto.getRequestStatus() != null && !(requestHistoryDto.getRequestStatus().equals(""))) {
-				if(requestHistoryDto.getRequestStatus().equalsIgnoreCase("REJECTED")) {
+		for (RequestHistoryDto requestHistoryDto : reqList) {
+			if (requestHistoryDto.getRequestStatus() != null && !(requestHistoryDto.getRequestStatus().equals(""))) {
+				if (requestHistoryDto.getRequestStatus().equalsIgnoreCase("REJECTED")) {
 					rejected = rejected + 1;
 					rejectedRequest.add(requestHistoryDto.getRequestId());
 				} else {
@@ -57,15 +62,15 @@ public class RequestHistoryServiceImpl implements RequestHistoryService {
 				}
 			}
 		}
-		
+
 		statusPendingDto.setPending(list.size());
 		statusPendingDto.setApproved(approved);
 		statusPendingDto.setRejected(rejected);
-		
+
 		statusPendingDto.setApprovedRequest(approvedRequest);
 		statusPendingDto.setPendingRequest(pendingRequest);
 		statusPendingDto.setRejectedRequest(rejectedRequest);
-		
+
 		return statusPendingDto;
 	}
 
@@ -76,46 +81,49 @@ public class RequestHistoryServiceImpl implements RequestHistoryService {
 
 	@Override
 	public List<StatusResponseDto> getApproverDashboardList(RoleDto roleDto, String status) {
-		if(status.equalsIgnoreCase("PENDING")) {
+		if (status.equalsIgnoreCase("PENDING")) {
 			List<StatusResponseDto> pendingList = returnOrderRepository.getRequestorList("", roleDto.getRole());
 			return pendingList;
-		} else if(status.equalsIgnoreCase("APPROVED")) {
+		} else if (status.equalsIgnoreCase("APPROVED")) {
 			List<StatusResponseDto> modifiedApproved = new ArrayList<>();
+
 			List<StatusResponseDto> approvedList = returnOrderRepository.getRequestorList("", "");
 			List<RequestHistoryDto> reqList = requestHistoryRepository.getApprovedBy(roleDto.getUserId());
-			for(int i = 0 ; i < reqList.size() ; i++) {
-				for(int j = 0 ; j < approvedList.size() ; j++) {
+			for (int i = 0; i < reqList.size(); i++) {
+				for (int j = 0; j < approvedList.size(); j++) {
+					
 					RequestHistoryDto requestHistoryDto = reqList.get(i);
 					StatusResponseDto statusResponseDto = approvedList.get(j);
-					if(requestHistoryDto.getRequestId().equalsIgnoreCase(statusResponseDto.getRequestId()) &&
-							!(requestHistoryDto.getRequestStatus().equalsIgnoreCase("REJECTED"))) {
+					if (requestHistoryDto.getRequestId().equalsIgnoreCase(statusResponseDto.getRequestId())
+							&& ((requestHistoryDto.getRequestStatus().equalsIgnoreCase("COMPLETED")
+									|| (requestHistoryDto.getRequestStatus().equalsIgnoreCase("INPROGRESS"))))) {
+						statusResponseDto.setRequestStatus("Approved");
 						modifiedApproved.add(statusResponseDto);
 						break;
 					}
 				}
 			}
 			return modifiedApproved;
-		} else if(status.equalsIgnoreCase("REJECTED")) {
+		} else if (status.equalsIgnoreCase("REJECTED")) {
 			List<StatusResponseDto> modifiedRejected = new ArrayList<>();
 			List<StatusResponseDto> rejectedList = returnOrderRepository.getRequestorList("", "");
 			List<RequestHistoryDto> reqList = requestHistoryRepository.getApprovedBy(roleDto.getUserId());
-			for(int i = 0 ; i < reqList.size() ; i++) {
-				for(int j = 0 ; j < rejectedList.size() ; j++) {
+			for (int i = 0; i < reqList.size(); i++) {
+				for (int j = 0; j < rejectedList.size(); j++) {
 					RequestHistoryDto requestHistoryDto = reqList.get(i);
 					StatusResponseDto statusResponseDto = rejectedList.get(j);
-					if(requestHistoryDto.getRequestId().equalsIgnoreCase(statusResponseDto.getRequestId()) &&
-							requestHistoryDto.getRequestStatus().equalsIgnoreCase("REJECTED")) {
+					if (requestHistoryDto.getRequestId().equalsIgnoreCase(statusResponseDto.getRequestId())
+							&& requestHistoryDto.getRequestStatus().equalsIgnoreCase("REJECTED")) {
 						modifiedRejected.add(statusResponseDto);
 						break;
 					}
+
 				}
 			}
 			return modifiedRejected;
 		}
-		
+
 		return null;
 	}
-	
-	
 
 }
