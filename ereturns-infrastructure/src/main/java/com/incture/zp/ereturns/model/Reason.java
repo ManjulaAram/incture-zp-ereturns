@@ -16,7 +16,7 @@ public class Reason {
 	@Column(name = "REASON_DESC", length = 200)
 	private String reasonDesc;
 
-	@Column(name = "REASON_NAME", length = 50)
+	@Column(name = "REASON_NAME", length = 200)
 	private String reasonName;
 
 	@Column(name = "BUS_UNIT", length = 20)
