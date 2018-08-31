@@ -74,5 +74,6 @@ public interface EReturnsWorkflowConstants {
 	public static final String WORKFLOW_PATCH = "PATCH";
 
 	public static final String WORKFLOW_FLAG = "flag";
+	public static final String MAIL_X_CSRF_TOKEN="x-csrf-token";
 
 }

@@ -28,11 +28,11 @@ import com.incture.zp.ereturns.dto.EmailRequestDto;
 import com.incture.zp.ereturns.dto.EmailResponseDto;
 
 @Component
-public class EmailService {
+public class EmailServiceUtil {
 
 	private Properties prop = null;
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(EmailServiceUtil.class);
 	
 	public EmailResponseDto sendEmail(EmailRequestDto requestDto) {
 		
@@ -121,7 +121,7 @@ public class EmailService {
 	}
 
 	
-	public EmailService() {
+	public EmailServiceUtil() {
 		InputStream is = null;
 		try {
 			this.prop = new Properties();
@@ -180,6 +180,100 @@ public class EmailService {
 		     .append("</body>")
 		     .append("</html>");
 
+		return mailTemplate.toString();
+	}
+	
+	public String getMailTemplateApproverSend(String requestId, String material, String invoice, String customerName, String action) {
+			
+
+		StringBuilder mailTemplate = new StringBuilder(); 
+		mailTemplate.append("<!DOCTYPE html>")
+		     .append("<html>")
+		     .append("<head>")
+		     .append("	<title>Request</title>")
+		     .append("	<link href=\"https://fonts.googleapis.com/css?family=PT+Serif\" rel=\"stylesheet\">")
+		     .append("	<style>")
+		     .append("	body{")
+		     .append("		width: auto;")
+		     .append("		height: auto;")
+		     .append("		display: block;")
+		     .append("		margin: 0 auto;")
+		     .append("		padding: 25px;")
+		     .append("		font-family: 'PT Serif', serif;")
+		     .append("	}")
+		     .append("	.bar {")
+		     .append("		width: 100%;")
+		     .append("		height: 15px;")
+		     .append("		background: #026894;")
+		     .append("	}")
+		     .append("	</style>")
+		     .append("</head>")
+		     .append("<body>")
+		     .append("<img src=\"http://6erxg60qvo1qvjha44jrgpan.wpengine.netdna-cdn.com/wp-content/uploads/2015/02/Zuellig-Pharma-logo.jpg\" ")
+		     .append("					width=\"250\" height=\"55\"/>")
+		     .append("<img align=\"right\" src=\"https://image.ibb.co/cO37cy/e_returns.png\" width=\"150\" height=\"55\"/>")
+		     .append("<div class=\"bar\">")
+		     .append("</div>")
+		     .append("<div>")
+		     .append("	<h2> Dear "+customerName+", </h2>")
+		     .append("	<p> E-Returns Request with Reference ID <i><b>"+requestId+"</b></i> is waiting for your Approval for Invoice <i><b>"+invoice+"</b></i> and ")
+		     .append("	Material <i><b>"+material+"</b></i> .")
+		     .append("	Please check your MyInbox or Mobile App for more information. </p>")
+		     .append("")
+		     .append("	<b style=\"color:#00415C;\">Regards,</b><br/>")
+		     .append("	<b style=\"color:#00415C;\">Workflow Team</b>")
+		     .append("</div>")
+		     .append("<p><i style=\"color:grey;\">Note: This is auto generated email please do not reply.</i></p>")
+		     .append("</body>")
+		     .append("</html>");
+
+			return mailTemplate.toString();
+		}
+
+	public String getMailTemplateApproverReceive(String requestId, String material, String invoice, String customerName, String action) {
+		
+
+		StringBuilder mailTemplate = new StringBuilder(); 
+		mailTemplate.append("<!DOCTYPE html>")
+		     .append("<html>")
+		     .append("<head>")
+		     .append("	<title>Approve</title>")
+		     .append("	<link href=\"https://fonts.googleapis.com/css?family=PT+Serif\" rel=\"stylesheet\">")
+		     .append("	<style>")
+		     .append("	body{")
+		     .append("		width: auto;")
+		     .append("		height: auto;")
+		     .append("		display: block;")
+		     .append("		margin: 0 auto;")
+		     .append("		padding: 25px;")
+		     .append("		font-family: 'PT Serif', serif;")
+		     .append("	}")
+		     .append("	.bar {")
+		     .append("		width: 100%;")
+		     .append("		height: 15px;")
+		     .append("		background: #026894;")
+		     .append("	}")
+		     .append("	</style>")
+		     .append("</head>")
+		     .append("<body>")
+		     .append("<img src=\"http://6erxg60qvo1qvjha44jrgpan.wpengine.netdna-cdn.com/wp-content/uploads/2015/02/Zuellig-Pharma-logo.jpg\" ")
+		     .append("					width=\"250\" height=\"55\"/>")
+		     .append("<img align=\"right\" src=\"https://image.ibb.co/cO37cy/e_returns.png\" width=\"150\" height=\"55\"/>")
+		     .append("<div class=\"bar\">")
+		     .append("</div>")
+		     .append("<div>")
+		     .append("	<h2> Dear Approver, </h2>")
+		     .append("	<p> Your E-Returns Request with Request ID <i><b>"+requestId+"</b></i> for Invoice <i><b>"+invoice+"</b></i> and ")
+		     .append("	Material <i><b>"+material+"</b></i>  has been <i><b>"+action+"</b></i>.</p>")
+		     .append("")
+		     .append("	<b style=\"color:#00415C;\">Regards,</b><br/>")
+		     .append("	<b style=\"color:#00415C;\">E-Returns Team</b>")
+		     .append("</div>")
+		     .append("<p><i style=\"color:grey;\">Note: This is auto generated email please do not reply.</i></p>")
+		     .append("</body>")
+		     .append("</html>");
+	
+	
 		return mailTemplate.toString();
 	}
 	

@@ -43,6 +43,7 @@ import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.UpdateDto;
 import com.incture.zp.ereturns.repositories.RequestRepository;
 import com.incture.zp.ereturns.repositories.ReturnOrderRepository;
+import com.incture.zp.ereturns.services.EmailService;
 import com.incture.zp.ereturns.services.HciMappingEccService;
 import com.incture.zp.ereturns.services.NotificationService;
 import com.incture.zp.ereturns.services.RequestHistoryService;
@@ -51,7 +52,6 @@ import com.incture.zp.ereturns.services.ReturnOrderService;
 import com.incture.zp.ereturns.services.UserService;
 import com.incture.zp.ereturns.services.WorkFlowService;
 import com.incture.zp.ereturns.services.WorkflowTriggerService;
-import com.incture.zp.ereturns.utils.EmailService;
 import com.incture.zp.ereturns.utils.RestInvoker;
 import com.incture.zp.ereturns.utils.ServiceUtil;
 import com.sap.core.connectivity.api.configuration.DestinationConfiguration;
@@ -87,7 +87,10 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 	@Autowired
 	RequestHistoryService requestHistoryService;
 	
-	@Autowired 
+//	@Autowired 
+//	EmailServiceUtil emailService;
+	
+	@Autowired
 	EmailService emailService;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkflowTriggerServiceImpl.class);
@@ -273,6 +276,10 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 									} else {
 										res.setPurchaseOrder("ERS");
 									}
+									// checking for role of override
+//									if(requestDto.getOverrideRole() != null && !(requestDto.getOverrideRole().equals(""))) {
+//									
+//									}
 									responseDto = hciMappingService.pushDataToEcc(res);
 									eccFlag = true;
 								}
@@ -574,7 +581,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
 	@Override
 	public EmailResponseDto sendEmail(EmailRequestDto emailRequestDto) {
-		return emailService.sendEmail(emailRequestDto);
+		return emailService.triggerEmail(emailRequestDto);
 	}
 	
 	public void sendingMailToCustomer(RequestDto res, CompleteTaskRequestDto requestDto, String action) {
@@ -589,7 +596,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			} else {
 				emailRequestDto.setCustomerName("Customer");
 			}
-			email.add(user.getEmail());
+//			email.add(user.getEmail());
 			emailRequestDto.setEmailIds(email);
 			emailRequestDto.setInvoice(res.getHeaderDto().getInvoiceNo());
 			for(ItemDto	itemDto : res.getHeaderDto().getItemSet()) {
@@ -599,7 +606,11 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			}
 			emailRequestDto.setRequestId(res.getRequestId());
 			emailRequestDto.setAction(action);
-			emailService.sendEmail(emailRequestDto);
+			emailRequestDto.setTomailIds(user.getEmail());
+			emailRequestDto.setSflag("");
+			emailRequestDto.setSubject("");
+			
+			emailService.triggerEmail(emailRequestDto);
 		}
 	}
 	

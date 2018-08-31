@@ -10,6 +10,8 @@ public interface EReturnConstants {
 	public static final String CONTENT_TYPE = "Content-Type";
 	public static final String CONTENT_APPLICATION = "application/json";
 	
+	public static final String CONTENT_TEXT_HTML = "text/html";
+	
 	public static final String INPROGRESS = "INPROGRESS";
 	public static final String NEW = "NEW";
 	public static final String REJECTED = "REJECTED";

@@ -19,6 +19,10 @@ public class EmailRequestDto implements Serializable {
 	private String material;
 	
 	private String action;
+	private String subject;
+	
+	private String tomailIds;
+	private String sflag;
 	
 	public List<String> getEmailIds() {
 		return emailIds;
@@ -68,4 +72,29 @@ public class EmailRequestDto implements Serializable {
 		this.action = action;
 	}
 
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+
+	public String getTomailIds() {
+		return tomailIds;
+	}
+
+	public void setTomailIds(String tomailIds) {
+		this.tomailIds = tomailIds;
+	}
+
+	public String getSflag() {
+		return sflag;
+	}
+
+	public void setSflag(String sflag) {
+		this.sflag = sflag;
+	}
+
+	
 }

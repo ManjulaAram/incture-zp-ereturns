@@ -3,6 +3,7 @@ package com.incture.zp.ereturns.constants;
 public interface EReturnsHciConstants {
 
 //	public static final String HCI_ECC_ENDPOINT_URL = "https://l6088-iflmap.hcisbp.ap1.hana.ondemand.com";
+													   
 	public static final String HCI_ECC_ENDPOINT = "ZP_ERETURNS_HCI";
 //	public static final String USERNAME = "S0019321680";
 //	public static final String PASSWORD = "0WV1]2{Q";
@@ -17,6 +18,12 @@ public interface EReturnsHciConstants {
 	public static final String RETURN_ORDER_CREATION = "Return_Order_Creation";
 	public static final String RETURN_SCHEDULES_IN = "Return_Schedules_In";
 	public static final String RETURN_ITEMS = "Return_Items";
+	
+	public static final String RETURN_CONDITIONS = "Return_Conditions";
+	public static final String CONDITION_TYPE = "condition_type";
+	public static final String CONDITION_VALUE = "condition_value";
+	
+	public static final String CONDITION_TYPE_VALUE = "ZPO1";
 	
 	public static final String RETURN_HEADER = "Return_Header";
 	public static final String RETURN_PARTNERS = "Return_Partners";
@@ -45,4 +52,11 @@ public interface EReturnsHciConstants {
 	
 	public static final String REFERENCE_DOCUMENT_CATEGORY = "M";
 	public static final String STORE_LOC_DEFAULT = "1005";
+	
+	public static final String SENDER = "sender";
+	public static final String RECEIVER = "receiver";
+	public static final String SUBJECT = "subject";
+	public static final String EMAIL_SENDER = "ereturns@zuelligpharma.com";
+	public static final String EMAIL_RECEIVER = "temp";
+	public static final String EMAIL_HCI_URL = "/http/email/trigger/v1";
 }

@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.incture.zp.ereturns.dto.EmailRequestDto;
+import com.incture.zp.ereturns.dto.EmailResponseDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
+import com.incture.zp.ereturns.services.EmailService;
 import com.incture.zp.ereturns.services.NotificationService;
 
 @RestController
@@ -20,6 +23,9 @@ import com.incture.zp.ereturns.services.NotificationService;
 public class EReturnsNotificationController {
 	@Autowired
 	NotificationService notifyService;
+	
+	@Autowired
+	EmailService emailService;
 
 	@RequestMapping("/hello")
 	public String hello() {
@@ -37,6 +43,13 @@ public class EReturnsNotificationController {
 	@RequestMapping(path = "/sendNotificationForRequestor", method = RequestMethod.POST)
 	public ResponseDto sendNotificationForRequestor(@RequestBody RequestDto requestDto) {
 		return notifyService.sendNotificationForRequestor(requestDto.getRequestId(), requestDto.getRequestCreatedBy(), "A");
+
+	}
+	
+	@ResponseBody
+	@RequestMapping(path = "/emailTrigger", method = RequestMethod.POST)
+	public EmailResponseDto sendEmail(@RequestBody EmailRequestDto requestDto) {
+		return emailService.triggerEmail(requestDto);
 
 	}
 }

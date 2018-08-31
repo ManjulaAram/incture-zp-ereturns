@@ -44,6 +44,7 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		JSONObject header = new JSONObject();
 		JSONArray itemsArry = new JSONArray();
 		JSONArray scheduleArry = new JSONArray();
+		JSONArray conditionArry = new JSONArray();
 		
 		partnerShipTo.put(EReturnsHciConstants.PARTNER_ROLE, EReturnsHciConstants.SHIP_TO_PARTY);
 		partnerShipTo.put(EReturnsHciConstants.PARTNER_NUMBER, requestDto.getShipTo());
@@ -100,6 +101,14 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 			schedules.put(EReturnsHciConstants.REQ_QTY, returnOrderList.get(i).getReturnQty());
 
 			scheduleArry.put(schedules);
+			
+			JSONObject conditions = new JSONObject();
+			conditions.put(EReturnsHciConstants.ITEM_NO, itemDto.getItemCode());
+			conditions.put(EReturnsHciConstants.CONDITION_TYPE, EReturnsHciConstants.CONDITION_TYPE_VALUE);
+			conditions.put(EReturnsHciConstants.CURRENCY, requestDto.getHeaderDto().getCurrency());
+			conditions.put(EReturnsHciConstants.CONDITION_VALUE, returnOrderList.get(i).getReturnQty());
+			
+			conditionArry.put(conditions);
 		}
 		 
 		header.put(EReturnsHciConstants.ORDER_REASON, reason);
@@ -107,6 +116,7 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		orderCreation.put(EReturnsHciConstants.RETURN_HEADER, header);
 		orderCreation.put(EReturnsHciConstants.RETURN_ITEMS, itemsArry);
 		orderCreation.put(EReturnsHciConstants.RETURN_SCHEDULES_IN, scheduleArry);
+		orderCreation.put(EReturnsHciConstants.RETURN_CONDITIONS, conditionArry);
 		 
 		returnOrder.put(EReturnsHciConstants.RETURN_ORDER_CREATION, orderCreation);
 		 
