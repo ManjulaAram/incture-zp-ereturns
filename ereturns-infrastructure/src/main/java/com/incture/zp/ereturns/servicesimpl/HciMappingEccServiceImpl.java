@@ -31,7 +31,7 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 	
 	@SuppressWarnings("unused")
 	@Override
-	public ResponseDto pushDataToEcc(RequestDto requestDto) {
+	public ResponseDto pushDataToEcc(RequestDto requestDto, String itemCode, String action) {
 		ResponseDto responseDto = new ResponseDto();
 		
 		JSONObject returnOrder = new JSONObject();
@@ -44,7 +44,7 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		JSONObject header = new JSONObject();
 		JSONArray itemsArry = new JSONArray();
 		JSONArray scheduleArry = new JSONArray();
-//		JSONArray conditionArry = new JSONArray();
+		JSONArray conditionArry = new JSONArray();
 		
 		partnerShipTo.put(EReturnsHciConstants.PARTNER_ROLE, EReturnsHciConstants.SHIP_TO_PARTY);
 		partnerShipTo.put(EReturnsHciConstants.PARTNER_NUMBER, requestDto.getShipTo());
@@ -66,49 +66,73 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		 
 		List<ItemDto> itemList = new ArrayList<>();
 		itemList.addAll(requestDto.getHeaderDto().getItemSet());
-		
+
+		itemList.sort((i1, i2) -> i1.getItemCode().compareTo(i2.getItemCode()));
+		 
 		List<ReturnOrderDto> returnOrderList = new ArrayList<>();
 		returnOrderList.addAll(requestDto.getSetReturnOrderDto());
+		returnOrderList.sort((o1, o2) -> o1.getItemCode().compareTo(o2.getItemCode()));
+		
 		String reason = "";
 		for(int i = 0; i < itemList.size(); i++) {
-			ItemDto itemDto = itemList.get(i);
 			
-			JSONObject item = new JSONObject();
-			
-			item.put(EReturnsHciConstants.PLANT, itemDto.getPlant());
-			item.put(EReturnsHciConstants.STORE_LOC, "");
-			item.put(EReturnsHciConstants.MATERIAL, itemDto.getMaterial());
-			item.put(EReturnsHciConstants.ITEM_NO, itemDto.getItemCode());
-			item.put(EReturnsHciConstants.TARGET_QTY, returnOrderList.get(i).getReturnQty());// need to get from return order
-			item.put(EReturnsHciConstants.REF_DOC, requestDto.getHeaderDto().getInvoiceNo());
-			item.put(EReturnsHciConstants.CURRENCY, requestDto.getHeaderDto().getCurrency());
-			item.put(EReturnsHciConstants.ORDER_REASON, itemDto.getItemName());
-			
-			if(returnOrderList.get(i).getPaymentType() != null && !(returnOrderList.get(i).getPaymentType().equals(""))) {
-				if(returnOrderList.get(i).getPaymentType().equalsIgnoreCase("Credit")) {
+			LOGGER.error("Status To add to ECC1:"+returnOrderList.get(i).getOrderStatus());
+			if(!(returnOrderList.get(i).getOrderStatus().equalsIgnoreCase("REJECTED"))) {
+				LOGGER.error("Status To add to ECC2:"+returnOrderList.get(i).getOrderStatus());
+				ItemDto itemDto = itemList.get(i);
+				
+				JSONObject item = new JSONObject();
+				
+				item.put(EReturnsHciConstants.PLANT, itemDto.getPlant());
+				item.put(EReturnsHciConstants.STORE_LOC, "");
+				item.put(EReturnsHciConstants.MATERIAL, itemDto.getMaterial());
+				item.put(EReturnsHciConstants.ITEM_NO, itemDto.getItemCode());
+				item.put(EReturnsHciConstants.TARGET_QTY, returnOrderList.get(i).getReturnQty());// need to get from return order
+				item.put(EReturnsHciConstants.REF_DOC, requestDto.getHeaderDto().getInvoiceNo());
+				item.put(EReturnsHciConstants.CURRENCY, requestDto.getHeaderDto().getCurrency());
+				item.put(EReturnsHciConstants.ORDER_REASON, itemDto.getItemName());
+				item.put(EReturnsHciConstants.BATCH, itemDto.getBatch());
+				
+				JSONObject schedules = new JSONObject();
+				schedules.put(EReturnsHciConstants.ITEM_NO, itemDto.getItemCode());
+				schedules.put(EReturnsHciConstants.SCHEDULE_LINE, EReturnConstants.ECC_SCHEDULE_LINE);
+				schedules.put(EReturnsHciConstants.REQ_DATE, new SimpleDateFormat(EReturnConstants.ECC_DATE_FORMAT).format(new Date()));
+				schedules.put(EReturnsHciConstants.REQ_QTY, returnOrderList.get(i).getReturnQty());
+
+				JSONObject conditions = new JSONObject();
+				conditions.put(EReturnsHciConstants.CONDITION_ITEM_NO, itemDto.getItemCode());
+				conditions.put(EReturnsHciConstants.CONDITION_TYPE, EReturnsHciConstants.CONDITION_TYPE_VALUE);
+				conditions.put(EReturnsHciConstants.CURRENCY, requestDto.getHeaderDto().getCurrency());
+				conditions.put(EReturnsHciConstants.CONDITION_VALUE, returnOrderList.get(i).getOverrideReturnValue());
+				LOGGER.error("Value for override:"+returnOrderList.get(i).getOverrideReturnValue());
+				
+				if(returnOrderList.get(i).getPaymentType() != null && !(returnOrderList.get(i).getPaymentType().equals(""))) {
+					if(returnOrderList.get(i).getPaymentType().equalsIgnoreCase("Credit")) {
+						if(returnOrderList.get(i).getOrderStatus().equalsIgnoreCase("INPROGRESS") 
+								&& itemDto.getItemCode().equalsIgnoreCase(itemCode) && action.equalsIgnoreCase("Approved")) {
+							itemsArry.put(item);
+							scheduleArry.put(schedules);
+							conditionArry.put(conditions);
+						} else if(returnOrderList.get(i).getOrderStatus().equalsIgnoreCase("COMPLETED")){
+							itemsArry.put(item);
+							scheduleArry.put(schedules);
+							conditionArry.put(conditions);
+						} else if(action.equalsIgnoreCase("AUTO")){
+							itemsArry.put(item);
+							scheduleArry.put(schedules);
+							conditionArry.put(conditions);
+						}
+					} 
+				} else {
 					itemsArry.put(item);
-				} 
-			} else {
-				itemsArry.put(item);
+					scheduleArry.put(schedules);
+					conditionArry.put(conditions);
+				}
+				
+				reason = returnOrderList.get(i).getReason();
+				
 			}
 			
-			reason = returnOrderList.get(i).getReason();
-			
-			JSONObject schedules = new JSONObject();
-			schedules.put(EReturnsHciConstants.ITEM_NO, itemDto.getItemCode());
-			schedules.put(EReturnsHciConstants.SCHEDULE_LINE, EReturnConstants.ECC_SCHEDULE_LINE);
-			schedules.put(EReturnsHciConstants.REQ_DATE, new SimpleDateFormat(EReturnConstants.ECC_DATE_FORMAT).format(new Date()));
-			schedules.put(EReturnsHciConstants.REQ_QTY, returnOrderList.get(i).getReturnQty());
-
-			scheduleArry.put(schedules);
-			
-//			JSONObject conditions = new JSONObject();
-//			conditions.put(EReturnsHciConstants.ITEM_NO, itemDto.getItemCode());
-//			conditions.put(EReturnsHciConstants.CONDITION_TYPE, EReturnsHciConstants.CONDITION_TYPE_VALUE);
-//			conditions.put(EReturnsHciConstants.CURRENCY, requestDto.getHeaderDto().getCurrency());
-//			conditions.put(EReturnsHciConstants.CONDITION_VALUE, returnOrderList.get(i).getReturnQty());
-//			
-//			conditionArry.put(conditions);
 		}
 		 
 		header.put(EReturnsHciConstants.ORDER_REASON, reason);
@@ -116,7 +140,7 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		orderCreation.put(EReturnsHciConstants.RETURN_HEADER, header);
 		orderCreation.put(EReturnsHciConstants.RETURN_ITEMS, itemsArry);
 		orderCreation.put(EReturnsHciConstants.RETURN_SCHEDULES_IN, scheduleArry);
-//		orderCreation.put(EReturnsHciConstants.RETURN_CONDITIONS, conditionArry);
+		orderCreation.put(EReturnsHciConstants.RETURN_CONDITIONS, conditionArry);
 		 
 		returnOrder.put(EReturnsHciConstants.RETURN_ORDER_CREATION, orderCreation);
 		 

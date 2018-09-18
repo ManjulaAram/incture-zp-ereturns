@@ -68,6 +68,8 @@ public class StatusResponseDto implements Serializable {
 	
 	private String currency;
 	
+	private String overrideReturnValue;
+	
 	private Set<AttachmentDto> attachments;
 	
 	public String getMessage() {
@@ -312,6 +314,14 @@ public class StatusResponseDto implements Serializable {
 
 	public void setCurrency(String currency) {
 		this.currency = currency;
+	}
+
+	public String getOverrideReturnValue() {
+		return overrideReturnValue;
+	}
+
+	public void setOverrideReturnValue(String overrideReturnValue) {
+		this.overrideReturnValue = overrideReturnValue;
 	}
 	
 }

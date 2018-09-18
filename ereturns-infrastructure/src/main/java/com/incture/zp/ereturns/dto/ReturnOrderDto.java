@@ -44,6 +44,8 @@ public class ReturnOrderDto implements Serializable {
 	
 	private String invoicedQty;
 	
+	private String overrideReturnValue;
+	
 	public Long getReturnOrderId() {
 		return returnOrderId;
 	}
@@ -194,6 +196,14 @@ public class ReturnOrderDto implements Serializable {
 
 	public void setInvoicedQty(String invoicedQty) {
 		this.invoicedQty = invoicedQty;
+	}
+
+	public String getOverrideReturnValue() {
+		return overrideReturnValue;
+	}
+
+	public void setOverrideReturnValue(String overrideReturnValue) {
+		this.overrideReturnValue = overrideReturnValue;
 	}
 
 }

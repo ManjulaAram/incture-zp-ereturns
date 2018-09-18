@@ -37,9 +37,11 @@ import com.incture.zp.ereturns.dto.EmailRequestDto;
 import com.incture.zp.ereturns.dto.EmailResponseDto;
 import com.incture.zp.ereturns.dto.IdpUserDetailsDto;
 import com.incture.zp.ereturns.dto.ItemDto;
+import com.incture.zp.ereturns.dto.PriceOverrideDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.RequestHistoryDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
+import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.UpdateDto;
 import com.incture.zp.ereturns.repositories.RequestRepository;
 import com.incture.zp.ereturns.repositories.ReturnOrderRepository;
@@ -188,7 +190,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
 	@Override
 	public ResponseDto completeTask(CompleteTaskRequestDto requestDto) {
-		
+		overridePrice(requestDto);
 		ResponseDto responseDto = new ResponseDto();
 		RequestDto res = requestService.getRequestById(requestDto.getRequestId());
 		boolean eccFlag = false;
@@ -201,7 +203,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 				if(requestDto.getFlag().equalsIgnoreCase("Approved")) {
 					LOGGER.error("Re-Triggering on failure of ECC");
 					// post call to ECC
-					responseDto = hciMappingService.pushDataToEcc(res);
+					responseDto = hciMappingService.pushDataToEcc(res, requestDto.getItemCode(), requestDto.getFlag());
 					if(responseDto != null) {
 						if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_SUCCESS_STATUS)) {
 							// adding response dto on completion
@@ -209,7 +211,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 							responseDto.setStatus(EReturnConstants.ECC_SUCCESS_STATUS);
 							responseDto.setMessage(responseDto.getMessage());
 							// status update
-							reTriggerProcess(res, requestDto.getLoginUser(), responseDto.getMessage(), true, requestDto.getOrderComments(), "");
+							reTriggerProcess(res, requestDto.getLoginUser(), responseDto.getMessage(), true, requestDto.getOrderComments(), "", requestDto.getItemCode());
 							sendingMailToCustomer(res, requestDto, "Approved");
 						} else if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_ERROR_STATUS)) {
 							// adding response dto on error
@@ -217,16 +219,16 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 							responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
 							responseDto.setStatus(EReturnConstants.ECC_ERROR_STATUS);
 							//update tables of request, return order and history for re-trigger
-							reTriggerProcess(res, requestDto.getLoginUser(), responseDto.getMessage(), false, requestDto.getOrderComments(), "");
+							reTriggerProcess(res, requestDto.getLoginUser(), responseDto.getMessage(), false, requestDto.getOrderComments(), "", requestDto.getItemCode());
 						}
 					} 
 				} else if(requestDto.getFlag().equalsIgnoreCase("Rejected")) {
 					// adding response dto
-					responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
+					responseDto.setCode(EReturnConstants.WORKFLOW_STATUS_CODE);
 					responseDto.setMessage(EReturnConstants.SUCCESS_STATUS);
 					responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
 					// change to rejected status
-					reTriggerProcess(res, requestDto.getLoginUser(), "", true, requestDto.getOrderComments(), "Rejected");
+					reTriggerProcess(res, requestDto.getLoginUser(), "", true, requestDto.getOrderComments(), "Rejected", requestDto.getItemCode());
 					sendingMailToCustomer(res, requestDto, "Rejected");
 				}
 				
@@ -268,7 +270,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 //							res.setPurchaseOrder("ERP");
 							Thread.sleep(5000);
 							String status = updateOrderDetails(instanceId);
-							if(status.equalsIgnoreCase(EReturnConstants.COMPLETE)) {
+							if(status.equalsIgnoreCase(EReturnConstants.COMPLETE) || status.equalsIgnoreCase(EReturnConstants.REJECT)) {
 								synchronized(this) {
 									String client = res.getClient();
 									if(client != null && !(client.equals("")) && client.equalsIgnoreCase("WEB")) {
@@ -276,15 +278,20 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 									} else {
 										res.setPurchaseOrder("ERS");
 									}
-									// checking for role of override
-//									if(requestDto.getOverrideRole() != null && !(requestDto.getOverrideRole().equals(""))) {
-//									
-//									}
-									responseDto = hciMappingService.pushDataToEcc(res);
-									eccFlag = true;
+									// checking for role of override update return order
+//									overridePrice(requestDto);
+									List<ReturnOrderDto> orderList = returnOrderRepository.getReturnOrderByRequestId(requestId);
+//									Set<ReturnOrderDto> set = new HashSet<>(orderList);
+//									res.setSetReturnOrderDto(set);
+									boolean check = getStatusTrack(orderList, requestDto.getItemCode());
+									if(!check) {
+										responseDto = hciMappingService.pushDataToEcc(res, requestDto.getItemCode(), requestDto.getFlag());
+										eccFlag = true;
+									}
 								}
 							} else {
 								notification = true;
+//								overridePrice(requestDto);
 							}
 						}
 						if(responseDto != null && eccFlag) {
@@ -295,7 +302,11 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 							} else if(responseDto.getStatus().equalsIgnoreCase(EReturnConstants.ECC_ERROR_STATUS)) {
 								responseDto.setMessage(responseDto.getMessage());
 								//update tables of request, return order and history
-								reTriggerProcess(res, requestDto.getLoginUser(), responseDto.getMessage(), false, "", "");
+								reTriggerProcess(res, requestDto.getLoginUser(), responseDto.getMessage(), false, "", "", requestDto.getItemCode());
+							} else if(requestDto.getFlag().equalsIgnoreCase("REJECTED") && responseDto.getStatus().equalsIgnoreCase("SUCCESS")) {
+								responseDto.setMessage(EReturnConstants.SUCCESS_STATUS);
+								responseDto.setCode(EReturnConstants.WORKFLOW_STATUS_CODE);
+								responseDto.setCode(EReturnConstants.SUCCESS_STATUS);
 							}
 						} 
 						if(responseDto.getCode().equals(EReturnConstants.WORKFLOW_STATUS_CODE)) {
@@ -505,7 +516,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
 	}
 
-	private void reTriggerProcess(RequestDto res, String loginUser, String eccResponse, boolean retry, String comments, String action) {
+	private void reTriggerProcess(RequestDto res, String loginUser, String eccResponse, boolean retry, String comments, String action, String itemCode) {
 		//update tables of request, return order and history
 		IdpUserDetailsDto pendingWith = userService.getIdpUserDetailsById(loginUser);
 		UpdateDto updateDto = new UpdateDto();
@@ -521,15 +532,14 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			else
 				updateDto.setStatus(EReturnConstants.COMPLETE);
 			requestRepository.updateRequestTrigger(updateDto);
-			for(ItemDto itemDto : res.getHeaderDto().getItemSet()) {
-				updateDto.setItemCode(itemDto.getItemCode());
-				returnOrderRepository.updateReturnOrderTrigger(updateDto);
-			}
+			updateDto.setItemCode(itemCode);
+			returnOrderRepository.updateReturnOrderTrigger(updateDto);
 			// History table insert
 			RequestHistoryDto requestHistoryDto = new RequestHistoryDto();
 			requestHistoryDto.setCustomer("");
 			requestHistoryDto.setInvoiceNo("");
 			requestHistoryDto.setMaterial("");
+			requestHistoryDto.setItemCode(itemCode);
 			requestHistoryDto.setRequestApprovedBy(loginUser);
 			requestHistoryDto.setRequestApprovedDate("");
 			requestHistoryDto.setRequestCreatedBy(res.getRequestCreatedBy());
@@ -550,15 +560,14 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			updateDto.setRequestId(res.getRequestId());
 			updateDto.setStatus("INPROGRESS");
 			requestRepository.updateRequestTrigger(updateDto);
-			for(ItemDto itemDto : res.getHeaderDto().getItemSet()) {
-				updateDto.setItemCode(itemDto.getItemCode());
-				returnOrderRepository.updateReturnOrderTrigger(updateDto);
-			}
+			updateDto.setItemCode(itemCode);
+			returnOrderRepository.updateReturnOrderTrigger(updateDto);
 			// History table insert
 			RequestHistoryDto requestHistoryDto = new RequestHistoryDto();
 			requestHistoryDto.setCustomer("");
 			requestHistoryDto.setInvoiceNo("");
 			requestHistoryDto.setMaterial("");
+			requestHistoryDto.setItemCode(itemCode);
 			requestHistoryDto.setRequestApprovedBy("");
 			requestHistoryDto.setRequestApprovedDate("");
 			requestHistoryDto.setRequestCreatedBy(res.getRequestCreatedBy());
@@ -612,6 +621,39 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			
 			emailService.triggerEmail(emailRequestDto);
 		}
+	}
+	
+	public boolean getStatusTrack(List<ReturnOrderDto> orderList, String itemCode) {
+		boolean flag = false;
+		for(int i = 0 ; i < orderList.size() ; i++) {
+			ReturnOrderDto returnOrderDto = orderList.get(i);
+			if(returnOrderDto.getOrderStatus() != null && !(returnOrderDto.getOrderStatus().equals(""))) {
+				if(!(itemCode.equalsIgnoreCase(returnOrderDto.getItemCode()))) {
+					LOGGER.error("Check all itemcode status: "+returnOrderDto.getOrderStatus());
+					if(returnOrderDto.getOrderStatus().equalsIgnoreCase("INPROGRESS")) {
+						flag = true;
+						break;
+					}
+				} 
+			}
+		}
+		return flag;
+		
+	}
+	
+	public int overridePrice(CompleteTaskRequestDto requestDto) {
+		int i = 0;
+		if(requestDto.getOverrideRole() != null && !(requestDto.getOverrideRole().equals("")) &&
+				requestDto.getOverrideRole().equalsIgnoreCase("PRINCIPAL_OVERRIDE")) {
+			if(requestDto.getOverridePrice() != null && !(requestDto.getOverridePrice().equals(""))) {
+				PriceOverrideDto priceOverrideDto = new PriceOverrideDto();
+				priceOverrideDto.setOverridePrice(requestDto.getOverridePrice());
+				priceOverrideDto.setItemCode(requestDto.getItemCode());
+				priceOverrideDto.setRequestId(requestDto.getRequestId());
+				i = returnOrderRepository.updatePriceOverride(priceOverrideDto);
+			}
+		}
+		return i;
 	}
 	
 }

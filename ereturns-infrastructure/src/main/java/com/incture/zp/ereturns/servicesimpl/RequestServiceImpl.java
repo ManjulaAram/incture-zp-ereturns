@@ -180,23 +180,26 @@ public class RequestServiceImpl implements RequestService {
 				if (requestDto2.getHeaderDto().getInvoiceNo() != null) {
 					if (requestDto2.getHeaderDto().getInvoiceNo().equals(requestDto.getHeaderDto().getInvoiceNo())
 							&& ((requestDto2.getRequestStatus().equalsIgnoreCase(EReturnConstants.NEW)) || (requestDto2
-									.getRequestStatus().equalsIgnoreCase(EReturnConstants.INPROGRESS)))) {
+									.getRequestStatus().equalsIgnoreCase(EReturnConstants.INPROGRESS)) || requestDto2
+									.getRequestStatus().equalsIgnoreCase(EReturnConstants.REJECTED))) {
 						for (ItemDto itemDto : requestDto2.getHeaderDto().getItemSet()) {
 							for (int i = 0; i < itemList.size(); i++) {
 								ItemDto itemDto2 = itemList.get(i);
 								if (itemDto.getMaterial().equals(itemDto2.getMaterial())) {
 									returnOrderList.addAll(requestDto2.getSetReturnOrderDto());
-								
-									duplicate = true;
-									int remainingQty = Integer.parseInt(returnOrderList.get(i).getReturnQty());
-									materials.add("Request " + requestDto2.getRequestId() + " for Invoice "
-											+ requestDto.getHeaderDto().getInvoiceNo() + " and Material "
-											+ itemDto.getMaterial() + " is already in approval queue with quantity "
-											+ remainingQty + " .Hence cannot proceed for new Request");
-									break;
-								} else {
-									duplicate = false;
-								}
+									if(returnOrderList.get(i).getOrderStatus().equalsIgnoreCase(EReturnConstants.NEW) || 
+									(returnOrderList.get(i).getOrderStatus().equalsIgnoreCase(EReturnConstants.INPROGRESS))) {
+										duplicate = true;
+										int remainingQty = Integer.parseInt(returnOrderList.get(i).getReturnQty());
+										materials.add("Request " + requestDto2.getRequestId() + " for Invoice "
+												+ requestDto.getHeaderDto().getInvoiceNo() + " and Material "
+												+ itemDto.getMaterial() + " is already in approval queue with quantity "
+												+ remainingQty + " .Hence cannot proceed for new Request");
+										break;
+									} else {
+										duplicate = false;
+									}
+								} 
 							}
 						}
 					}
@@ -301,7 +304,7 @@ public class RequestServiceImpl implements RequestService {
 		} else {
 			requestDto.setPurchaseOrder("ERS");
 		}
-		return hciMappingService.pushDataToEcc(requestDto);
+		return hciMappingService.pushDataToEcc(requestDto, "", "AUTO");
 	}
 
 	private ResponseDto saveData(RequestDto requestDto) {

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.incture.zp.ereturns.dto.PriceOverrideDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.StatusPendingDto;
@@ -49,6 +50,11 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
 	@Override
 	public List<StatusResponseDto> getRequestorDashboardList(String createdBy, String status) {
 		return returnOrderRepository.getRequestorDashboardList(createdBy, status);
+	}
+
+	@Override
+	public int updatePriceOverride(PriceOverrideDto priceOverrideDto) {
+		return returnOrderRepository.updatePriceOverride(priceOverrideDto);
 	}
 
 }

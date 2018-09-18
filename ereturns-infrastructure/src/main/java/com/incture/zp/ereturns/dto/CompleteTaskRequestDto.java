@@ -14,6 +14,10 @@ public class CompleteTaskRequestDto implements Serializable {
 	private String itemCode;
 	private String flag;
 	private String orderComments;
+	
+	private String overridePrice;
+	private String role;
+	private String overrideRole;
 
 	public String getRequestId() {
 		return requestId;
@@ -44,6 +48,24 @@ public class CompleteTaskRequestDto implements Serializable {
 	}
 	public void setOrderComments(String orderComments) {
 		this.orderComments = orderComments;
+	}
+	public String getOverridePrice() {
+		return overridePrice;
+	}
+	public void setOverridePrice(String overridePrice) {
+		this.overridePrice = overridePrice;
+	}
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
+	}
+	public String getOverrideRole() {
+		return overrideRole;
+	}
+	public void setOverrideRole(String overrideRole) {
+		this.overrideRole = overrideRole;
 	}
 	
 }

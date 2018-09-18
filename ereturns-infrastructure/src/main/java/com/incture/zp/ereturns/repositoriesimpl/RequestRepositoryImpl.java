@@ -188,6 +188,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 							statusResponseDto.setRemark(returnOrder2.getRemark());
 							statusResponseDto.setReturnType(returnOrder2.getPaymentType());
 							statusResponseDto.setReturnValue(returnOrder2.getReturnValue());
+							statusResponseDto.setOverrideReturnValue(returnOrder2.getOverrideReturnValue());
 							statusResponseDto.setSalesPerson(EReturnConstants.SALES_PERSON);
 							statusResponseDto.setOrderComments(returnOrder2.getOrderComments());
 							statusResponseDto.setPrincipalCode(item2.getPrincipalCode());

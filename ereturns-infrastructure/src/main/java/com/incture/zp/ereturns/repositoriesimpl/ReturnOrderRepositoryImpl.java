@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
+
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
@@ -18,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.incture.zp.ereturns.constants.EReturnConstants;
+import com.incture.zp.ereturns.dto.PriceOverrideDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.StatusPendingDto;
@@ -60,12 +64,12 @@ public class ReturnOrderRepositoryImpl implements ReturnOrderRepository {
 		sb.append("SELECT r FROM ReturnOrder r WHERE r.returnOrderData.requestId=:requestId");
 		Query query = sessionFactory.getCurrentSession().createQuery(sb.toString());
 		query.setParameter("requestId", requestId);
-		LOGGER.error("Query String1:" + query.getQueryString());
 
 		@SuppressWarnings("unchecked")
 		List<ReturnOrder> list = query.list();
 		for (ReturnOrder returnOrder : list) {
 			returnOrderDtos.add(importExportUtil.exportReturnOrderDto(returnOrder));
+			LOGGER.error(">>>>>>>>>>>>"+returnOrder.getOverrideReturnValue());
 		}
 
 		return returnOrderDtos;
@@ -343,6 +347,22 @@ public class ReturnOrderRepositoryImpl implements ReturnOrderRepository {
 		List<StatusResponseDto> finalList = new ArrayList<>();
 		finalList.addAll(set);
 		return finalList;
+	}
+
+	@Override
+	@Transactional(value=TxType.REQUIRES_NEW)
+	public int updatePriceOverride(PriceOverrideDto priceOverrideDto) {
+		
+		String queryStr = "UPDATE ReturnOrder SET overrideReturnValue=:overrideReturnValue "
+				+ "WHERE returnOrderData.requestId=:requestId AND itemCode=:itemCode";
+		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
+		query.setParameter("overrideReturnValue", priceOverrideDto.getOverridePrice());
+		query.setParameter("requestId", priceOverrideDto.getRequestId());
+		query.setParameter("itemCode", priceOverrideDto.getItemCode());
+		
+		int result = query.executeUpdate();
+		LOGGER.error("Update status for override:"+result+"..."+priceOverrideDto.getOverridePrice()+"..."+priceOverrideDto.getRequestId()+"..."+priceOverrideDto.getItemCode());
+		return result;
 	}
 
 }

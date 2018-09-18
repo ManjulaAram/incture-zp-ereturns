@@ -18,7 +18,6 @@ import com.incture.zp.ereturns.dto.EmailRequestDto;
 import com.incture.zp.ereturns.dto.EmailResponseDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
-import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.RoleDto;
 import com.incture.zp.ereturns.dto.StatusPendingDto;
 import com.incture.zp.ereturns.dto.StatusRequestDto;
@@ -102,20 +101,36 @@ public class EReturnsRequestController {
 		return requestService.getAllRequests();
 	}
 	
+//	@RequestMapping(value = "/completeWorkflow", method = RequestMethod.POST, consumes = { "application/json" })
+//	@ResponseBody
+//	public ResponseDto completeWorkflow(@RequestBody CompleteTasksDto completeTasksDto) {
+//		ResponseDto responseDto = null;
+//		for(CompleteTaskRequestDto completeTaskRequestDto : completeTasksDto.getCompleteRequestDto()) {
+//			List<ReturnOrderDto> list = returnOrderService.getReturnOrderByRequestId(completeTaskRequestDto.getRequestId());
+//			for(ReturnOrderDto returnOrderDto : list) {
+//				completeTaskRequestDto.setItemCode(returnOrderDto.getItemCode());
+//				completeTaskRequestDto.setRequestId(returnOrderDto.getRequestId());
+//				completeTaskRequestDto.setFlag(completeTaskRequestDto.getFlag());
+//				completeTaskRequestDto.setLoginUser(completeTaskRequestDto.getLoginUser());
+//				completeTaskRequestDto.setOrderComments(completeTaskRequestDto.getOrderComments());
+//				responseDto = workFlowTriggerService.completeTask(completeTaskRequestDto);
+//			}
+//		}
+//		return responseDto;
+//		 
+//	}
+	
 	@RequestMapping(value = "/completeWorkflow", method = RequestMethod.POST, consumes = { "application/json" })
 	@ResponseBody
 	public ResponseDto completeWorkflow(@RequestBody CompleteTasksDto completeTasksDto) {
 		ResponseDto responseDto = null;
 		for(CompleteTaskRequestDto completeTaskRequestDto : completeTasksDto.getCompleteRequestDto()) {
-			List<ReturnOrderDto> list = returnOrderService.getReturnOrderByRequestId(completeTaskRequestDto.getRequestId());
-			for(ReturnOrderDto returnOrderDto : list) {
-				completeTaskRequestDto.setItemCode(returnOrderDto.getItemCode());
-				completeTaskRequestDto.setRequestId(returnOrderDto.getRequestId());
-				completeTaskRequestDto.setFlag(completeTaskRequestDto.getFlag());
-				completeTaskRequestDto.setLoginUser(completeTaskRequestDto.getLoginUser());
-				completeTaskRequestDto.setOrderComments(completeTaskRequestDto.getOrderComments());
-				responseDto = workFlowTriggerService.completeTask(completeTaskRequestDto);
-			}
+			completeTaskRequestDto.setItemCode(completeTaskRequestDto.getItemCode());
+			completeTaskRequestDto.setRequestId(completeTaskRequestDto.getRequestId());
+			completeTaskRequestDto.setFlag(completeTaskRequestDto.getFlag());
+			completeTaskRequestDto.setLoginUser(completeTaskRequestDto.getLoginUser());
+			completeTaskRequestDto.setOrderComments(completeTaskRequestDto.getOrderComments());
+			responseDto = workFlowTriggerService.completeTask(completeTaskRequestDto);
 		}
 		return responseDto;
 		 
@@ -136,7 +151,7 @@ public class EReturnsRequestController {
 	@RequestMapping(value = "/pushData", method = RequestMethod.POST, consumes = { "application/json" })
 	@ResponseBody
 	public ResponseDto pushData(@RequestBody RequestDto requestDto) {
-		return hciMappingEccService.pushDataToEcc(requestDto);
+		return hciMappingEccService.pushDataToEcc(requestDto, "", "AUTO");
 	}
 
 	@RequestMapping(value = "/getPendingStatus/{userId}", method = RequestMethod.GET)

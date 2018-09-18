@@ -315,6 +315,7 @@ public class ImportExportUtil {
 		}
 		returnOrder.setOrderComments(returnOrderDto.getOrderComments());
 		returnOrder.setInvoicedQty(returnOrderDto.getInvoicedQty());
+		returnOrder.setOverrideReturnValue(returnOrderDto.getOverrideReturnValue());
 		return returnOrder;
 	}
 
@@ -347,6 +348,7 @@ public class ImportExportUtil {
 		returnOrderDto.setRequestId(returnOrder.getReturnOrderData().getRequestId());
 		returnOrderDto.setOrderComments(returnOrder.getOrderComments());
 		returnOrderDto.setInvoicedQty(returnOrder.getInvoicedQty());
+		returnOrderDto.setOverrideReturnValue(returnOrder.getOverrideReturnValue());
 		return returnOrderDto;
 	}
 

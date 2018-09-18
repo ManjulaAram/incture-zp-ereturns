@@ -39,6 +39,9 @@ public class ReturnOrder {
 	
 	@Column(name = "RETURN_VALUE", length = 50)
 	private String returnValue;
+	
+	@Column(name = "OVERRIDE_RETURN_VALUE", length = 50)
+	private String overrideReturnValue;
 
 	@Column(name = "ITEM_CODE")
 	private String itemCode; 
@@ -230,6 +233,14 @@ public class ReturnOrder {
 
 	public void setInvoicedQty(String invoicedQty) {
 		this.invoicedQty = invoicedQty;
+	}
+
+	public String getOverrideReturnValue() {
+		return overrideReturnValue;
+	}
+
+	public void setOverrideReturnValue(String overrideReturnValue) {
+		this.overrideReturnValue = overrideReturnValue;
 	}
 
 }

@@ -5,5 +5,5 @@ import com.incture.zp.ereturns.dto.ResponseDto;
 
 public interface HciMappingEccService {
 
-	public ResponseDto pushDataToEcc(RequestDto requestDto);
+	public ResponseDto pushDataToEcc(RequestDto requestDto, String itemCode, String action);
 }

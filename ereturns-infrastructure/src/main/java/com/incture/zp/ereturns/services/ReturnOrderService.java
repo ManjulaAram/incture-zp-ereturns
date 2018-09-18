@@ -2,6 +2,7 @@ package com.incture.zp.ereturns.services;
 
 import java.util.List;
 
+import com.incture.zp.ereturns.dto.PriceOverrideDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.StatusPendingDto;
@@ -21,5 +22,7 @@ public interface ReturnOrderService {
 	public StatusPendingDto getRequestStatusByUserId(String userId);
 	
 	public List<StatusResponseDto> getRequestorDashboardList(String createdBy, String status);
+	
+	public int updatePriceOverride(PriceOverrideDto priceOverrideDto);
 
 }

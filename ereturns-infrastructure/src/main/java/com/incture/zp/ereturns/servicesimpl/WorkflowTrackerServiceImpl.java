@@ -79,6 +79,7 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 				if(logObject.getRequestStatus().equalsIgnoreCase("INPROGRESS")) {
 					instanceDto.setStatus(logObject.getRequestStatus());
 					recipient = logObject.getRequestPendingWith();
+					flag = false;
 				} 
 				if(logObject.getRequestStatus().equalsIgnoreCase("COMPLETED")) {
 					instanceDto.setCompletedAt(logObject.getRequestApprovedDate());
@@ -132,14 +133,19 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 		finalList.addAll(set);
 		
 		recipientList.add(recipient);
-		if(requestDto.getEccStatus() != null && !(requestDto.getEccStatus().equals(""))) {
-			if(requestDto.getEccStatus().equalsIgnoreCase("ECC_ERROR")) {
-				flag = false;
-				int index = finalList.size() - 1;
-				finalList.remove(index);
-				instanceDto.setStatus("INPROGRESS");
-			}
+//		if(requestDto.getEccStatus() != null && !(requestDto.getEccStatus().equals(""))) {
+//			if(requestDto.getEccStatus().equalsIgnoreCase("ECC_ERROR")) {
+//				flag = false;
+//				int index = finalList.size() - 1;
+//				finalList.remove(index);
+//				instanceDto.setStatus("INPROGRESS");
+//			}
+//		}
+		if(!flag && finalList.size() > 0) {
+			int index = finalList.size() - 1;
+			finalList.remove(index);
 		}
+		
 		if(flag) {
 			recipientList.clear();
 		}

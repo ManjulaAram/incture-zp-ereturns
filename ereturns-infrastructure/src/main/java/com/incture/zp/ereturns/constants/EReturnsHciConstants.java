@@ -39,12 +39,14 @@ public interface EReturnsHciConstants {
 	public static final String DISTRIBUTION_CHANNEL = "distr_chan";
 	public static final String DIVISION = "division";
 	public static final String PO_METHOD = "po_method";
+	public static final String BATCH = "batch";
 	
 	public static final String PLANT = "plant";
 	public static final String STORE_LOC = "store_loc";
 	public static final String MATERIAL = "material";
 	public static final String ITEM_NO = "itm_number";
 	public static final String TARGET_QTY = "target_qty";
+	public static final String CONDITION_ITEM_NO = "item_number";
 
 	public static final String SCHEDULE_LINE = "sched_line";
 	public static final String REQ_DATE = "req_date";
