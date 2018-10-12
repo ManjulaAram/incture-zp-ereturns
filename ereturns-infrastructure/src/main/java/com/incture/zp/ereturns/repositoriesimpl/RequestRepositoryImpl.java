@@ -98,8 +98,8 @@ public class RequestRepositoryImpl implements RequestRepository {
 			queryString.append(" AND r.requestCreatedDate BETWEEN :startDate AND :endDate");
 		}
 
-		if (requestDto.getPendingWith() != null && !(requestDto.getPendingWith().equals(""))) {
-			queryString.append(" AND o.orderPendingWith=:orderPendingWith");
+		if (requestDto.getPendingWith() != null && requestDto.getPendingWith().size() > 0) {
+			queryString.append(" AND o.orderPendingWith in (:orderPendingWith)");
 			queryString.append(" AND o.orderStatus=:orderStatus");
 			flag = true;
 		}
@@ -127,7 +127,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 			query.setParameter("customer", requestDto.getCustomerName()+"%");
 		}
 		if (requestDto.getPendingWith() != null && !(requestDto.getPendingWith().equals(""))) {
-			query.setParameter("orderPendingWith", requestDto.getPendingWith());
+			query.setParameterList("orderPendingWith", requestDto.getPendingWith());
 			query.setParameter("orderStatus", "INPROGRESS");
 		}
 		if ((requestDto.getStartDate() != null && !(requestDto.getStartDate().equals("")))

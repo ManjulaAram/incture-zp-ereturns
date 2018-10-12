@@ -1,6 +1,7 @@
 package com.incture.zp.ereturns.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -16,7 +17,7 @@ public class CompleteTaskRequestDto implements Serializable {
 	private String orderComments;
 	
 	private String overridePrice;
-	private String role;
+	private List<String> role;
 	private String overrideRole;
 
 	public String getRequestId() {
@@ -55,17 +56,18 @@ public class CompleteTaskRequestDto implements Serializable {
 	public void setOverridePrice(String overridePrice) {
 		this.overridePrice = overridePrice;
 	}
-	public String getRole() {
-		return role;
-	}
-	public void setRole(String role) {
-		this.role = role;
-	}
+
 	public String getOverrideRole() {
 		return overrideRole;
 	}
 	public void setOverrideRole(String overrideRole) {
 		this.overrideRole = overrideRole;
+	}
+	public List<String> getRole() {
+		return role;
+	}
+	public void setRole(List<String> role) {
+		this.role = role;
 	}
 	
 }

@@ -1,6 +1,7 @@
 package com.incture.zp.ereturns.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -23,7 +24,7 @@ public class StatusRequestDto implements Serializable {
 	
 	private String endDate;
 	
-	private String pendingWith;
+	private List<String> pendingWith;
 
 	public String getCustomerCode() {
 		return customerCode;
@@ -81,12 +82,12 @@ public class StatusRequestDto implements Serializable {
 		this.endDate = endDate;
 	}
 
-	public String getPendingWith() {
+	public List<String> getPendingWith() {
 		return pendingWith;
 	}
 
-	public void setPendingWith(String pendingWith) {
+	public void setPendingWith(List<String> pendingWith) {
 		this.pendingWith = pendingWith;
 	}
-	
+
 }

@@ -260,30 +260,27 @@ public class RequestServiceImpl implements RequestService {
 			RestInvoker restInvoker = new RestInvoker(url, username, password);
 			String path = EReturnConstants.DATABASE_REST_API_REQUESTID+requestId+EReturnConstants.DATABASE_REST_API_ITEMCODE+itemDto.getItemCode();
 			String response = restInvoker.getData(path);
-			LOGGER.error("Response coming from DB:"+response);
 
 			JSONObject responseObject = new JSONObject(response);
 			if(responseObject != null) {
 				boolean policy = (boolean) responseObject.get(EReturnConstants.IN_EXPIRY);
 				String reason = (String) responseObject.get(EReturnConstants.REASON);
+				String principal = (String) responseObject.get(EReturnConstants.PRINCIPAL_GROUP);
 				
 				if(policy)
 				{
-					if(!(reason.equalsIgnoreCase("T21")) && !(reason.equalsIgnoreCase("T22"))) {
-					//Auto approve
-					// notificationService.sendNotificationForRequestor(requestId, requestDto.getRequestCreatedBy(), "A");
-					} else {
-					//Pricipal
-						notificationService.sendNotificationForApprover(requestId, "Principal");
-					}
+//					if(!(reason.equalsIgnoreCase("T21")) && !(reason.equalsIgnoreCase("T22"))) {
+//					//Auto approve
+//					// notificationService.sendNotificationForRequestor(requestId, requestDto.getRequestCreatedBy(), "A");
+//					} else {
+//					//Principal
+//						notificationService.sendNotificationForApprover(requestId, "Principal");
+//					}
+					LOGGER.error("Principal coming from workflow for in-policy:" + principal+"..."+reason);
 				} else {
-					if(!(reason.equalsIgnoreCase("T21")) && !(reason.equalsIgnoreCase("T22"))) {
-					//Principal
-						notificationService.sendNotificationForApprover(requestId, "Principal");
-					} else {
-					//Pricipal && ZP
-						notificationService.sendNotificationForApprover(requestId, "Principal");
-					}
+					//Principal code based user
+					LOGGER.error("Principal coming from workflow for out-policy:" + principal+"...."+reason);
+					notificationService.sendNotificationForApprover(requestId, principal);
 				}
 			}
 		}

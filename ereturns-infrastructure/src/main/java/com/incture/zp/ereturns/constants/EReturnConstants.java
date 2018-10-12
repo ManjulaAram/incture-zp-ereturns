@@ -78,7 +78,7 @@ public interface EReturnConstants {
 	
 	public static final String IN_EXPIRY = "InexpPolicy";
 	public static final String REASON = "Reason";
-	
+	public static final String PRINCIPAL_GROUP = "PrincipalGrp";
 	
 	//IDP standard service constants
 	

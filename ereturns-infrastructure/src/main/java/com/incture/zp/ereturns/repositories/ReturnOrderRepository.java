@@ -22,7 +22,7 @@ public interface ReturnOrderRepository {
 	
 	public StatusPendingDto getRequestStatusByUserId(String userId);
 	
-	public List<ReturnOrderDto> getPendingWith(String role);
+	public List<ReturnOrderDto> getPendingWith(List<String> roles);
 	
 	public int updateReturnOrderTrigger(UpdateDto updateDto);
 	
@@ -30,7 +30,7 @@ public interface ReturnOrderRepository {
 	
 	public List<StatusResponseDto> getRequestorDashboardList(String createdBy, String status);
 	
-	public List<StatusResponseDto> getRequestorList(String createdBy, String role);
+	public List<StatusResponseDto> getRequestorList(String createdBy, List<String> roles);
 	
 	public int updatePriceOverride(PriceOverrideDto priceOverrideDto);
 	

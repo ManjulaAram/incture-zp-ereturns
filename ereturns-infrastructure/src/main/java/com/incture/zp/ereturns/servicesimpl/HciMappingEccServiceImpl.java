@@ -76,9 +76,7 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		String reason = "";
 		for(int i = 0; i < itemList.size(); i++) {
 			
-			LOGGER.error("Status To add to ECC1:"+returnOrderList.get(i).getOrderStatus());
 			if(!(returnOrderList.get(i).getOrderStatus().equalsIgnoreCase("REJECTED"))) {
-				LOGGER.error("Status To add to ECC2:"+returnOrderList.get(i).getOrderStatus());
 				ItemDto itemDto = itemList.get(i);
 				
 				JSONObject item = new JSONObject();
@@ -104,7 +102,6 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 				conditions.put(EReturnsHciConstants.CONDITION_TYPE, EReturnsHciConstants.CONDITION_TYPE_VALUE);
 				conditions.put(EReturnsHciConstants.CURRENCY, requestDto.getHeaderDto().getCurrency());
 				conditions.put(EReturnsHciConstants.CONDITION_VALUE, returnOrderList.get(i).getOverrideReturnValue());
-				LOGGER.error("Value for override:"+returnOrderList.get(i).getOverrideReturnValue());
 				
 				if(returnOrderList.get(i).getPaymentType() != null && !(returnOrderList.get(i).getPaymentType().equals(""))) {
 					if(returnOrderList.get(i).getPaymentType().equalsIgnoreCase("Credit")) {
@@ -183,7 +180,6 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 							JSONObject typeObject = new JSONObject();
 							typeObject = (JSONObject) itemAry.get(i);
 							String type = typeObject.get("TYPE").toString();
-							LOGGER.error(msgObject.get("MESSAGE")+"...."+type);
 							if(type != null && !(type.equals("")) && type.equalsIgnoreCase("E")) {
 								responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
 								responseDto.setStatus(EReturnConstants.ECC_ERROR_STATUS);

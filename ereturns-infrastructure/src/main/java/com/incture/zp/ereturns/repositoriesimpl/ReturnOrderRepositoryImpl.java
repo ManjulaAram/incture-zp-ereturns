@@ -150,13 +150,12 @@ public class ReturnOrderRepositoryImpl implements ReturnOrderRepository {
 		return statusPendingDto;
 	}
 	
-	public List<ReturnOrderDto> getPendingWith(String role) {
+	public List<ReturnOrderDto> getPendingWith(List<String> roles) {
 		
 		List<ReturnOrderDto> returnOrderDtos = new ArrayList<ReturnOrderDto>();
-		
-		String queryStr = "SELECT o FROM ReturnOrder o where o.orderPendingWith=:orderPendingWith";
+		String queryStr = "SELECT o FROM ReturnOrder o where o.orderPendingWith in (:roles)";
 		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
-		query.setParameter("orderPendingWith", role);
+		query.setParameterList("roles", roles);
 		@SuppressWarnings("unchecked")
 		List<ReturnOrder> reqList = query.list();
 		for (ReturnOrder returnOrder : reqList) {
@@ -197,7 +196,7 @@ public class ReturnOrderRepositoryImpl implements ReturnOrderRepository {
 		int pending = 0;
 		int approved = 0;
 		int rejected = 0;
-		List<StatusResponseDto> list = getRequestorList(createdBy, "");
+		List<StatusResponseDto> list = getRequestorList(createdBy, null);
 		List<StatusResponseDto> modifiedPending = new ArrayList<>();
 		List<StatusResponseDto> modifiedApproved = new ArrayList<>();
 		List<StatusResponseDto> modifiedRejected = new ArrayList<>();
@@ -227,7 +226,7 @@ public class ReturnOrderRepositoryImpl implements ReturnOrderRepository {
 	}
 
 
-	public List<StatusResponseDto> getRequestorList(String createdBy, String role) {
+	public List<StatusResponseDto> getRequestorList(String createdBy, List<String> roles) {
 		boolean flag = false;
 		StringBuilder queryString = new StringBuilder();
 		queryString
@@ -237,8 +236,8 @@ public class ReturnOrderRepositoryImpl implements ReturnOrderRepository {
 		if (createdBy != null && !(createdBy.equals(""))) {
 			queryString.append(" AND o.orderCreatedBy=:orderCreatedBy");
 		}
-		if (role != null && !(role.equals(""))) {
-			queryString.append(" AND o.orderPendingWith=:orderPendingWith");
+		if (roles != null && roles.size() > 0) {
+			queryString.append(" AND o.orderPendingWith in (:roles)");
 		}
 		
 		queryString.append(" ORDER BY r.requestId DESC");
@@ -246,8 +245,8 @@ public class ReturnOrderRepositoryImpl implements ReturnOrderRepository {
 		if (createdBy != null && !(createdBy.equals(""))) {
 			query.setParameter("orderCreatedBy", createdBy);
 		}
-		if (role != null && !(role.equals(""))) {
-			query.setParameter("orderPendingWith", role);
+		if (roles != null && roles.size() > 0) {
+			query.setParameterList("roles", roles);
 		}
 		
 		Request request = null;

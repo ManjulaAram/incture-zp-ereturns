@@ -89,9 +89,6 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 	@Autowired
 	RequestHistoryService requestHistoryService;
 	
-//	@Autowired 
-//	EmailServiceUtil emailService;
-	
 	@Autowired
 	EmailService emailService;
 	
@@ -201,7 +198,6 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 					&& res.getEccStatus().equalsIgnoreCase("ECC_ERROR") && res.getRequestStatus().equalsIgnoreCase("INPROGRESS")) {
 				
 				if(requestDto.getFlag().equalsIgnoreCase("Approved")) {
-					LOGGER.error("Re-Triggering on failure of ECC");
 					// post call to ECC
 					responseDto = hciMappingService.pushDataToEcc(res, requestDto.getItemCode(), requestDto.getFlag());
 					if(responseDto != null) {
@@ -267,7 +263,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 					if(responseDto.getCode() != null) {
 						
 						if (responseDto.getCode().equals(EReturnConstants.WORKFLOW_STATUS_CODE)) {
-//							res.setPurchaseOrder("ERP");
+							//res.setPurchaseOrder("ERP");
 							Thread.sleep(5000);
 							String status = updateOrderDetails(instanceId);
 							if(status.equalsIgnoreCase(EReturnConstants.COMPLETE) || status.equalsIgnoreCase(EReturnConstants.REJECT)) {
@@ -279,10 +275,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 										res.setPurchaseOrder("ERS");
 									}
 									// checking for role of override update return order
-//									overridePrice(requestDto);
 									List<ReturnOrderDto> orderList = returnOrderRepository.getReturnOrderByRequestId(requestId);
-//									Set<ReturnOrderDto> set = new HashSet<>(orderList);
-//									res.setSetReturnOrderDto(set);
 									boolean check = getStatusTrack(orderList, requestDto.getItemCode());
 									if(!check) {
 										responseDto = hciMappingService.pushDataToEcc(res, requestDto.getItemCode(), requestDto.getFlag());
@@ -291,7 +284,6 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 								}
 							} else {
 								notification = true;
-//								overridePrice(requestDto);
 							}
 						}
 						if(responseDto != null && eccFlag) {
@@ -316,7 +308,9 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 									sendingMailToCustomer(res, requestDto, "Rejected");
 								} else if(requestDto.getFlag().equalsIgnoreCase(EReturnsWorkflowConstants.STATUS_APPROVED) && notification) {
 									// ZP approver
-									notificationService.sendNotificationForApprover(res.getRequestId(), "ZP-Approver");
+//									notificationService.sendNotificationForApprover(res.getRequestId(), "ZP-Approver");
+//									this is commented because here need to check how ZP-approver will be coming with principal code
+									// to do
 								}
 							}
 						}
@@ -358,7 +352,6 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
 		String responseCode = "";
 		payloadData = buildPayload(reqStatus, loginUser, comments);
-		LOGGER.error("Payload for Approver action:"+payloadData);
 
 		try {
 
@@ -385,7 +378,6 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			if (str.size() > 0) {
 				csrfToken = str.get(0);
 			}
-			LOGGER.error(csrfToken);
 			cookies = urlConnection.getHeaderFields().get(EReturnsWorkflowConstants.SET_COOKIE);
 
 			allowMethods(EReturnsWorkflowConstants.WORKFLOW_PATCH);
@@ -511,7 +503,6 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 		JSONObject updateContent = new JSONObject();
 		updateContent = updateObject.getJSONObject(EReturnsWorkflowConstants.UPDATE_CONTENT);
 		String status = updateContent.getString(EReturnsWorkflowConstants.STATUS).toString();
-		LOGGER.error("Status from context:"+status);
 		return status;
 
 	}
@@ -551,7 +542,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			requestHistoryDto.setRequestUpdatedBy("APPLICATION");
 			requestHistoryDto.setRequestUpdatedDate(getCurrentDate());
 			requestHistoryService.addRequestHistory(requestHistoryDto);
-		} else {
+		} else { 
 			updateDto.setApprovedBy("");
 			updateDto.setApprovedDate("");
 			updateDto.setEccNo(eccResponse);
@@ -561,13 +552,23 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			updateDto.setStatus("INPROGRESS");
 			requestRepository.updateRequestTrigger(updateDto);
 			updateDto.setItemCode(itemCode);
-			returnOrderRepository.updateReturnOrderTrigger(updateDto);
-			// History table insert
 			RequestHistoryDto requestHistoryDto = new RequestHistoryDto();
+			if(action.equalsIgnoreCase("Rejected")) {
+				List<ReturnOrderDto> orderList = returnOrderRepository.getReturnOrderByRequestId(res.getRequestId());
+				for(ReturnOrderDto rDto : orderList) {
+					if(rDto.getOrderStatus().equalsIgnoreCase("COMPLETED")) {
+						updateDto.setItemCode(rDto.getItemCode());
+						returnOrderRepository.updateReturnOrderTrigger(updateDto);
+						requestHistoryDto.setItemCode(rDto.getItemCode());
+					}
+				}
+			}
+			// History table insert
 			requestHistoryDto.setCustomer("");
 			requestHistoryDto.setInvoiceNo("");
 			requestHistoryDto.setMaterial("");
-			requestHistoryDto.setItemCode(itemCode);
+//			requestHistoryDto.setItemCode(itemCode); // changing for rejected should not get updated on ECC failure, 
+													 // only complete should get inserted again not all any one for reference to get history
 			requestHistoryDto.setRequestApprovedBy("");
 			requestHistoryDto.setRequestApprovedDate("");
 			requestHistoryDto.setRequestCreatedBy(res.getRequestCreatedBy());
@@ -605,7 +606,6 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			} else {
 				emailRequestDto.setCustomerName("Customer");
 			}
-//			email.add(user.getEmail());
 			emailRequestDto.setEmailIds(email);
 			emailRequestDto.setInvoice(res.getHeaderDto().getInvoiceNo());
 			for(ItemDto	itemDto : res.getHeaderDto().getItemSet()) {
@@ -629,7 +629,6 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			ReturnOrderDto returnOrderDto = orderList.get(i);
 			if(returnOrderDto.getOrderStatus() != null && !(returnOrderDto.getOrderStatus().equals(""))) {
 				if(!(itemCode.equalsIgnoreCase(returnOrderDto.getItemCode()))) {
-					LOGGER.error("Check all itemcode status: "+returnOrderDto.getOrderStatus());
 					if(returnOrderDto.getOrderStatus().equalsIgnoreCase("INPROGRESS")) {
 						flag = true;
 						break;
@@ -644,7 +643,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 	public int overridePrice(CompleteTaskRequestDto requestDto) {
 		int i = 0;
 		if(requestDto.getOverrideRole() != null && !(requestDto.getOverrideRole().equals("")) &&
-				requestDto.getOverrideRole().equalsIgnoreCase("PRINCIPAL_OVERRIDE")) {
+				requestDto.getOverrideRole().equalsIgnoreCase("PRICE_OVERRIDE")) {
 			if(requestDto.getOverridePrice() != null && !(requestDto.getOverridePrice().equals(""))) {
 				PriceOverrideDto priceOverrideDto = new PriceOverrideDto();
 				priceOverrideDto.setOverridePrice(requestDto.getOverridePrice());

@@ -239,11 +239,11 @@ public class UserServiceImpl implements UserService {
 					String role = "";
 					role = roleObject.get(EReturnConstants.IDP_VALUE).toString();
 					if(role != null && !(role.equals(""))) {
-						if(role.equalsIgnoreCase("Principal")) {
-							idpUserIdDto.setRole("Principal");
+						if(role.contains("PRINCIPAL_")) {
+							idpUserIdDto.setRole(role);
 							break;
-						} else if(role.equalsIgnoreCase("ZP-Approver")) {
-							idpUserIdDto.setRole("ZP-Approver");	
+						} else if(role.contains("ZP-APPROVER_")) {
+							idpUserIdDto.setRole(role);	
 							break;
 						} else if(role.equalsIgnoreCase("Requestor")){
 							idpUserIdDto.setRole("Requestor");

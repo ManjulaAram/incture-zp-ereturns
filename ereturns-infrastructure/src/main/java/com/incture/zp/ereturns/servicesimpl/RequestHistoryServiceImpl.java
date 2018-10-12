@@ -82,7 +82,7 @@ public class RequestHistoryServiceImpl implements RequestHistoryService {
 		} else if (status.equalsIgnoreCase("APPROVED")) {
 			List<StatusResponseDto> modifiedApproved = new ArrayList<>();
 
-			List<StatusResponseDto> approvedList = returnOrderRepository.getRequestorList("", "");
+			List<StatusResponseDto> approvedList = returnOrderRepository.getRequestorList("", null);
 			List<RequestHistoryDto> reqList = requestHistoryRepository.getApprovedBy(roleDto.getUserId());
 			for (int i = 0; i < reqList.size(); i++) {
 				for (int j = 0; j < approvedList.size(); j++) {
@@ -101,7 +101,7 @@ public class RequestHistoryServiceImpl implements RequestHistoryService {
 			return modifiedApproved;
 		} else if (status.equalsIgnoreCase("REJECTED")) {
 			List<StatusResponseDto> modifiedRejected = new ArrayList<>();
-			List<StatusResponseDto> rejectedList = returnOrderRepository.getRequestorList("", "");
+			List<StatusResponseDto> rejectedList = returnOrderRepository.getRequestorList("", null);
 			List<RequestHistoryDto> reqList = requestHistoryRepository.getApprovedBy(roleDto.getUserId());
 			for (int i = 0; i < reqList.size(); i++) {
 				for (int j = 0; j < rejectedList.size(); j++) {
