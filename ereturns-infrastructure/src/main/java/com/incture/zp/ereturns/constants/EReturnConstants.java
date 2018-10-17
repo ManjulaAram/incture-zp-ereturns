@@ -52,6 +52,8 @@ public interface EReturnConstants {
 	public static final String ECC_DATE_FORMAT = "yyyyMMdd";
 	public static final String ECC_SCHEDULE_LINE = "0001";
 	
+	public static final String ECC_TYPE_ERROR_E = "\"TYPE\":\"E\"";
+	
 	public static final String DUPLICATE_CODE = "02";
 	public static final String SALES_PERSON = "BOM";
 	

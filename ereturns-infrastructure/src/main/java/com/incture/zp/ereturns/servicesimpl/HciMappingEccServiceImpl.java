@@ -29,7 +29,6 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(HciMappingEccServiceImpl.class);
 	
-	@SuppressWarnings("unused")
 	@Override
 	public ResponseDto pushDataToEcc(RequestDto requestDto, String itemCode, String action) {
 		ResponseDto responseDto = new ResponseDto();
@@ -184,8 +183,8 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 								responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
 								responseDto.setStatus(EReturnConstants.ECC_ERROR_STATUS);
 								responseDto.setMessage(msgObject.get("MESSAGE").toString());
+								break;
 							}
-							break;
 						}
 					} 
 				} else if(response.contains(EReturnConstants.ECC_EXCEPTION)) {
