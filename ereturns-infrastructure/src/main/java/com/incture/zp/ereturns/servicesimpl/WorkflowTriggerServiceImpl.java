@@ -198,6 +198,12 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 					&& res.getEccStatus().equalsIgnoreCase("ECC_ERROR") && res.getRequestStatus().equalsIgnoreCase("INPROGRESS")) {
 				
 				if(requestDto.getFlag().equalsIgnoreCase("Approved")) {
+					String client = res.getClient();
+					if(client != null && !(client.equals("")) && client.equalsIgnoreCase("WEB")) {
+						res.setPurchaseOrder("ERC");
+					} else {
+						res.setPurchaseOrder("ERS");
+					}
 					// post call to ECC
 					responseDto = hciMappingService.pushDataToEcc(res, requestDto.getItemCode(), requestDto.getFlag());
 					if(responseDto != null) {
@@ -298,7 +304,7 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 							} else if(requestDto.getFlag().equalsIgnoreCase("REJECTED") && responseDto.getStatus().equalsIgnoreCase("SUCCESS")) {
 								responseDto.setMessage(EReturnConstants.SUCCESS_STATUS);
 								responseDto.setCode(EReturnConstants.WORKFLOW_STATUS_CODE);
-								responseDto.setCode(EReturnConstants.SUCCESS_STATUS);
+								responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
 							}
 						} 
 						if(responseDto.getCode().equals(EReturnConstants.WORKFLOW_STATUS_CODE)) {

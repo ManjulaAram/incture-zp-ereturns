@@ -120,9 +120,16 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 						}
 					} 
 				} else {
-					itemsArry.put(item);
-					scheduleArry.put(schedules);
-					conditionArry.put(conditions);
+					if(returnOrderList.get(i).getOrderStatus().equalsIgnoreCase("INPROGRESS") 
+							&& itemDto.getItemCode().equalsIgnoreCase(itemCode) && action.equalsIgnoreCase("Approved")) {
+						itemsArry.put(item);
+						scheduleArry.put(schedules);
+						conditionArry.put(conditions);
+					} else if(returnOrderList.get(i).getOrderStatus().equalsIgnoreCase("COMPLETED")) {
+						itemsArry.put(item);
+						scheduleArry.put(schedules);
+						conditionArry.put(conditions);
+					}
 				}
 				
 				reason = returnOrderList.get(i).getReason();
@@ -203,7 +210,7 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 			}
 		} else {
 			responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
-			responseDto.setMessage("No posting on Exchange");
+			responseDto.setMessage("No posting to ECC");
 			responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
 		}
 		return responseDto;
