@@ -54,7 +54,22 @@ public class Request {
 
 	@Column(name = "SHIP_TO", length = 100)
 	private String shipTo;
-	
+
+//	@Column(name = "SHIP_TO_NAME")
+//	private String shipToName;
+//	
+//	@Column(name = "SHIP_TO_STREET")
+//	private String shipToStreet;
+//	
+//	@Column(name = "SHIP_TO_SUPPLY1")
+//	private String shipToSupply1;
+//	
+//	@Column(name = "SHIP_TO_SUPPLY2")
+//	private String shipToSupply2;
+//	
+//	@Column(name = "SHIP_TO_CITY")
+//	private String shipToCity;
+
 	@Column(name = "CUSTOMER", length = 255)
 	private String customer;
 
@@ -253,4 +268,43 @@ public class Request {
 		this.unref = unref;
 	}
 
+//	public String getShipToName() {
+//		return shipToName;
+//	}
+//
+//	public void setShipToName(String shipToName) {
+//		this.shipToName = shipToName;
+//	}
+//
+//	public String getShipToStreet() {
+//		return shipToStreet;
+//	}
+//
+//	public void setShipToStreet(String shipToStreet) {
+//		this.shipToStreet = shipToStreet;
+//	}
+//
+//	public String getShipToSupply1() {
+//		return shipToSupply1;
+//	}
+//
+//	public void setShipToSupply1(String shipToSupply1) {
+//		this.shipToSupply1 = shipToSupply1;
+//	}
+//
+//	public String getShipToSupply2() {
+//		return shipToSupply2;
+//	}
+//
+//	public void setShipToSupply2(String shipToSupply2) {
+//		this.shipToSupply2 = shipToSupply2;
+//	}
+//
+//	public String getShipToCity() {
+//		return shipToCity;
+//	}
+//
+//	public void setShipToCity(String shipToCity) {
+//		this.shipToCity = shipToCity;
+//	}
 }

@@ -562,12 +562,14 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 			if(action.equalsIgnoreCase("Rejected")) {
 				List<ReturnOrderDto> orderList = returnOrderRepository.getReturnOrderByRequestId(res.getRequestId());
 				for(ReturnOrderDto rDto : orderList) {
-					if(rDto.getOrderStatus().equalsIgnoreCase("COMPLETED")) {
+					if(rDto.getOrderStatus().equalsIgnoreCase("COMPLETED") || rDto.getOrderStatus().equalsIgnoreCase("INPROGRESS")) {
 						updateDto.setItemCode(rDto.getItemCode());
 						returnOrderRepository.updateReturnOrderTrigger(updateDto);
 						requestHistoryDto.setItemCode(rDto.getItemCode());
 					}
 				}
+			} else {
+				returnOrderRepository.updateReturnOrderTrigger(updateDto);
 			}
 			// History table insert
 			requestHistoryDto.setCustomer("");

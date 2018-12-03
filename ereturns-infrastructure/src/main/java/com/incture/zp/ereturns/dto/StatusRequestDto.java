@@ -24,6 +24,10 @@ public class StatusRequestDto implements Serializable {
 	
 	private String endDate;
 	
+	private String batch;
+	
+	private String invoice;
+	
 	private List<String> pendingWith;
 
 	public String getCustomerCode() {
@@ -88,6 +92,22 @@ public class StatusRequestDto implements Serializable {
 
 	public void setPendingWith(List<String> pendingWith) {
 		this.pendingWith = pendingWith;
+	}
+
+	public String getBatch() {
+		return batch;
+	}
+
+	public void setBatch(String batch) {
+		this.batch = batch;
+	}
+
+	public String getInvoice() {
+		return invoice;
+	}
+
+	public void setInvoice(String invoice) {
+		this.invoice = invoice;
 	}
 
 }

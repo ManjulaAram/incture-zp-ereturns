@@ -234,6 +234,13 @@ public class ImportExportUtil {
 
 		request.setClient(requestDto.getClient());
 		request.setUnref(requestDto.getUnrefFlag());
+		
+//		request.setShipToCity(requestDto.getShipToCity());
+//		request.setShipToName(requestDto.getShipToName());
+//		request.setShipToStreet(requestDto.getShipToStreet());
+//		request.setShipToSupply1(requestDto.getShipToSupply1());
+//		request.setShipToSupply2(requestDto.getShipToSupply2());
+		
 		return request;
 	}
 
@@ -282,6 +289,12 @@ public class ImportExportUtil {
 		
 		requestDto.setClient(request.getClient());
 		requestDto.setUnrefFlag(request.getUnref());
+		
+//		requestDto.setShipToCity(request.getShipToCity());
+//		requestDto.setShipToName(request.getShipToName());
+//		requestDto.setShipToStreet(request.getShipToStreet());
+//		requestDto.setShipToSupply1(request.getShipToSupply1());
+//		requestDto.setShipToSupply2(request.getShipToSupply2());
 		
 		return requestDto;
 	}

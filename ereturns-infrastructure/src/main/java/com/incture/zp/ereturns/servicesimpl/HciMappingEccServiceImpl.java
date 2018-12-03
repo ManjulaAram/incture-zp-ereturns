@@ -55,7 +55,7 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		
 		header.put(EReturnsHciConstants.DOCUMENT_TYPE, requestDto.getHeaderDto().getDocumentType());
 		header.put(EReturnsHciConstants.REF_DOC, requestDto.getHeaderDto().getInvoiceNo());
-		header.put(EReturnsHciConstants.PURCHASE_CUSTOMER_NO, requestDto.getHeaderDto().getPurchNoCust());
+		header.put(EReturnsHciConstants.PURCHASE_CUSTOMER_NO, requestDto.getRequestId());
 		header.put(EReturnsHciConstants.REF_DOC_CAT, EReturnsHciConstants.REFERENCE_DOCUMENT_CATEGORY);
 		header.put(EReturnsHciConstants.CURRENCY, requestDto.getHeaderDto().getCurrency());
 		header.put(EReturnsHciConstants.SALES_ORG, requestDto.getHeaderDto().getSalesOrg());
@@ -175,25 +175,53 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 					responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
 					responseDto.setStatus(EReturnConstants.ECC_SUCCESS_STATUS);
 					responseDto.setMessage(bapiObj.getString("SALESDOCUMENT"));
+					
+					Object     obj;
+					JSONArray  itemArry;
+					JSONObject itemObj;
 					if(responseDto.getMessage().equals("")) {
 						JSONObject msgReturnObj = new JSONObject();
 						msgReturnObj = bapiObj.getJSONObject("RETURN");
-						JSONArray itemAry = msgReturnObj.getJSONArray("item");
-						
-						for (int i = 0; i < itemAry.length(); i++) {
-							JSONObject msgObject = new JSONObject();
-							msgObject = (JSONObject) itemAry.get(i);
-							JSONObject typeObject = new JSONObject();
-							typeObject = (JSONObject) itemAry.get(i);
-							String type = typeObject.get("TYPE").toString();
-							if(type != null && !(type.equals("")) && type.equalsIgnoreCase("E")) {
+						obj = msgReturnObj.get("item");
+						if(obj instanceof JSONArray) {
+							itemArry = (JSONArray) obj;
+							for (int i = 0; i < itemArry.length(); i++) {
+								JSONObject msgObject = new JSONObject();
+								msgObject = (JSONObject) itemArry.get(i);
+								JSONObject typeObject = new JSONObject();
+								typeObject = (JSONObject) itemArry.get(i);
+								String type = typeObject.get("TYPE").toString();
+								if(type != null && !(type.equals("")) && type.equalsIgnoreCase("E")) {
+									responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
+									responseDto.setStatus(EReturnConstants.ECC_ERROR_STATUS);
+									responseDto.setMessage(msgObject.get("MESSAGE").toString());
+									break;
+								} else if(type != null && !(type.equals("")) && type.equalsIgnoreCase("S")){
+									responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
+									responseDto.setStatus(EReturnConstants.ECC_SUCCESS_STATUS);
+									responseDto.setMessage(msgObject.get("MESSAGE").toString());
+								}
+							}
+						} else if(obj instanceof JSONObject) {
+							itemObj = (JSONObject) obj;
+							String type = itemObj.get("TYPE").toString();
+							if (type.equalsIgnoreCase("E")) {
 								responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
 								responseDto.setStatus(EReturnConstants.ECC_ERROR_STATUS);
-								responseDto.setMessage(msgObject.get("MESSAGE").toString());
-								break;
+								responseDto.setMessage(itemObj.get("MESSAGE").toString());
+							} else {
+								responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
+								responseDto.setStatus(EReturnConstants.ECC_SUCCESS_STATUS);
+								responseDto.setMessage(bapiObj.getString("SALESDOCUMENT"));
 							}
+
 						}
-					} 
+					} else {
+						responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
+						responseDto.setStatus(EReturnConstants.ECC_SUCCESS_STATUS);
+						responseDto.setMessage(bapiObj.getString("SALESDOCUMENT"));
+					}
+					
 				} else if(response.contains(EReturnConstants.ECC_EXCEPTION)) {
 					responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);
 					responseDto.setMessage(response);

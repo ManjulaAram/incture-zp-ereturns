@@ -53,6 +53,16 @@ public class RequestDto {
 	
 	private String client;
 
+//	private String shipToName;
+//	
+//	private String shipToStreet;
+//	
+//	private String shipToSupply1;
+//	
+//	private String shipToSupply2;
+//	
+//	private String shipToCity;
+
 	public String getRequestId() {
 		return requestId;
 	}
@@ -236,5 +246,45 @@ public class RequestDto {
 	public void setClient(String client) {
 		this.client = client;
 	}
+
+//	public String getShipToName() {
+//		return shipToName;
+//	}
+//
+//	public void setShipToName(String shipToName) {
+//		this.shipToName = shipToName;
+//	}
+//
+//	public String getShipToStreet() {
+//		return shipToStreet;
+//	}
+//
+//	public void setShipToStreet(String shipToStreet) {
+//		this.shipToStreet = shipToStreet;
+//	}
+//
+//	public String getShipToSupply1() {
+//		return shipToSupply1;
+//	}
+//
+//	public void setShipToSupply1(String shipToSupply1) {
+//		this.shipToSupply1 = shipToSupply1;
+//	}
+//
+//	public String getShipToSupply2() {
+//		return shipToSupply2;
+//	}
+//
+//	public void setShipToSupply2(String shipToSupply2) {
+//		this.shipToSupply2 = shipToSupply2;
+//	}
+//
+//	public String getShipToCity() {
+//		return shipToCity;
+//	}
+//
+//	public void setShipToCity(String shipToCity) {
+//		this.shipToCity = shipToCity;
+//	}
 	
 }

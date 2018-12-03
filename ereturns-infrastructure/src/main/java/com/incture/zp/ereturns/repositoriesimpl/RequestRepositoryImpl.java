@@ -108,6 +108,14 @@ public class RequestRepositoryImpl implements RequestRepository {
 			queryString.append(" AND i.principalCode=:principalCode");
 		}
 		
+		if (requestDto.getBatch() != null && !(requestDto.getBatch().equals(""))) {
+			queryString.append(" AND i.batch=:batch");
+		}
+		
+		if (requestDto.getInvoice() != null && !(requestDto.getInvoice().equals(""))) {
+			queryString.append(" AND h.invoiceNo=:invoiceNo");
+		}
+		
 		queryString.append(" ORDER BY r.requestId DESC");
 		LOGGER.error("Query for Status details:" + queryString);
 		Query query = sessionFactory.getCurrentSession().createQuery(queryString.toString());
@@ -147,6 +155,15 @@ public class RequestRepositoryImpl implements RequestRepository {
 			String prinicipalCode = paddingZeros(requestDto.getPrincipalCode());
 			query.setParameter("principalCode", prinicipalCode);
 		}
+		
+		if (requestDto.getBatch() != null && !(requestDto.getBatch().equals(""))) {
+			query.setParameter("batch", requestDto.getBatch());
+		}
+		
+		if (requestDto.getInvoice() != null && !(requestDto.getInvoice().equals(""))) {
+			query.setParameter("invoiceNo", requestDto.getInvoice());
+		}
+
 		Request request = null;
 		@SuppressWarnings("unchecked")
 		List<Object[]> objectsList = query.list();
