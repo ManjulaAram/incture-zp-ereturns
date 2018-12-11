@@ -294,6 +294,14 @@ public class RequestRepositoryImpl implements RequestRepository {
 		return status;
 	}
 
+	public String getRequestClient(String requestId) {
+		String str = "SELECT r.client FROM Request r WHERE r.requestId=:requestId";
+		Query query = sessionFactory.getCurrentSession().createQuery(str);
+		query.setParameter("requestId", requestId);
+		String client = (String) query.uniqueResult();
+		return client;
+	}
+	
 	public int updateEccReturnOrder(String eccStatus, String eccNo, String requestId) {
 		String queryStr = "UPDATE Request SET eccStatus=:eccStatus, eccReturnOrderNo=:eccReturnOrderNo "
 				+ "WHERE requestId=:requestId";

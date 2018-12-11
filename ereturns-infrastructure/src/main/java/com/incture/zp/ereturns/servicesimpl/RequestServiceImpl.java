@@ -30,7 +30,6 @@ import com.incture.zp.ereturns.repositories.HeaderRepository;
 import com.incture.zp.ereturns.repositories.RequestRepository;
 import com.incture.zp.ereturns.repositories.ReturnOrderRepository;
 import com.incture.zp.ereturns.services.EcmDocumentService;
-import com.incture.zp.ereturns.services.HciMappingEccService;
 import com.incture.zp.ereturns.services.NotificationService;
 import com.incture.zp.ereturns.services.RequestService;
 import com.incture.zp.ereturns.services.UserService;
@@ -69,9 +68,6 @@ public class RequestServiceImpl implements RequestService {
 	@Autowired
 	WorkFlowService workFlowService;
 	
-	@Autowired
-	HciMappingEccService hciMappingService;
-
 	@Autowired
 	ServiceUtil serviceUtil;
 	
@@ -293,6 +289,11 @@ public class RequestServiceImpl implements RequestService {
 	}
 	
 	@Override
+	public String getRequestClient(String requestId) {
+		return requestRepository.getRequestClient(requestId);
+	}
+	
+	@Override
 	public ResponseDto postToEcc(String requestId) {
 		RequestDto requestDto = getRequestById(requestId);
 		String client = requestDto.getClient();
@@ -301,7 +302,12 @@ public class RequestServiceImpl implements RequestService {
 		} else {
 			requestDto.setPurchaseOrder("ERS");
 		}
-		return hciMappingService.pushDataToEcc(requestDto, "", "AUTO");
+		ResponseDto responseDto = new ResponseDto();
+		responseDto.setCode("01");
+		responseDto.setMessage("Approval group is not assigned.");
+		responseDto.setStatus("SUCCESS");
+		return responseDto;
+//		return hciMappingService.pushDataToEcc(requestDto, "", "AUTO");
 	}
 
 	private ResponseDto saveData(RequestDto requestDto) {

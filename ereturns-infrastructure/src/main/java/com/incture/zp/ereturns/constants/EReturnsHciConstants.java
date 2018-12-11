@@ -25,6 +25,11 @@ public interface EReturnsHciConstants {
 	
 	public static final String CONDITION_TYPE_VALUE = "ZPO1";
 	
+	public static final String RETURN_TEXT = "Return_Text";
+	public static final String TEXT_ID = "text_id";
+	public static final String TEXT_LINE = "text_line";
+	public static final String TEXT_LANGUAGE = "language";
+	
 	public static final String RETURN_HEADER = "Return_Header";
 	public static final String RETURN_PARTNERS = "Return_Partners";
 	public static final String PARTNER_ROLE = "partn_role";
@@ -40,6 +45,7 @@ public interface EReturnsHciConstants {
 	public static final String DIVISION = "division";
 	public static final String PO_METHOD = "po_method";
 	public static final String BATCH = "batch";
+	public static final String ASSIGNMENT_NO = "assignment_number";
 	
 	public static final String PLANT = "plant";
 	public static final String STORE_LOC = "store_loc";

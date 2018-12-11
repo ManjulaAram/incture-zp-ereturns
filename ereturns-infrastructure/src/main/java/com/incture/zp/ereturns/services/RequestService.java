@@ -23,4 +23,6 @@ public interface RequestService {
 	
 	public String getRequestStatus(String requestId);
 	
+	public String getRequestClient(String requestId);
+	
 }

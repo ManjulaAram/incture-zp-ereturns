@@ -15,20 +15,22 @@ import com.incture.zp.ereturns.dto.AttachmentDto;
 import com.incture.zp.ereturns.dto.CustomerDto;
 import com.incture.zp.ereturns.dto.HeaderDto;
 import com.incture.zp.ereturns.dto.ItemDto;
+import com.incture.zp.ereturns.dto.ReasonDto;
 import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.RequestHistoryDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
-import com.incture.zp.ereturns.dto.ReasonDto;
+import com.incture.zp.ereturns.dto.TaxClassificationDto;
 import com.incture.zp.ereturns.dto.UserDto;
 import com.incture.zp.ereturns.dto.WorkFlowDto;
 import com.incture.zp.ereturns.model.Attachment;
 import com.incture.zp.ereturns.model.Customer;
 import com.incture.zp.ereturns.model.Header;
 import com.incture.zp.ereturns.model.Item;
+import com.incture.zp.ereturns.model.Reason;
 import com.incture.zp.ereturns.model.Request;
 import com.incture.zp.ereturns.model.RequestHistory;
 import com.incture.zp.ereturns.model.ReturnOrder;
-import com.incture.zp.ereturns.model.Reason;
+import com.incture.zp.ereturns.model.TaxClassification;
 import com.incture.zp.ereturns.model.User;
 import com.incture.zp.ereturns.model.WorkFlow;
 
@@ -406,6 +408,23 @@ public class ImportExportUtil {
 		returnReason.setReasonName(returnReasonDto.getReasonName());
 
 		return returnReason;
+	}
+
+	public TaxClassificationDto exportTaxClassificationDto(TaxClassification taxClassification) {
+		TaxClassificationDto taxClassificationDto = new TaxClassificationDto();
+		taxClassificationDto.setTaxCode(taxClassification.getTaxCode());
+		taxClassificationDto.setTaxDesc(taxClassification.getTaxDesc());
+		
+		return taxClassificationDto;
+
+	}
+
+	public TaxClassification importTaxClassificationDto(TaxClassificationDto taxClassificationDto) {
+		TaxClassification taxClassification = new TaxClassification();
+		taxClassification.setTaxCode(taxClassificationDto.getTaxCode());
+		taxClassification.setTaxDesc(taxClassificationDto.getTaxDesc());
+		
+		return taxClassification;
 	}
 
 	public CustomerDto exportCustomerDto(Customer customer) {

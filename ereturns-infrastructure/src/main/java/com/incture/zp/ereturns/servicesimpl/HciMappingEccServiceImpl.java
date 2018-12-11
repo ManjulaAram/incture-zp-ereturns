@@ -44,6 +44,13 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		JSONArray itemsArry = new JSONArray();
 		JSONArray scheduleArry = new JSONArray();
 		JSONArray conditionArry = new JSONArray();
+		JSONObject returnText = new JSONObject();
+		
+		String invoiceNo = "";
+		
+		if(requestDto.getUnrefFlag() != null && requestDto.getUnrefFlag().equalsIgnoreCase("FALSE")) {
+			invoiceNo = requestDto.getHeaderDto().getInvoiceNo();
+		} 
 		
 		partnerShipTo.put(EReturnsHciConstants.PARTNER_ROLE, EReturnsHciConstants.SHIP_TO_PARTY);
 		partnerShipTo.put(EReturnsHciConstants.PARTNER_NUMBER, requestDto.getShipTo());
@@ -54,7 +61,7 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		partnerArry.put(partnerSoldTo);
 		
 		header.put(EReturnsHciConstants.DOCUMENT_TYPE, requestDto.getHeaderDto().getDocumentType());
-		header.put(EReturnsHciConstants.REF_DOC, requestDto.getHeaderDto().getInvoiceNo());
+		header.put(EReturnsHciConstants.REF_DOC, invoiceNo);
 		header.put(EReturnsHciConstants.PURCHASE_CUSTOMER_NO, requestDto.getRequestId());
 		header.put(EReturnsHciConstants.REF_DOC_CAT, EReturnsHciConstants.REFERENCE_DOCUMENT_CATEGORY);
 		header.put(EReturnsHciConstants.CURRENCY, requestDto.getHeaderDto().getCurrency());
@@ -62,6 +69,7 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		header.put(EReturnsHciConstants.DISTRIBUTION_CHANNEL, requestDto.getHeaderDto().getDistrChan());
 		header.put(EReturnsHciConstants.DIVISION, requestDto.getHeaderDto().getDivision());
 		header.put(EReturnsHciConstants.PO_METHOD, requestDto.getPurchaseOrder());
+		header.put(EReturnsHciConstants.ASSIGNMENT_NO, requestDto.getHeaderDto().getInvoiceNo());
 		 
 		List<ItemDto> itemList = new ArrayList<>();
 		itemList.addAll(requestDto.getHeaderDto().getItemSet());
@@ -73,6 +81,7 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 		returnOrderList.sort((o1, o2) -> o1.getItemCode().compareTo(o2.getItemCode()));
 		
 		String reason = "";
+		String reqComments = "";
 		for(int i = 0; i < itemList.size(); i++) {
 			
 			if(!(returnOrderList.get(i).getOrderStatus().equalsIgnoreCase("REJECTED"))) {
@@ -85,7 +94,7 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 				item.put(EReturnsHciConstants.MATERIAL, itemDto.getMaterial());
 				item.put(EReturnsHciConstants.ITEM_NO, itemDto.getItemCode());
 				item.put(EReturnsHciConstants.TARGET_QTY, returnOrderList.get(i).getReturnQty());// need to get from return order
-				item.put(EReturnsHciConstants.REF_DOC, requestDto.getHeaderDto().getInvoiceNo());
+				item.put(EReturnsHciConstants.REF_DOC, invoiceNo);
 				item.put(EReturnsHciConstants.CURRENCY, requestDto.getHeaderDto().getCurrency());
 				item.put(EReturnsHciConstants.ORDER_REASON, itemDto.getItemName());
 				item.put(EReturnsHciConstants.BATCH, itemDto.getBatch());
@@ -133,17 +142,23 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 				}
 				
 				reason = returnOrderList.get(i).getReason();
+				reqComments = returnOrderList.get(i).getRemark();
 				
 			}
 			
 		}
 		 
 		header.put(EReturnsHciConstants.ORDER_REASON, reason);
+		returnText.put(EReturnsHciConstants.TEXT_ID, "ZP02");
+		returnText.put(EReturnsHciConstants.TEXT_LINE, reqComments);
+		returnText.put(EReturnsHciConstants.TEXT_LANGUAGE, "EN");
+		
 		orderCreation.put(EReturnsHciConstants.RETURN_PARTNERS, partnerArry);
 		orderCreation.put(EReturnsHciConstants.RETURN_HEADER, header);
 		orderCreation.put(EReturnsHciConstants.RETURN_ITEMS, itemsArry);
 		orderCreation.put(EReturnsHciConstants.RETURN_SCHEDULES_IN, scheduleArry);
 		orderCreation.put(EReturnsHciConstants.RETURN_CONDITIONS, conditionArry);
+		orderCreation.put(EReturnsHciConstants.RETURN_TEXT, returnText);
 		 
 		returnOrder.put(EReturnsHciConstants.RETURN_ORDER_CREATION, orderCreation);
 		 

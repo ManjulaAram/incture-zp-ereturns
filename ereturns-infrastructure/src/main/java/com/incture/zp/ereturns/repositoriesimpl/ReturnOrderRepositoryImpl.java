@@ -311,6 +311,7 @@ public class ReturnOrderRepositoryImpl implements ReturnOrderRepository {
 							statusResponseDto.setInvoiceNo(request.getRequestHeader().getInvoiceNo());
 							statusResponseDto.setCustomerName(request.getCustomer());
 							statusResponseDto.setCustomerCode(request.getCustomerNo());
+							statusResponseDto.setOverrideReturnValue(returnOrder2.getOverrideReturnValue());
 							if(returnOrder2.getOrderStatus().equalsIgnoreCase(EReturnConstants.COMPLETE)) {
 								statusResponseDto.setEccResponse(request.getEccReturnOrderNo());
 							} else {
