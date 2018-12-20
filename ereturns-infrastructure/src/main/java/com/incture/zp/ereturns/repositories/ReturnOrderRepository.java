@@ -34,4 +34,6 @@ public interface ReturnOrderRepository {
 	
 	public int updatePriceOverride(PriceOverrideDto priceOverrideDto);
 	
+	public List<ReturnOrderDto> getRequestOrderTrack(String requestId, String itemCode);
+	
 }

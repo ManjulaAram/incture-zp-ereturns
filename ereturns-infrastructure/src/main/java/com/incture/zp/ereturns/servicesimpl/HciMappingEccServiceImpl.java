@@ -98,6 +98,7 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 				item.put(EReturnsHciConstants.CURRENCY, requestDto.getHeaderDto().getCurrency());
 				item.put(EReturnsHciConstants.ORDER_REASON, itemDto.getItemName());
 				item.put(EReturnsHciConstants.BATCH, itemDto.getBatch());
+				item.put(EReturnsHciConstants.HIGH_LEVEL_ITEM_CODE, itemDto.getHighLevelItemCode());
 				
 				JSONObject schedules = new JSONObject();
 				schedules.put(EReturnsHciConstants.ITEM_NO, itemDto.getItemCode());
@@ -107,7 +108,16 @@ public class HciMappingEccServiceImpl implements HciMappingEccService {
 
 				JSONObject conditions = new JSONObject();
 				conditions.put(EReturnsHciConstants.CONDITION_ITEM_NO, itemDto.getItemCode());
-				conditions.put(EReturnsHciConstants.CONDITION_TYPE, EReturnsHciConstants.CONDITION_TYPE_VALUE);
+				if(returnOrderList.get(i).getOverrideReturnValue() != null 
+						&& !(returnOrderList.get(i).getOverrideReturnValue().equals("")) 
+						&& !(returnOrderList.get(i).getOverrideReturnValue().equals("0"))) {
+					conditions.put(EReturnsHciConstants.CONDITION_TYPE, EReturnsHciConstants.CONDITION_TYPE_VALUE);
+				} else if(returnOrderList.get(i).getOverrideReturnValue() != null 
+						&& returnOrderList.get(i).getOverrideReturnValue().equals("0")) {
+					conditions.put(EReturnsHciConstants.CONDITION_TYPE, "");
+				} else {
+					conditions.put(EReturnsHciConstants.CONDITION_TYPE, "");
+				}
 				conditions.put(EReturnsHciConstants.CURRENCY, requestDto.getHeaderDto().getCurrency());
 				conditions.put(EReturnsHciConstants.CONDITION_VALUE, returnOrderList.get(i).getOverrideReturnValue());
 				

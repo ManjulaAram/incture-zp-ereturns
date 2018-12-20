@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.incture.zp.ereturns.constants.EReturnConstants;
+import com.incture.zp.ereturns.dto.AttachmentDto;
 import com.incture.zp.ereturns.dto.PriceOverrideDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
@@ -31,6 +33,7 @@ import com.incture.zp.ereturns.model.Header;
 import com.incture.zp.ereturns.model.Item;
 import com.incture.zp.ereturns.model.Request;
 import com.incture.zp.ereturns.model.ReturnOrder;
+import com.incture.zp.ereturns.repositories.AttachmentRepository;
 import com.incture.zp.ereturns.repositories.ReasonRepository;
 import com.incture.zp.ereturns.repositories.ReturnOrderRepository;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
@@ -50,6 +53,9 @@ public class ReturnOrderRepositoryImpl implements ReturnOrderRepository {
 
 	@Autowired
 	ReasonRepository reasonRepository;
+	
+	@Autowired
+	AttachmentRepository attachmentRepository;
 	
 	@Override
 	public ReturnOrder getReturnOrderById(String id) {
@@ -197,11 +203,18 @@ public class ReturnOrderRepositoryImpl implements ReturnOrderRepository {
 		int approved = 0;
 		int rejected = 0;
 		List<StatusResponseDto> list = getRequestorList(createdBy, null);
+		List<StatusResponseDto> modifiedList = new ArrayList<StatusResponseDto>();
+		for(Iterator<StatusResponseDto> itr = list.iterator(); itr.hasNext();) {
+			StatusResponseDto statusResponseDto = itr.next();
+			Set<AttachmentDto> setAttachmentDto = attachmentRepository.getAttachmentsById(statusResponseDto.getRequestId());
+			statusResponseDto.setAttachments(setAttachmentDto);
+			modifiedList.add(statusResponseDto);
+		}
 		List<StatusResponseDto> modifiedPending = new ArrayList<>();
 		List<StatusResponseDto> modifiedApproved = new ArrayList<>();
 		List<StatusResponseDto> modifiedRejected = new ArrayList<>();
-		for(int i = 0 ; i < list.size() ; i++) {
-			StatusResponseDto obj = list.get(i);
+		for(int i = 0 ; i < modifiedList.size() ; i++) {
+			StatusResponseDto obj = modifiedList.get(i);
 			if (obj.getRequestStatus().equalsIgnoreCase(EReturnConstants.COMPLETE)) {
 				approved = approved + 1;
 				modifiedApproved.add(obj);
@@ -363,6 +376,23 @@ public class ReturnOrderRepositoryImpl implements ReturnOrderRepository {
 		int result = query.executeUpdate();
 		LOGGER.error("Update status for override:"+result+"..."+priceOverrideDto.getOverridePrice()+"..."+priceOverrideDto.getRequestId()+"..."+priceOverrideDto.getItemCode());
 		return result;
+	}
+	
+	@Override
+	public List<ReturnOrderDto> getRequestOrderTrack(String requestId, String itemCode) {
+		
+		List<ReturnOrderDto> returnOrderDtos = new ArrayList<ReturnOrderDto>();
+		
+		String queryStr = "select o from ReturnOrder o where o.returnOrderData.requestId=:requestId and o.itemCode=:itemCode";
+		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
+		query.setParameter("requestId", requestId);
+		query.setParameter("itemCode", itemCode);
+		@SuppressWarnings("unchecked")
+		List<ReturnOrder> reqList = query.list();
+		for (ReturnOrder returnOrder : reqList) {
+			returnOrderDtos.add(importExportUtil.exportReturnOrderDto(returnOrder));
+		}
+		return returnOrderDtos;
 	}
 
 }

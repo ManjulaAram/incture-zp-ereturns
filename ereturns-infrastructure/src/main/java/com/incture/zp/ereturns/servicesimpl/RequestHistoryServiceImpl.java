@@ -1,18 +1,22 @@
 package com.incture.zp.ereturns.servicesimpl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.incture.zp.ereturns.dto.AttachmentDto;
 import com.incture.zp.ereturns.dto.RequestHistoryDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.RoleDto;
 import com.incture.zp.ereturns.dto.StatusPendingDto;
 import com.incture.zp.ereturns.dto.StatusResponseDto;
+import com.incture.zp.ereturns.repositories.AttachmentRepository;
 import com.incture.zp.ereturns.repositories.RequestHistoryRepository;
 import com.incture.zp.ereturns.repositories.ReturnOrderRepository;
 import com.incture.zp.ereturns.services.RequestHistoryService;
@@ -27,6 +31,9 @@ public class RequestHistoryServiceImpl implements RequestHistoryService {
 
 	@Autowired
 	ReturnOrderRepository returnOrderRepository;
+	
+	@Autowired
+	AttachmentRepository attachmentRepository;
 
 	@Autowired
 	ImportExportUtil importExportUtil;
@@ -78,7 +85,14 @@ public class RequestHistoryServiceImpl implements RequestHistoryService {
 	public List<StatusResponseDto> getApproverDashboardList(RoleDto roleDto, String status) {
 		if (status.equalsIgnoreCase("PENDING")) {
 			List<StatusResponseDto> pendingList = returnOrderRepository.getRequestorList("", roleDto.getRole());
-			return pendingList;
+			List<StatusResponseDto> modifiedPendingList = new ArrayList<StatusResponseDto>();
+			for(Iterator<StatusResponseDto> itr = pendingList.iterator(); itr.hasNext();) {
+				StatusResponseDto statusResponseDto = itr.next();
+				Set<AttachmentDto> setAttachmentDto = attachmentRepository.getAttachmentsById(statusResponseDto.getRequestId());
+				statusResponseDto.setAttachments(setAttachmentDto);
+				modifiedPendingList.add(statusResponseDto);
+			}
+			return modifiedPendingList;
 		} else if (status.equalsIgnoreCase("APPROVED")) {
 			List<StatusResponseDto> modifiedApproved = new ArrayList<>();
 

@@ -6,6 +6,8 @@ public class ItemDto {
 
 	private String itemCode;
 	
+	private String highLevelItemCode;
+	
 	private String itemName;
 	
 	private String itemDescription;
@@ -201,6 +203,14 @@ public class ItemDto {
 
 	public void setStoreType(String storeType) {
 		this.storeType = storeType;
+	}
+
+	public String getHighLevelItemCode() {
+		return highLevelItemCode;
+	}
+
+	public void setHighLevelItemCode(String highLevelItemCode) {
+		this.highLevelItemCode = highLevelItemCode;
 	}
 
 }

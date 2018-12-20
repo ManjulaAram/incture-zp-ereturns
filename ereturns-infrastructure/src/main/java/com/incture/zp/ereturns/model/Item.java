@@ -24,7 +24,10 @@ public class Item {
 
 	@Column(name = "ITEM_CODE", length = 100)
 	private String itemCode;
-	
+
+	@Column(name = "HIGH_LEVEL_ITEM_CODE")
+	private String highLevelItemCode;
+
 	@Column(name = "ITEM_NAME", length = 100)
 	private String itemName;
 	
@@ -251,6 +254,14 @@ public class Item {
 
 	public void setPrincipalGroup(String principalGroup) {
 		this.principalGroup = principalGroup;
+	}
+
+	public String getHighLevelItemCode() {
+		return highLevelItemCode;
+	}
+
+	public void setHighLevelItemCode(String highLevelItemCode) {
+		this.highLevelItemCode = highLevelItemCode;
 	}
 
 }

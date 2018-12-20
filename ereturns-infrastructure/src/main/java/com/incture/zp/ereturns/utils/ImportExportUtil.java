@@ -161,7 +161,7 @@ public class ImportExportUtil {
 		item.setMaterialGroup(itemDto.getMaterialGroup());
 		item.setPrincipalGroup(itemDto.getPrincipalGroup());
 		item.setStoreType(itemDto.getStoreType());
-
+		item.setHighLevelItemCode(itemDto.getHighLevelItemCode());
 		return item;
 	}
 
@@ -193,7 +193,7 @@ public class ImportExportUtil {
 		
 		itemDto.setPrincipalGroup(item.getPrincipalGroup());
 		itemDto.setStoreType(item.getStoreType());
-
+		itemDto.setHighLevelItemCode(item.getHighLevelItemCode());
 
 		return itemDto;
 	}
