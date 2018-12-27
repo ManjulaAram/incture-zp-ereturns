@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.incture.zp.ereturns.dto.AttachmentDto;
+import com.incture.zp.ereturns.dto.CountryDto;
 import com.incture.zp.ereturns.dto.CustomerDto;
 import com.incture.zp.ereturns.dto.HeaderDto;
 import com.incture.zp.ereturns.dto.ItemDto;
@@ -23,6 +24,7 @@ import com.incture.zp.ereturns.dto.TaxClassificationDto;
 import com.incture.zp.ereturns.dto.UserDto;
 import com.incture.zp.ereturns.dto.WorkFlowDto;
 import com.incture.zp.ereturns.model.Attachment;
+import com.incture.zp.ereturns.model.Country;
 import com.incture.zp.ereturns.model.Customer;
 import com.incture.zp.ereturns.model.Header;
 import com.incture.zp.ereturns.model.Item;
@@ -528,6 +530,20 @@ public class ImportExportUtil {
 
 		
 		return requestHistoryDto;
+	}
+	
+	public CountryDto exportCountryDto(Country country) {
+		CountryDto countryDto = new CountryDto();
+		countryDto.setCountryCode(country.getCountryCode());
+		countryDto.setCountryName(country.getCountryName());
+		return countryDto;
+	}
+	
+	public Country importCountryDto(CountryDto countryDto) {
+		Country country = new Country();
+		country.setCountryCode(countryDto.getCountryCode());
+		country.setCountryName(countryDto.getCountryName());
+		return country;
 	}
 
 	private String convertDateToString(Date input) {
