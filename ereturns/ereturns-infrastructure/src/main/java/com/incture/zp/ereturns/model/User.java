@@ -10,70 +10,31 @@ import javax.persistence.Table;
 public class User {
 
 	@Id
-	@Column(name = "USER_ID", nullable=false)
-	private String userId;
+	@Column(name = "IDP_USER_ID", nullable = false)
+	private String idpUserId;
 	
-	@Column(name = "USER_CODE", length = 50)
-	private String userCode;
+	@Column(name = "SCI_USER_ID", nullable = false)
+	private String sciUserId;
+
+	@Column(name = "MOBILE_TOKEN", length = 255)
+	private String mobileToken;
 	
-	@Column(name = "FIRST_NAME", length = 100)
-	private String firstName;
-	
-	@Column(name = "LAST_NAME", length = 100)
-	private String lastName;
-	
-	@Column(name = "EMAIL", length = 100)
-	private String email;
-	
-	@Column(name = "ADDRESS", length = 255)
-	private String address;
-	
-	@Column(name = "SCI_ID", length = 50)
-	private String sciId;
-	
-	@Column(name = "LOT_NO", length = 50)
-	private int lotNo;
-	
-	public String getUserId() {
-		return userId;
+	public String getSciUserId() {
+		return sciUserId;
 	}
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setSciUserId(String sciUserId) {
+		this.sciUserId = sciUserId;
 	}
-	public String getFirstName() {
-		return firstName;
+	public String getIdpUserId() {
+		return idpUserId;
 	}
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+	public void setIdpUserId(String idpUserId) {
+		this.idpUserId = idpUserId;
 	}
-	public String getLastName() {
-		return lastName;
+	public String getMobileToken() {
+		return mobileToken;
 	}
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-	public String getUserCode() {
-		return userCode;
-	}
-	public void setUserCode(String userCode) {
-		this.userCode = userCode;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	public String getAddress() {
-		return address;
-	}
-	public void setAddress(String address) {
-		this.address = address;
-	}
-	public String getSciId() {
-		return sciId;
-	}
-	public void setSciId(String sciId) {
-		this.sciId = sciId;
+	public void setMobileToken(String mobileToken) {
+		this.mobileToken = mobileToken;
 	}
 }

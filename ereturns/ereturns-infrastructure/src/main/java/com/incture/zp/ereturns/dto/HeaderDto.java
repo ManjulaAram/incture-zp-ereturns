@@ -1,34 +1,44 @@
 package com.incture.zp.ereturns.dto;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
-public class HeaderDto implements Serializable {
+public class HeaderDto {
 
-	private static final long serialVersionUID = -8547234219630979516L;
-
-	private int invoiceNo;
+	private Long headerId;
+	
+	private String invoiceNo;
 	
 	private String invoiceSeq;
 	
-	private Date invoiceDate;
+	private String invoiceDate;
 	
-	private Date expiryDate;
+	private String documentType;
 	
-	private double invoiceAvailableQty;
+	private String salesOrder;
 	
-	private double invoiceNetValue;
-	
-	private int userCode;
-	
-	private List<ItemDto> itemList;
+	private String salesOrg;
 
-	public int getInvoiceNo() {
+	private String deliveryNo;
+
+	private String distrChan;
+
+	private String division;
+
+	private String currency;
+
+	private String refDocCat;
+
+	private String purchNoCust;
+
+	private String netValue; // sum of all item level net value to be calculated
+	
+	private Set<ItemDto> itemSet;
+	
+	public String getInvoiceNo() {
 		return invoiceNo;
 	}
 
-	public void setInvoiceNo(int invoiceNo) {
+	public void setInvoiceNo(String invoiceNo) {
 		this.invoiceNo = invoiceNo;
 	}
 
@@ -40,52 +50,109 @@ public class HeaderDto implements Serializable {
 		this.invoiceSeq = invoiceSeq;
 	}
 
-	public Date getInvoiceDate() {
+	public String getInvoiceDate() {
 		return invoiceDate;
 	}
 
-	public void setInvoiceDate(Date invoiceDate) {
+	public void setInvoiceDate(String invoiceDate) {
 		this.invoiceDate = invoiceDate;
 	}
 
-	public Date getExpiryDate() {
-		return expiryDate;
+	public String getNetValue() {
+		return netValue;
 	}
 
-	public void setExpiryDate(Date expiryDate) {
-		this.expiryDate = expiryDate;
+	public void setNetValue(String netValue) {
+		this.netValue = netValue;
 	}
 
-	public double getInvoiceAvailableQty() {
-		return invoiceAvailableQty;
+
+	public Set<ItemDto> getItemSet() {
+		return itemSet;
 	}
 
-	public void setInvoiceAvailableQty(double invoiceAvailableQty) {
-		this.invoiceAvailableQty = invoiceAvailableQty;
+	public void setItemSet(Set<ItemDto> itemSet) {
+		this.itemSet = itemSet;
 	}
 
-	public double getInvoiceNetValue() {
-		return invoiceNetValue;
+	public String getDocumentType() {
+		return documentType;
 	}
 
-	public void setInvoiceNetValue(double invoiceNetValue) {
-		this.invoiceNetValue = invoiceNetValue;
+	public void setDocumentType(String documentType) {
+		this.documentType = documentType;
 	}
 
-	public int getUserCode() {
-		return userCode;
+	public String getSalesOrder() {
+		return salesOrder;
 	}
 
-	public void setUserCode(int userCode) {
-		this.userCode = userCode;
+	public void setSalesOrder(String salesOrder) {
+		this.salesOrder = salesOrder;
 	}
 
-	public List<ItemDto> getItemList() {
-		return itemList;
+	public String getSalesOrg() {
+		return salesOrg;
 	}
 
-	public void setItemList(List<ItemDto> itemList) {
-		this.itemList = itemList;
+	public void setSalesOrg(String salesOrg) {
+		this.salesOrg = salesOrg;
 	}
-	
+
+	public String getDeliveryNo() {
+		return deliveryNo;
+	}
+
+	public void setDeliveryNo(String deliveryNo) {
+		this.deliveryNo = deliveryNo;
+	}
+
+	public String getDistrChan() {
+		return distrChan;
+	}
+
+	public void setDistrChan(String distrChan) {
+		this.distrChan = distrChan;
+	}
+
+	public String getDivision() {
+		return division;
+	}
+
+	public void setDivision(String division) {
+		this.division = division;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
+	public String getRefDocCat() {
+		return refDocCat;
+	}
+
+	public void setRefDocCat(String refDocCat) {
+		this.refDocCat = refDocCat;
+	}
+
+	public String getPurchNoCust() {
+		return purchNoCust;
+	}
+
+	public void setPurchNoCust(String purchNoCust) {
+		this.purchNoCust = purchNoCust;
+	}
+
+	public Long getHeaderId() {
+		return headerId;
+	}
+
+	public void setHeaderId(Long headerId) {
+		this.headerId = headerId;
+	}
+
 }
