@@ -219,7 +219,7 @@ public class EmailServiceUtil {
 		     .append("	<p> E-Returns Request with Reference ID <i><b>"+requestId+"</b></i> is waiting for your Approval for Invoice <i><b>"+invoice+"</b></i> and ")
 		     .append("	Material <i><b>"+material+"</b></i> .")
 		     .append("	Please check your <a href='https://ereturn-c8e00d73c.dispatcher.ap1.hana.ondemand.com/index.html'> Inbox </a> or Mobile App for more information. </p>")
-//		     .append("	For IOS check <a href='#zpapp://'> this </a>. </p>")
+		     .append("	For IOS click <a href='#zpapp://' target='_blank'> here </a>. </p>")
 //		     .append("  <script> function test() {  window.open('zpapp://'); } </script> ")
 		     .append("")
 		     .append("	<b style=\"color:#00415C;\">Regards,</b><br/>")

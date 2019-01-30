@@ -17,7 +17,9 @@ import com.incture.zp.ereturns.dto.IdpUserDetailsDto;
 import com.incture.zp.ereturns.dto.IdpUserIdDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.UserDto;
+import com.incture.zp.ereturns.dto.UserNameDto;
 import com.incture.zp.ereturns.services.CustomerService;
+import com.incture.zp.ereturns.services.UserNameService;
 import com.incture.zp.ereturns.services.UserService;
 
 @RestController
@@ -31,6 +33,9 @@ public class EReturnsUserController {
 	
 	@Autowired
 	CustomerService customerService;
+	
+	@Autowired
+	UserNameService userNameService;
 
 	@RequestMapping("/getUser/{userId}")
 	public UserDto getUser(@RequestBody @PathVariable String userId) {
@@ -77,5 +82,13 @@ public class EReturnsUserController {
 	public IdpUserDetailsDto getIdpUserDetailsById(@PathVariable String id)
 	{
 		return userService.getIdpUserDetailsById(id);
+	}
+	
+	@RequestMapping(path="/addUserName",consumes="application/json",method=RequestMethod.POST)
+	public ResponseDto addUserName(@RequestBody UserNameDto userNameDto)
+	{
+		String name = userService.getUserNameById(userNameDto.getUserId());
+		userNameDto.setUserName(name);
+		return userNameService.addUserName(userNameDto);
 	}
 }

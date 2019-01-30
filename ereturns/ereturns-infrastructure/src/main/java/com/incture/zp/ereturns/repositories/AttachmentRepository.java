@@ -3,6 +3,7 @@ package com.incture.zp.ereturns.repositories;
 import java.util.Set;
 
 import com.incture.zp.ereturns.dto.AttachmentDto;
+import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.model.Attachment;
 
@@ -21,5 +22,7 @@ public interface AttachmentRepository {
 	public Set<AttachmentDto> getAttachmentsById(String id);
 	
 	public Set<AttachmentDto> getAttachmentURLsByIds(String requestId, String itemId);
+	
+	public int updateAttachment(RequestDto requestDto);
 	
 }

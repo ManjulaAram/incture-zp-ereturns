@@ -75,18 +75,18 @@ public class EReturnsDocumentController {
 				String docName = ecmDocumentService.uploadAttachment(bytes, name, type);
 				attachmentDto = new AttachmentDto();
 				attachmentDto.setAttachmentId("");
-				attachmentDto.setAttachmentName(name);
+				attachmentDto.setAttachmentName(docName);
 				attachmentDto.setAttachmentType(type);
 				attachmentDto.setContent("");
 				attachmentDto.setInvoiceNo(invoiceNo);
 				attachmentDto.setItemCode(itemCode);
 				attachmentDto.setRequestId(requestId);
-				docIds.add(docName);
 				
 				responseDto = attachmentService.addAttachment(attachmentDto);
 				responseDto.setCode("00");
-				responseDto.setMessage("You successfully uploaded files");
+				responseDto.setMessage(responseDto.getMessage());
 				responseDto.setStatus("SUCCESS");
+				docIds.add(responseDto.getMessage());
 				
 			} catch (Exception e) {
 				responseDto.setCode("01");
@@ -94,6 +94,7 @@ public class EReturnsDocumentController {
 				responseDto.setStatus("ERROR");
 			}
 		}
+		responseDto.setDocIds(docIds);
 		return responseDto;
 	}
 

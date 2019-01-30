@@ -22,6 +22,7 @@ import com.incture.zp.ereturns.dto.RequestHistoryDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.TaxClassificationDto;
 import com.incture.zp.ereturns.dto.UserDto;
+import com.incture.zp.ereturns.dto.UserNameDto;
 import com.incture.zp.ereturns.dto.WorkFlowDto;
 import com.incture.zp.ereturns.model.Attachment;
 import com.incture.zp.ereturns.model.Country;
@@ -34,6 +35,7 @@ import com.incture.zp.ereturns.model.RequestHistory;
 import com.incture.zp.ereturns.model.ReturnOrder;
 import com.incture.zp.ereturns.model.TaxClassification;
 import com.incture.zp.ereturns.model.User;
+import com.incture.zp.ereturns.model.UserName;
 import com.incture.zp.ereturns.model.WorkFlow;
 
 @Component
@@ -544,6 +546,20 @@ public class ImportExportUtil {
 		country.setCountryCode(countryDto.getCountryCode());
 		country.setCountryName(countryDto.getCountryName());
 		return country;
+	}
+
+	public UserName importUserNameDto(UserNameDto userNameDto) {
+		UserName userName = new UserName();
+		userName.setUserId(userNameDto.getUserId());
+		userName.setUserName(userNameDto.getUserName());
+		return userName;
+	}
+
+	public UserNameDto exportUserNameDto(UserName userName) {
+		UserNameDto userNameDto = new UserNameDto();
+		userNameDto.setUserId(userName.getUserId());
+		userNameDto.setUserName(userName.getUserName());
+		return userNameDto;
 	}
 
 	private String convertDateToString(Date input) {

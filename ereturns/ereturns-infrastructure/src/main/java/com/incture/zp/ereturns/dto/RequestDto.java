@@ -1,5 +1,6 @@
 package com.incture.zp.ereturns.dto;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -30,6 +31,8 @@ public class RequestDto {
 	private Set<ReturnOrderDto> setReturnOrderDto;
 	
 	private Set<AttachmentDto> setAttachments;
+	
+	private List<String> docIds;
 	
 	private String soldTo; //customer code
 	
@@ -286,5 +289,14 @@ public class RequestDto {
 	public void setShipToCity(String shipToCity) {
 		this.shipToCity = shipToCity;
 	}
+
+	public List<String> getDocIds() {
+		return docIds;
+	}
+
+	public void setDocIds(List<String> docIds) {
+		this.docIds = docIds;
+	}
+	
 	
 }

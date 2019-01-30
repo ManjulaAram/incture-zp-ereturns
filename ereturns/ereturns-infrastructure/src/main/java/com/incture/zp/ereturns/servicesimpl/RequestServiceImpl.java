@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.codec.binary.Base64;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +22,8 @@ import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.StatusRequestDto;
 import com.incture.zp.ereturns.dto.StatusResponseDto;
+import com.incture.zp.ereturns.dto.UserNameDto;
 import com.incture.zp.ereturns.dto.WorkFlowDto;
-import com.incture.zp.ereturns.model.Attachment;
 import com.incture.zp.ereturns.repositories.AttachmentRepository;
 import com.incture.zp.ereturns.repositories.HeaderRepository;
 import com.incture.zp.ereturns.repositories.RequestRepository;
@@ -32,6 +31,7 @@ import com.incture.zp.ereturns.repositories.ReturnOrderRepository;
 import com.incture.zp.ereturns.services.EcmDocumentService;
 import com.incture.zp.ereturns.services.NotificationService;
 import com.incture.zp.ereturns.services.RequestService;
+import com.incture.zp.ereturns.services.UserNameService;
 import com.incture.zp.ereturns.services.UserService;
 import com.incture.zp.ereturns.services.WorkFlowService;
 import com.incture.zp.ereturns.services.WorkflowTriggerService;
@@ -75,6 +75,9 @@ public class RequestServiceImpl implements RequestService {
 	UserService userService;
 	
 	@Autowired
+	UserNameService userNameService;
+	
+	@Autowired
 	NotificationService notificationService;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequestServiceImpl.class);
@@ -83,7 +86,13 @@ public class RequestServiceImpl implements RequestService {
 	public ResponseDto addRequest(RequestDto requestDto) {
 		ResponseDto responseDto = new ResponseDto();
 		boolean processStartFlag = false;
-		
+		boolean exist = userNameService.isUserExist(requestDto.getRequestCreatedBy());
+		if(!exist) {
+			UserNameDto userNameDto = new UserNameDto();
+			userNameDto.setUserId(requestDto.getRequestCreatedBy());
+			userNameDto.setUserName(userService.getUserNameById(requestDto.getRequestCreatedBy()));
+			userNameService.addUserName(userNameDto);
+		}
 		String requestId = "";
 		String unref = requestDto.getUnrefFlag();
 		if(unref != null && !(unref.equals("")) && unref.equalsIgnoreCase("TRUE")) {
@@ -315,16 +324,22 @@ public class RequestServiceImpl implements RequestService {
 		try { 
 			responseDto = requestRepository.addRequest(importExportUtil.importRequestDto(requestDto));
 
-			Set<AttachmentDto> setAttachment = requestDto.getSetAttachments();
-			for (AttachmentDto attachmentDto : setAttachment) {
-				byte[] decodedString = Base64.decodeBase64(attachmentDto.getContent());
-				String attachmentName = ecmDocumentService.uploadAttachment(decodedString,
-						attachmentDto.getAttachmentName(), attachmentDto.getAttachmentType());
-				attachmentDto.setAttachmentName(attachmentName);
-				attachmentDto.setRequestId(getRequestId(responseDto));
-				Attachment attachment = importExportUtil.importAttachmentDto(attachmentDto);
-				attachmentRepository.addAttachment(attachment);
+//			Set<AttachmentDto> setAttachment = requestDto.getSetAttachments();
+//			for (AttachmentDto attachmentDto : setAttachment) {
+//				byte[] decodedString = Base64.decodeBase64(attachmentDto.getContent());
+//				String attachmentName = ecmDocumentService.uploadAttachment(decodedString,
+//						attachmentDto.getAttachmentName(), attachmentDto.getAttachmentType());
+//				attachmentDto.setAttachmentName(attachmentName);
+//				attachmentDto.setRequestId(getRequestId(responseDto));
+//				Attachment attachment = importExportUtil.importAttachmentDto(attachmentDto);
+//				attachmentRepository.addAttachment(attachment);
+//			}
+			String requestId = "";
+			if(responseDto.getMessage() != null && !(responseDto.getMessage().equals(""))) {
+				requestId = responseDto.getMessage().substring(8, 19);
 			}
+			requestDto.setRequestId(requestId);
+			attachmentRepository.updateAttachment(requestDto);
 		} catch (Exception e) {
 			if(responseDto != null) {
 				responseDto.setCode(EReturnConstants.ERROR_STATUS_CODE);

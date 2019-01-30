@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.dto.AttachmentDto;
+import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.model.Attachment;
 import com.incture.zp.ereturns.repositories.AttachmentRepository;
@@ -41,7 +42,7 @@ public class AttachmentRepositoryImpl implements AttachmentRepository {
 			attachment.setAttachmentId(attachmentId);
 		}
 		sessionFactory.getCurrentSession().saveOrUpdate(attachment);
-		responseDto.setMessage("Attachment "+attachment.getAttachmentId()+" Success");
+		responseDto.setMessage(attachment.getAttachmentId());
 		responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);
 		responseDto.setCode(EReturnConstants.SUCCESS_STATUS_CODE);
 		return responseDto;
@@ -134,4 +135,18 @@ public class AttachmentRepositoryImpl implements AttachmentRepository {
 		return attachmentDtos;
 	}
 
+	public int updateAttachment(RequestDto requestDto) {
+		int result = 0;
+		for(int i = 0 ; i < requestDto.getDocIds().size() ; i++) {
+			String documentId = requestDto.getDocIds().get(i);
+			String queryStr = "UPDATE Attachment SET requestId=:requestId WHERE attachmentId=:attachmentId";
+			Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
+			query.setParameter("requestId", requestDto.getRequestId());
+			query.setParameter("attachmentId", documentId);
+			
+			result = query.executeUpdate();
+		}
+
+		return result;
+	}
 }

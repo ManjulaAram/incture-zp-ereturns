@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.incture.zp.ereturns.dto.AttachmentDto;
+import com.incture.zp.ereturns.dto.RequestDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.repositories.AttachmentRepository;
 import com.incture.zp.ereturns.services.AttachmentService;
@@ -50,6 +51,11 @@ public class AttachmentServiceImpl implements AttachmentService {
 	@Override
 	public Set<AttachmentDto> getAttachmentURLsByIds(String requestId, String itemId) {
 		return attachmentRepository.getAttachmentURLsByIds(requestId, itemId);
+	}
+
+	@Override
+	public int updateAttachment(RequestDto requestDto) {
+		return attachmentRepository.updateAttachment(requestDto);
 	}
 
 }

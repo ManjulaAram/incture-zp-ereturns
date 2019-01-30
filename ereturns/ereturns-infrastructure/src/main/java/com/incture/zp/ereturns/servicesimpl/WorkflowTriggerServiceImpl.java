@@ -43,6 +43,7 @@ import com.incture.zp.ereturns.dto.RequestHistoryDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.ReturnOrderDto;
 import com.incture.zp.ereturns.dto.UpdateDto;
+import com.incture.zp.ereturns.dto.UserNameDto;
 import com.incture.zp.ereturns.repositories.RequestRepository;
 import com.incture.zp.ereturns.repositories.ReturnOrderRepository;
 import com.incture.zp.ereturns.services.EmailService;
@@ -51,6 +52,7 @@ import com.incture.zp.ereturns.services.NotificationService;
 import com.incture.zp.ereturns.services.RequestHistoryService;
 import com.incture.zp.ereturns.services.RequestService;
 import com.incture.zp.ereturns.services.ReturnOrderService;
+import com.incture.zp.ereturns.services.UserNameService;
 import com.incture.zp.ereturns.services.UserService;
 import com.incture.zp.ereturns.services.WorkFlowService;
 import com.incture.zp.ereturns.services.WorkflowTriggerService;
@@ -85,6 +87,9 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	UserNameService userNameService;
 	
 	@Autowired
 	RequestHistoryService requestHistoryService;
@@ -187,6 +192,13 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 
 	@Override
 	public ResponseDto completeTask(CompleteTaskRequestDto requestDto) {
+		boolean exist = userNameService.isUserExist(requestDto.getLoginUser());
+		if(!exist) {
+			UserNameDto userNameDto = new UserNameDto();
+			userNameDto.setUserId(requestDto.getLoginUser());
+			userNameDto.setUserName(userService.getUserNameById(requestDto.getLoginUser()));
+			userNameService.addUserName(userNameDto);
+		}
 		overridePrice(requestDto);
 		ResponseDto responseDto = new ResponseDto();
 		RequestDto res = requestService.getRequestById(requestDto.getRequestId());
@@ -605,7 +617,6 @@ public class WorkflowTriggerServiceImpl implements WorkflowTriggerService {
 	public void sendingMailToCustomer(RequestDto res, CompleteTaskRequestDto requestDto, String action) {
 		IdpUserDetailsDto user = userService.getIdpUserDetailsById(res.getRequestCreatedBy());
 		if(user != null && user.getEmail() != null && !(user.getEmail().equals(""))) {
-			LOGGER.error("Created by for Mail:"+user.getEmail()+"...."+user.getRole()+"..."+user.getUserName());
 			List<String> email = new ArrayList<>();
 			
 			EmailRequestDto emailRequestDto = new EmailRequestDto();

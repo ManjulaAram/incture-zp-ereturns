@@ -1,5 +1,7 @@
 package com.incture.zp.ereturns.dto;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -11,6 +13,8 @@ public class ResponseDto {
 	
 	private String status;
 
+	private List<String> docIds;
+	
 	public String getMessage() {
 		return message;
 	}
@@ -33,6 +37,14 @@ public class ResponseDto {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public List<String> getDocIds() {
+		return docIds;
+	}
+
+	public void setDocIds(List<String> docIds) {
+		this.docIds = docIds;
 	}
 	
 }
