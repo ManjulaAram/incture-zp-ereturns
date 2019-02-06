@@ -12,9 +12,7 @@ import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.UserNameDto;
 import com.incture.zp.ereturns.model.UserName;
 import com.incture.zp.ereturns.repositories.UserNameRepository;
-import com.incture.zp.ereturns.utils.GetReferenceData;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
-import com.incture.zp.ereturns.utils.SequenceNumberGen;
 
 @Repository
 public class UserNameRepositoryImpl implements UserNameRepository {
@@ -25,19 +23,9 @@ public class UserNameRepositoryImpl implements UserNameRepository {
 	@Autowired
 	ImportExportUtil importExportUtil;
 
-	public String getNextSeqNumber(String referenceCode, int noOfDigits) {
-		return SequenceNumberGen.getInstance().getNextSeqNumber(referenceCode, noOfDigits,
-				sessionFactory.getCurrentSession());
-	}
-	
 	@Override
 	public ResponseDto addUserName(UserName userName) {
 		ResponseDto responseDto = new ResponseDto();
-		String userNameId = getNextSeqNumber(new GetReferenceData().execute("UN"), 6);
-		if (userName.getUserId() == null || userName.getUserId().equals("")) {
-			userName.setUserId(userNameId);
-		}
-
 		sessionFactory.getCurrentSession().saveOrUpdate(userName);
 		responseDto.setMessage(userName.getUserId());
 		responseDto.setStatus(EReturnConstants.SUCCESS_STATUS);

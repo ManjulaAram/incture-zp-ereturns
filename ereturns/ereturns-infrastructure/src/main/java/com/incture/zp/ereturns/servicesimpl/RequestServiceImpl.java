@@ -179,18 +179,17 @@ public class RequestServiceImpl implements RequestService {
 		boolean duplicate = false;
 		List<RequestDto> list = getAllRequests();
 		List<ReturnOrderDto> returnOrderList = new ArrayList<>();
-		
 		if (list != null && list.size() > 0) {
 			for (RequestDto requestDto2 : list) {
 				if (requestDto2.getHeaderDto().getInvoiceNo() != null) {
-					if (requestDto2.getHeaderDto().getInvoiceNo().equals(requestDto.getHeaderDto().getInvoiceNo())
+					if (requestDto2.getHeaderDto().getInvoiceNo().equalsIgnoreCase(requestDto.getHeaderDto().getInvoiceNo())
 							&& ((requestDto2.getRequestStatus().equalsIgnoreCase(EReturnConstants.NEW)) || (requestDto2
 									.getRequestStatus().equalsIgnoreCase(EReturnConstants.INPROGRESS)) || requestDto2
 									.getRequestStatus().equalsIgnoreCase(EReturnConstants.REJECTED))) {
 						for (ItemDto itemDto : requestDto2.getHeaderDto().getItemSet()) {
 							for (int i = 0; i < itemList.size(); i++) {
 								ItemDto itemDto2 = itemList.get(i);
-								if (itemDto.getMaterial().equals(itemDto2.getMaterial())) {
+								if (itemDto.getMaterial().equalsIgnoreCase(itemDto2.getMaterial())) {
 									returnOrderList.addAll(requestDto2.getSetReturnOrderDto());
 									if(returnOrderList.get(i).getOrderStatus().equalsIgnoreCase(EReturnConstants.NEW) || 
 									(returnOrderList.get(i).getOrderStatus().equalsIgnoreCase(EReturnConstants.INPROGRESS))) {

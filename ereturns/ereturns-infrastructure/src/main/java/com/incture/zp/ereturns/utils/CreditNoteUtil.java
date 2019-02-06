@@ -15,17 +15,25 @@ import com.google.gson.Gson;
 import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.dto.CreditNoteStatusDto;
 import com.incture.zp.ereturns.dto.CreditNoteStatusResponseDto;
+import com.sap.core.connectivity.api.configuration.DestinationConfiguration;
 
 @Component
 public class CreditNoteUtil {
+	
+	String destination = "";
+	public CreditNoteUtil() {
+		DestinationConfiguration destConfiguration = ServiceUtil.getDest(EReturnConstants.ODATA_END_POINT);
+		destination = destConfiguration.getProperty(EReturnConstants.ODATA_DESTINATION_URL);
+	}
 
 	public List<CreditNoteStatusDto> getCreditNoteStatus(String sdNo) {
-		String destination = "https://zpgt.apimanagement.ap1.hana.ondemand.com/qas/ereturns";
+		
+//		String destination = "https://zpgt.apimanagement.ap1.hana.ondemand.com/qas/ereturns";
 		
 		List<CreditNoteStatusDto> arryList = new ArrayList<CreditNoteStatusDto>();
 		CreditNoteStatusDto creditNoteStatusDto = null;
 		try {
-			
+
 			String creditNotePath = destination + "/CV_CreditNote_Status/CreditNote_Status?$filter=PrecedingSalesandDistributionDocument%20eq%20%27"+sdNo+"%27";
 			
 			URL creditNoteUrl = new URL(creditNotePath);

@@ -283,9 +283,10 @@ public class RequestRepositoryImpl implements RequestRepository {
 	public List<RequestDto> getAllRequests() {
 		List<RequestDto> list = new ArrayList<>();
 		StringBuilder queryString = new StringBuilder();
-		queryString.append("SELECT r FROM Request r");
+		queryString.append("SELECT r FROM Request r WHERE r.unref=:unref");
 
 		Query query = sessionFactory.getCurrentSession().createQuery(queryString.toString());
+		query.setParameter("unref", "FALSE");
 		@SuppressWarnings("unchecked")
 		List<Request> requestList = (List<Request>) query.list();
 		for (Request request : requestList) {

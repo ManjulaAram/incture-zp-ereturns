@@ -24,8 +24,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.dto.EmailRequestDto;
 import com.incture.zp.ereturns.dto.EmailResponseDto;
+import com.sap.core.connectivity.api.configuration.DestinationConfiguration;
 
 @Component
 public class EmailServiceUtil {
@@ -120,8 +122,12 @@ public class EmailServiceUtil {
 		return emailResponseDto;
 	}
 
-	
+	String destination = "";
 	public EmailServiceUtil() {
+		
+		DestinationConfiguration destConfiguration = ServiceUtil.getDest(EReturnConstants.WEB_END_POINT);
+		destination = destConfiguration.getProperty(EReturnConstants.WEB_DESTINATION_URL);
+
 		InputStream is = null;
 		try {
 			this.prop = new Properties();
@@ -218,9 +224,9 @@ public class EmailServiceUtil {
 		     .append("	<h2> Dear "+customerName+", </h2>")
 		     .append("	<p> E-Returns Request with Reference ID <i><b>"+requestId+"</b></i> is waiting for your Approval for Invoice <i><b>"+invoice+"</b></i> and ")
 		     .append("	Material <i><b>"+material+"</b></i> .")
-		     .append("	Please check your <a href='https://ereturn-c8e00d73c.dispatcher.ap1.hana.ondemand.com/index.html'> Inbox </a> or Mobile App for more information. </p>")
-		     .append("	For IOS click <a href='#zpapp://' target='_blank'> here </a>. </p>")
-//		     .append("  <script> function test() {  window.open('zpapp://'); } </script> ")
+		     .append("	Please check your <a href='"+destination+"/index.html'> Inbox </a> or Mobile App for more information. </p>")
+		     
+		     .append("	For IOS click <a href='"+destination+"/apple-app-site-association' target='_blank'> here</a>. </p>")
 		     .append("")
 		     .append("	<b style=\"color:#00415C;\">Regards,</b><br/>")
 		     .append("	<b style=\"color:#00415C;\">Workflow Team</b>")

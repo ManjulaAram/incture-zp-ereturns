@@ -94,12 +94,18 @@ public interface EReturnConstants {
 	
 	public static final String IDP_GROUPS = "groups";
 	
-	public static final String ECS_URL = "https://zpprodapiportalapimgmt.apimanagement.ap1.hana.ondemand.com/tdms/ecollections/";
-	public static final String URL = "https://zpgt.apimanagement.ap1.hana.ondemand.com/qas/ecollections/";
+//	public static final String ECS_URL = "https://zpprodapiportalapimgmt.apimanagement.ap1.hana.ondemand.com/tdms/ecollections/";
+//	public static final String URL = "https://zpgt.apimanagement.ap1.hana.ondemand.com/qas/ecollections/";
 	
 	public static final String ACCEPT = "Accept";
 	public static final String APPLICATION_JSON = "application/json";
 	
 	public static final int HTTP_SUCCESS_CODE = 200;
+
+	public static final String ODATA_END_POINT = "ZP_ERETURNS_ODATA";
+	public static final String ODATA_DESTINATION_URL = "URL";
+	
+	public static final String WEB_END_POINT = "ZP_ERETURNS_WEB";
+	public static final String WEB_DESTINATION_URL = "URL";
 
 }
