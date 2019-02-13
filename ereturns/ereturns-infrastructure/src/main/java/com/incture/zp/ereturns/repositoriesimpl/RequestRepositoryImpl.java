@@ -117,7 +117,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 		}
 		
 		queryString.append(" ORDER BY r.requestId DESC");
-		LOGGER.error("Query for Status details:" + queryString);
+//		LOGGER.error("Query for Status details:" + queryString);
 		Query query = sessionFactory.getCurrentSession().createQuery(queryString.toString());
 		if (requestDto.getRequestId() != null && !(requestDto.getRequestId().equals(""))) {
 			query.setParameter("requestId", requestDto.getRequestId());
@@ -325,7 +325,7 @@ public class RequestRepositoryImpl implements RequestRepository {
 		return result;
 
 	}
-	
+
 	public int updateRequestTrigger(UpdateDto updateDto) {
 		String queryStr = "UPDATE Request SET requestPendingWith=:requestPendingWith, requestStatus=:requestStatus, requestApprovedBy=:requestApprovedBy, "
 				+ "requestApprovedDate=:requestApprovedDate, eccStatus=:eccStatus, eccReturnOrderNo=:eccReturnOrderNo "

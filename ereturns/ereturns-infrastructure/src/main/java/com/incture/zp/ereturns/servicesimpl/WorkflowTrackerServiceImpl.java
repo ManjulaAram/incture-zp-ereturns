@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +50,7 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 	@Autowired
 	CreditNoteUtil creditNoteUtil;
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(WorkflowTrackerServiceImpl.class);
+//	private static final Logger LOGGER = LoggerFactory.getLogger(WorkflowTrackerServiceImpl.class);
 
 	String destination;
 	String user;
@@ -172,7 +170,7 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 		set.addAll(approverList);
 		List<ApproverDto> finalList = new ArrayList<>();
 		finalList.addAll(set);
-		LOGGER.error("Approver list for track:"+finalList.size());
+//		LOGGER.error("Approver list for track:"+finalList.size());
 		recipientList.add(recipient);
 		if (requestDto.getEccStatus() != null && !(requestDto.getEccStatus().equals(""))) {
 			if (requestDto.getEccStatus().equalsIgnoreCase("ECC_ERROR")) {
@@ -187,7 +185,7 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 //			int index = finalList.size() - 1;
 //			finalList.remove(index);
 //		}
-		LOGGER.error("flag to check:"+finalList.size());
+//		LOGGER.error("flag to check:"+finalList.size());
 		if (flag) {
 			recipientList.clear();
 		}
@@ -208,7 +206,7 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 		}
 
 		instanceDto.setEccStatus(eccStatus);
-
+		returnOrderRepository.updateEccReturnOrderStatusCN(eccStatus, completeTaskRequestDto.getRequestId(), completeTaskRequestDto.getItemCode());
 		return instanceDto;
 	}
 

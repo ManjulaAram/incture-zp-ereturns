@@ -226,7 +226,7 @@ public class EmailServiceUtil {
 		     .append("	Material <i><b>"+material+"</b></i> .")
 		     .append("	Please check your <a href='"+destination+"/index.html'> Inbox </a> or Mobile App for more information. </p>")
 		     
-		     .append("	For IOS click <a href='"+destination+"/apple-app-site-association' target='_blank'> here</a>. </p>")
+		     .append("	For IOS click <a href='"+destination+"'> here</a>. </p>")
 		     .append("")
 		     .append("	<b style=\"color:#00415C;\">Regards,</b><br/>")
 		     .append("	<b style=\"color:#00415C;\">Workflow Team</b>")

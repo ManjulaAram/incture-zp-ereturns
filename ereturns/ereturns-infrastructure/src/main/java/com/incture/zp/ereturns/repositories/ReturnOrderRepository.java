@@ -36,4 +36,6 @@ public interface ReturnOrderRepository {
 	
 	public List<ReturnOrderDto> getRequestOrderTrack(String requestId, String itemCode);
 	
+	public int updateEccReturnOrderStatusCN(String eccStatus, String requestId,  String itemCode);
+	
 }

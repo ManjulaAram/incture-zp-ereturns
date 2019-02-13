@@ -26,4 +26,5 @@ public interface RequestRepository {
 	public int updateRequestTrigger(UpdateDto updateDto);
 	
 	public String getRequestClient(String requestId);
+	
 }

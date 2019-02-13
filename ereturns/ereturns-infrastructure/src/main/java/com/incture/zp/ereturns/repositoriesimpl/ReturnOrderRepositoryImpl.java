@@ -374,10 +374,24 @@ public class ReturnOrderRepositoryImpl implements ReturnOrderRepository {
 		query.setParameter("itemCode", priceOverrideDto.getItemCode());
 		
 		int result = query.executeUpdate();
-		LOGGER.error("Update status for override:"+result+"..."+priceOverrideDto.getOverridePrice()+"..."+priceOverrideDto.getRequestId()+"..."+priceOverrideDto.getItemCode());
+//		LOGGER.error("Update status for override:"+result+"..."+priceOverrideDto.getOverridePrice()+"..."+priceOverrideDto.getRequestId()+"..."+priceOverrideDto.getItemCode());
 		return result;
 	}
 	
+	
+	public int updateEccReturnOrderStatusCN(String eccStatus, String requestId,  String itemCode) {
+		String queryStr = "UPDATE ReturnOrder SET orderStatus=:orderStatus "
+				+ "WHERE returnOrderData.requestId=:requestId AND itemCode=:itemCode";
+		Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
+		query.setParameter("orderStatus", eccStatus);
+		query.setParameter("requestId", requestId);
+		query.setParameter("itemCode", itemCode);
+
+		int result = query.executeUpdate();
+		return result;
+
+	}
+
 	@Override
 	public List<ReturnOrderDto> getRequestOrderTrack(String requestId, String itemCode) {
 		
