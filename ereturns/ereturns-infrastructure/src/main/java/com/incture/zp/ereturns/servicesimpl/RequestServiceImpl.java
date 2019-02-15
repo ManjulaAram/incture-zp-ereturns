@@ -104,7 +104,10 @@ public class RequestServiceImpl implements RequestService {
 				}
 			}
 		} else {
-			DuplicateMaterialDto duplicateDto = findDuplicate(requestDto);
+			DuplicateMaterialDto duplicateDto;
+			synchronized (this) {
+				duplicateDto = findDuplicate(requestDto);
+			}
 //			duplicateDto.setDuplicate(false);
 			if(duplicateDto.isDuplicate()) {
 				responseDto.setCode(EReturnConstants.DUPLICATE_CODE);
