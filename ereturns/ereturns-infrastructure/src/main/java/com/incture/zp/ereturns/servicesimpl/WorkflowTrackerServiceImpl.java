@@ -206,7 +206,9 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 		}
 
 		instanceDto.setEccStatus(eccStatus);
-		returnOrderRepository.updateEccReturnOrderStatusCN(eccStatus, completeTaskRequestDto.getRequestId(), completeTaskRequestDto.getItemCode());
+		if(eccStatus != null && !(eccStatus.equals(""))) {
+			returnOrderRepository.updateEccReturnOrderStatusCN(eccStatus, completeTaskRequestDto.getRequestId(), completeTaskRequestDto.getItemCode());
+		}
 		return instanceDto;
 	}
 
