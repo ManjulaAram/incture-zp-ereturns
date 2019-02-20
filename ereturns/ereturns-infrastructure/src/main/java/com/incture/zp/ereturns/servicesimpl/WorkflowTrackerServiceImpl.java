@@ -76,24 +76,34 @@ public class WorkflowTrackerServiceImpl implements WorkflowTrackerService {
 		if(statusList.size() > 0) {
 			for(CreditNoteStatusDto dto : statusList) {
 				if(dto.getDocumentCategoryOfSubsequentDocument() != null && !(dto.getDocumentCategoryOfSubsequentDocument().equals(""))) {
-					if(dto.getDocumentCategoryOfSubsequentDocument().equalsIgnoreCase("T")) {
-						deliveryCount = deliveryCount + 1;
-					} 
 					if(dto.getDocumentCategoryOfSubsequentDocument().equalsIgnoreCase("O")) {
 						cnCount = cnCount + 1;
 					}
+					if(dto.getDocumentCategoryOfSubsequentDocument().equalsIgnoreCase("T")) {
+						deliveryCount = deliveryCount + 1;
+					} 
 				}
 			}
 		}
-		if(deliveryCount > 1) {
-			status = "Multiple Returns Delivery Created";
+//		if(deliveryCount > 1) {
+//			status = "Multiple Returns Delivery Created";
+//			return status;
+//		} else if(deliveryCount == 1) {
+//			status = "Returns Delivery Posted";
+//		} else if(cnCount == 1) {
+//			status = "Credit Note Posted";
+//		} else if(cnCount > 1) {
+//			status = "Multiple Credit Note Created";
+//		}
+		if(cnCount > 1) {
+			status = "Multiple Credit Note Created";
 			return status;
-		} else if(deliveryCount == 1) {
-			status = "Returns Delivery Posted";
 		} else if(cnCount == 1) {
 			status = "Credit Note Posted";
-		} else if(cnCount > 1) {
-			status = "Multiple Credit Note Created";
+		} else if(deliveryCount == 1) {
+			status = "Returns Delivery Posted";
+		} else if(deliveryCount > 1) {
+			status = "Multiple Returns Delivery Created";
 		}
 		
 		return status;
