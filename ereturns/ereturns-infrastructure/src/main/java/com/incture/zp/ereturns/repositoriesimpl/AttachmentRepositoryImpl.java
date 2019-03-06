@@ -137,14 +137,17 @@ public class AttachmentRepositoryImpl implements AttachmentRepository {
 
 	public int updateAttachment(RequestDto requestDto) {
 		int result = 0;
-		for(int i = 0 ; i < requestDto.getDocIds().size() ; i++) {
-			String documentId = requestDto.getDocIds().get(i);
-			String queryStr = "UPDATE Attachment SET requestId=:requestId WHERE attachmentId=:attachmentId";
-			Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
-			query.setParameter("requestId", requestDto.getRequestId());
-			query.setParameter("attachmentId", documentId);
+		if(requestDto != null && requestDto.getDocIds() != null) {
 			
-			result = query.executeUpdate();
+			for(int i = 0 ; i < requestDto.getDocIds().size() ; i++) {
+				String documentId = requestDto.getDocIds().get(i);
+				String queryStr = "UPDATE Attachment SET requestId=:requestId WHERE attachmentId=:attachmentId";
+				Query query = sessionFactory.getCurrentSession().createQuery(queryStr);
+				query.setParameter("requestId", requestDto.getRequestId());
+				query.setParameter("attachmentId", documentId);
+				
+				result = query.executeUpdate();
+			}
 		}
 
 		return result;
