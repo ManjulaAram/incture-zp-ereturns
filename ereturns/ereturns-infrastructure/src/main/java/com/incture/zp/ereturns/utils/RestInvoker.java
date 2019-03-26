@@ -77,4 +77,29 @@ public class RestInvoker {
 		return sb.toString();
 	}
 
+	public String postDataToSCIM(String path, String data) {
+		URL url;
+		StringBuilder sb = new StringBuilder();
+		try {
+			url = new URL(baseUrl + path);
+			HttpURLConnection urlConnection = (HttpURLConnection) setNameAndPassword(url);
+			urlConnection.setDoOutput(true);
+			urlConnection.setRequestMethod(EReturnConstants.POST);
+			urlConnection.setRequestProperty(EReturnConstants.CONTENT_TYPE, EReturnConstants.CONTENT_APPLICATION_SCIM);
+			OutputStream os = urlConnection.getOutputStream();
+			os.write(data.getBytes());
+			os.flush();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+			String line;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line);
+			}
+			reader.close();
+		} catch (MalformedURLException e) {
+			return e.getMessage();
+		} catch (IOException e) {
+			return e.getMessage();
+		}
+		return sb.toString();
+	}
 }

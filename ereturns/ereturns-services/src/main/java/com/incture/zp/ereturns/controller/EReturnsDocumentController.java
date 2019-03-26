@@ -1,6 +1,9 @@
 package com.incture.zp.ereturns.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +27,7 @@ import com.incture.zp.ereturns.dto.AttachmentDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.services.AttachmentService;
 import com.incture.zp.ereturns.services.EcmDocumentService;
+import com.incture.zp.ereturns.services.UserService;
 
 @RestController
 @CrossOrigin
@@ -36,6 +40,9 @@ public class EReturnsDocumentController {
 	
 	@Autowired
 	AttachmentService attachmentService;
+	
+	@Autowired
+	UserService userService;
 	
 	@RequestMapping(path = "/download/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Resource> download(@PathVariable String id) throws IOException {
@@ -97,5 +104,66 @@ public class EReturnsDocumentController {
 		responseDto.setDocIds(docIds);
 		return responseDto;
 	}
+	
+	@RequestMapping(path = "/uploadUserExcel", method = RequestMethod.POST)
+	public ResponseDto uploadUserExcel(@RequestParam("file") MultipartFile file) throws IOException {
+
+		ResponseDto responseDto = new ResponseDto();
+		
+			try {
+				InputStream in = file.getInputStream();
+			    File currDir = new File(".");
+			    String path = currDir.getAbsolutePath();
+			    String fileLocation = path.substring(0, path.length() - 1) + file.getOriginalFilename();
+			    FileOutputStream f = new FileOutputStream(fileLocation);
+			    int ch = 0;
+			    while ((ch = in.read()) != -1) {
+			        f.write(ch);
+			    }
+			    f.flush();
+			    f.close();
+				userService.createUserFromExcel(fileLocation);
+				responseDto.setCode("00");
+				responseDto.setMessage("You successfully uploaded file=" + file.getOriginalFilename());
+				responseDto.setStatus("SUCCESS");
+				
+			} catch (Exception e) {
+				responseDto.setCode("01");
+				responseDto.setMessage("You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage());
+				responseDto.setStatus("ERROR");
+			}
+		return responseDto;
+	}
+
+	@RequestMapping(path = "/uploadGroupExcel", method = RequestMethod.POST)
+	public ResponseDto uploadGroupExcel(@RequestParam("file") MultipartFile file) throws IOException {
+
+		ResponseDto responseDto = new ResponseDto();
+		
+			try {
+				InputStream in = file.getInputStream();
+			    File currDir = new File(".");
+			    String path = currDir.getAbsolutePath();
+			    String fileLocation = path.substring(0, path.length() - 1) + file.getOriginalFilename();
+			    FileOutputStream f = new FileOutputStream(fileLocation);
+			    int ch = 0;
+			    while ((ch = in.read()) != -1) {
+			        f.write(ch);
+			    }
+			    f.flush();
+			    f.close();
+				userService.createGroupFromExcel(fileLocation);
+				responseDto.setCode("00");
+				responseDto.setMessage("You successfully uploaded file=" + file.getOriginalFilename());
+				responseDto.setStatus("SUCCESS");
+				
+			} catch (Exception e) {
+				responseDto.setCode("01");
+				responseDto.setMessage("You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage());
+				responseDto.setStatus("ERROR");
+			}
+		return responseDto;
+	}
+
 
 }

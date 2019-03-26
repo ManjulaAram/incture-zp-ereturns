@@ -3,7 +3,9 @@ package com.incture.zp.ereturns.services;
 import java.util.List;
 
 import com.incture.zp.ereturns.dto.EmailDto;
+import com.incture.zp.ereturns.dto.IdpGroupDto;
 import com.incture.zp.ereturns.dto.IdpUserDetailsDto;
+import com.incture.zp.ereturns.dto.IdpUserDto;
 import com.incture.zp.ereturns.dto.IdpUserIdDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.UserDto;
@@ -27,4 +29,12 @@ public interface UserService {
 	public IdpUserDetailsDto getIdpUserDetailsById(String userId);
 	
 	public UserDto getUserDetailsById(String id);
+	
+	public ResponseDto createUserOnIdp(IdpUserDto idpUserDto);
+	
+	public ResponseDto createUserFromExcel(String filePath);
+	
+	public ResponseDto createGroupOnIdp(IdpGroupDto idpGroupDto);
+	
+	public ResponseDto createGroupFromExcel(String filePath);
 }

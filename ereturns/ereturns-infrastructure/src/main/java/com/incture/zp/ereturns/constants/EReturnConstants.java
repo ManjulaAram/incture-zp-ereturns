@@ -9,6 +9,7 @@ public interface EReturnConstants {
 	public static final String GET = "GET";
 	public static final String CONTENT_TYPE = "Content-Type";
 	public static final String CONTENT_APPLICATION = "application/json";
+	public static final String CONTENT_APPLICATION_SCIM = "application/scim+json";
 	
 	public static final String CONTENT_TEXT_HTML = "text/html";
 	
@@ -92,7 +93,22 @@ public interface EReturnConstants {
 	public static final String IDP_ID = "id";
 	public static final String IDP_VALUE = "value";
 	
+	public static final String IDP_DIVISION_OBJ = "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User";
+	public static final String IDP_DIVISION = "division";
+	
 	public static final String IDP_GROUPS = "groups";
+	public static final String IDP_SALUTATION = "honorificPrefix";
+	public static final String IDP_USER_NAME = "userName";
+	public static final String IDP_USER_TYPE = "userType";
+
+	public static final String IDP_SEND_MAIL = "sendMail";
+	public static final String IDP_MAIL_VERIFIED = "mailVerified";
+	public static final String IDP_ACTIVE = "active";
+
+	public static final String IDP_GROUP_DESC = "description";
+	public static final String IDP_GROUP_DISPLAY_NAME = "displayName";
+	
+	public static final String IDP_GROUP_URN = "urn:sap:cloud:scim:schemas:extension:custom:2.0:Group";
 	
 	public static final String ACCEPT = "Accept";
 	public static final String APPLICATION_JSON = "application/json";

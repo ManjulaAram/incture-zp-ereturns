@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.incture.zp.ereturns.dto.CustomerDto;
 import com.incture.zp.ereturns.dto.EmailDto;
+import com.incture.zp.ereturns.dto.IdpGroupDto;
 import com.incture.zp.ereturns.dto.IdpUserDetailsDto;
+import com.incture.zp.ereturns.dto.IdpUserDto;
 import com.incture.zp.ereturns.dto.IdpUserIdDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.UserDto;
@@ -91,4 +93,17 @@ public class EReturnsUserController {
 		userNameDto.setUserName(name);
 		return userNameService.addUserName(userNameDto);
 	}
+	
+	@RequestMapping(path="/createUserOnIdp",consumes="application/json",method=RequestMethod.POST)
+	public ResponseDto createUserOnIdp(@RequestBody IdpUserDto idpUserDto)
+	{
+		return userService.createUserOnIdp(idpUserDto);
+	}
+	
+	@RequestMapping(path="/createGroupOnIdp",consumes="application/json",method=RequestMethod.POST)
+	public ResponseDto createGroupOnIdp(@RequestBody IdpGroupDto idpGroupDto)
+	{
+		return userService.createGroupOnIdp(idpGroupDto);
+	}
 }
+

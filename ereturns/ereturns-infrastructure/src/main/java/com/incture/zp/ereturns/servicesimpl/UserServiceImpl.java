@@ -14,7 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.incture.zp.ereturns.constants.EReturnConstants;
 import com.incture.zp.ereturns.dto.EmailDto;
+import com.incture.zp.ereturns.dto.IdpGroupDto;
 import com.incture.zp.ereturns.dto.IdpUserDetailsDto;
+import com.incture.zp.ereturns.dto.IdpUserDto;
 import com.incture.zp.ereturns.dto.IdpUserIdDto;
 import com.incture.zp.ereturns.dto.ResponseDto;
 import com.incture.zp.ereturns.dto.UserDto;
@@ -22,6 +24,7 @@ import com.incture.zp.ereturns.model.User;
 import com.incture.zp.ereturns.repositories.UserRepository;
 import com.incture.zp.ereturns.services.UserService;
 import com.incture.zp.ereturns.utils.ImportExportUtil;
+import com.incture.zp.ereturns.utils.ReadCustomerExcelUtil;
 import com.incture.zp.ereturns.utils.RestInvoker;
 import com.incture.zp.ereturns.utils.ServiceUtil;
 import com.sap.core.connectivity.api.configuration.DestinationConfiguration;
@@ -35,6 +38,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	ImportExportUtil importExportUtil;
+	
+	@Autowired
+	ReadCustomerExcelUtil readCustomerExcelUtil;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 	
@@ -108,7 +114,7 @@ public class UserServiceImpl implements UserService {
 				sb.append(",");
 			}
 		}
-		LOGGER.error("Idp Email by Role:"+sb.toString());
+//		LOGGER.error("Idp Email by Role:"+sb.toString());
 		if(role != null && !(role.equals(""))) {
 			emailDto.setEmail(sb.toString());
 		} 
@@ -268,4 +274,128 @@ public class UserServiceImpl implements UserService {
 	public UserDto getUserDetailsById(String id) {
 		return userRepository.getUserDetailsById(id);
 	}
+	
+	public ResponseDto createUserOnIdp(IdpUserDto idpUserDto) {
+		ResponseDto responseDto = new ResponseDto();
+		String pUser = "";
+		
+		JSONObject userObj = new JSONObject();
+
+		userObj.put(EReturnConstants.IDP_SEND_MAIL, "true");
+		userObj.put(EReturnConstants.IDP_MAIL_VERIFIED, "false");
+		userObj.put(EReturnConstants.IDP_USER_NAME, idpUserDto.getLoginName());
+		userObj.put(EReturnConstants.IDP_USER_TYPE, idpUserDto.getUserType());
+		userObj.put(EReturnConstants.IDP_ACTIVE, Boolean.TRUE);
+
+		JSONObject nameObj = new JSONObject();
+		nameObj.put(EReturnConstants.IDP_GIVEN_NAME, idpUserDto.getFirstName());
+		nameObj.put(EReturnConstants.IDP_FAMILY_NAME, idpUserDto.getLastName());
+		nameObj.put(EReturnConstants.IDP_SALUTATION, ""); //Salutation
+
+		JSONArray emailArry = new JSONArray();
+
+		JSONObject emailObj = new JSONObject();
+		emailObj.put(EReturnConstants.IDP_VALUE, idpUserDto.getEmail());
+
+		emailArry.put(emailObj);
+
+		JSONArray groupArry = new JSONArray();
+
+		if(idpUserDto.getGroup() != null && !(idpUserDto.getGroup().equals(""))) {
+			String[] arry = idpUserDto.getGroup().split(",");
+			
+			for(int i = 0 ; i < arry.length ; i++) {
+				JSONObject groupObj = new JSONObject();
+				groupObj.put(EReturnConstants.IDP_VALUE, arry[i]);
+
+				groupArry.put(groupObj);
+			}
+		}
+
+		JSONObject divisionObj = new JSONObject();
+		divisionObj.put(EReturnConstants.IDP_DIVISION, idpUserDto.getDivision());
+		
+		userObj.put(EReturnConstants.IDP_EMAILS, emailArry);
+		userObj.put(EReturnConstants.IDP_NAME, nameObj);
+		userObj.put(EReturnConstants.IDP_GROUPS, groupArry);
+		userObj.put(EReturnConstants.IDP_DIVISION_OBJ, divisionObj);
+		
+		LOGGER.error("Idp User creation input:"+userObj);
+
+		String url = destination;
+		String username = user;
+		String password = pwd;
+		
+		RestInvoker restInvoker = new RestInvoker(url, username, password);
+		String response = restInvoker.postDataToSCIM("", userObj.toString());
+
+//		LOGGER.error("Idp User creation output:"+response);
+		JSONObject outputObj = new JSONObject(response);
+		
+
+		pUser = outputObj.optString(EReturnConstants.IDP_ID);
+		responseDto.setCode("00");
+		responseDto.setMessage(pUser);
+		responseDto.setStatus("SUCCESS");
+		
+		return responseDto;
+	}
+
+	public ResponseDto createGroupOnIdp(IdpGroupDto idpGroupDto) {
+		ResponseDto responseDto = new ResponseDto();
+		String pUser = "";
+		
+		JSONObject groupObj = new JSONObject();
+
+		groupObj.put(EReturnConstants.IDP_GROUP_DISPLAY_NAME, idpGroupDto.getGroupDisplayName());
+
+		JSONObject urnObj = new JSONObject();
+		urnObj.put(EReturnConstants.IDP_NAME, idpGroupDto.getGroupName());
+		urnObj.put(EReturnConstants.IDP_GROUP_DESC, idpGroupDto.getGroupDesc());
+
+		groupObj.put(EReturnConstants.IDP_GROUP_URN, urnObj);
+		LOGGER.error("Idp Group creation input:"+groupObj);
+
+		String url = destination;
+		String username = user;
+		String password = pwd;
+		
+		String groupUrl = url.replace("Users", "Groups");
+		RestInvoker restInvoker = new RestInvoker(groupUrl, username, password);
+		String response = restInvoker.postDataToSCIM("", groupObj.toString());
+
+		JSONObject outputObj = new JSONObject(response);
+
+		pUser = outputObj.optString(EReturnConstants.IDP_GROUP_DISPLAY_NAME);
+		responseDto.setCode("00");
+		responseDto.setMessage(pUser);
+		responseDto.setStatus("SUCCESS");
+		
+		return responseDto;
+	}
+
+	public ResponseDto createUserFromExcel(String filePath) {
+		ResponseDto responseDto = new ResponseDto();
+		List<IdpUserDto> users = readCustomerExcelUtil.readUserExcel(filePath);
+		for(IdpUserDto dto : users) {
+			createUserOnIdp(dto);
+		}
+		responseDto.setCode("00");
+		responseDto.setMessage("SUCCESS");
+		responseDto.setStatus("SUCCESS");
+		return responseDto;
+	}
+	
+	public ResponseDto createGroupFromExcel(String filePath) {
+		ResponseDto responseDto = new ResponseDto();
+		List<IdpGroupDto> groups = readCustomerExcelUtil.readGroupExcel(filePath);
+		for(IdpGroupDto dto : groups) {
+			createGroupOnIdp(dto);
+		}
+		responseDto.setCode("00");
+		responseDto.setMessage("SUCCESS");
+		responseDto.setStatus("SUCCESS");
+		return responseDto;
+	}
+	
 }
